@@ -1,0 +1,38 @@
+/* Variabili Palette & Font */
+:root {
+    --color-primary: #0F6E56;
+    --color-primary-light: #5DCAA5;
+    --color-bg: #F1EFE8;
+    --color-surface: #FFFFFF;
+    --color-text: #26221C;
+    --color-text-muted: #5F5E5A;
+
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+/* Reset Minimo */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+}
+
+/* Layout Default */
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-text);
+    background-color: var(--color-bg);
+    line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+    font-family: var(--font-heading);
+    line-height: 1.2;
+}
+
