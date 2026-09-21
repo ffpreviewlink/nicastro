@@ -33,4 +33,11 @@
                 dropdownToggle?.setAttribute('aria-expanded', 'false');
         }
     });
+
+    document.addEventListener('keydown', (event) => {
+        if(!dropdownMenu?.hasAttribute('hidden') && event.key == 'Escape') {
+            dropdownMenu?.toggleAttribute('hidden');
+            dropdownToggle?.setAttribute('aria-expanded', 'false');
+        }
+    });
 </script>
