@@ -1,6 +1,6 @@
 # Studio Optometrico Nicastro
 
-Sito del professionista (optometria comportamentale, rieducazione e potenziamento visivo). Astro 7, sito statico, nessuna libreria lato client.
+Sito del professionista (optometrista, rieducatore visivo: analisi, rieducazione e potenziamento visivo). Astro 7, sito statico, nessuna libreria lato client.
 
 ```sh
 npm install

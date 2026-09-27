@@ -37,8 +37,7 @@ export const services: Service[] = [
     // TODO(cliente): confermare a quali pubblici si rivolge l'analisi
     audience: 'Bambini, adulti e sportivi',
     price: { amount: 75, unit: 'una tantum' },
-    // TODO(cliente): fornire la durata dell'analisi, oppure eliminare questa riga
-    duration: "[INSERIRE DURATA DELL’ANALISI]",
+    duration: '1 ora',
     image: 'analisiVisiva',
     whatsappMessage:
       "Buongiorno, vorrei avere informazioni sull’analisi visiva optometrica.",

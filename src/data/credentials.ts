@@ -7,6 +7,8 @@
  * da sostituire con le informazioni reali fornite dal professionista.
  */
 
+import { site } from './site';
+
 export interface TrustPoint {
   title: string;
   text: string;
@@ -23,7 +25,7 @@ export const trustPoints: TrustPoint[] = [
   },
   {
     title: 'Uno studio dedicato',
-    text: 'Sono stato l’unico, nelle Marche, ad avere uno studio dedicato esclusivamente all’optometria comportamentale e alla rieducazione visiva.',
+    text: 'Sono stato l’unico, nelle Marche, ad avere uno studio dedicato esclusivamente all’analisi e alla rieducazione visiva.',
   },
   {
     title: 'Formazione e specializzazioni',
@@ -35,8 +37,8 @@ export const trustPoints: TrustPoint[] = [
     text: 'Una parte importante delle famiglie arriva su indicazione di logopedisti, psicologi e neuropsicomotricisti.',
   },
   {
-    title: 'Dove serve',
-    text: 'Oggi ricevo presso diversi studi: porto la mia competenza dove c’è bisogno.',
+    title: 'Dove ricevo',
+    text: `Oggi ricevo presso ${site.locations[0]}, con la possibilità di aggiungere altre sedi in futuro.`,
   },
 ];
 
@@ -64,16 +66,16 @@ export const experiences: Experience[] = [
   },
   {
     period: '[INSERIRE PERIODO]',
-    title: 'Studio dedicato all’optometria comportamentale',
+    title: 'Studio dedicato all’analisi e alla rieducazione visiva',
     place: 'Marche',
     description:
       'Sono stato l’unico, nelle Marche, ad avere uno studio dedicato esclusivamente a questa attività.',
   },
   {
     period: 'Oggi',
-    title: 'Presso diversi studi',
+    title: `Presso ${site.locations[0]}`,
     description:
-      'Il mio modo di lavorare si sta evolvendo: mi sposto e ricevo in studi diversi, portando la mia competenza dove serve.',
+      'Il mio modo di lavorare si sta evolvendo: ricevo presso questo studio, con la possibilità di aggiungerne altri in futuro.',
   },
 ];
 

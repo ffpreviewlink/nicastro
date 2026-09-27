@@ -13,14 +13,14 @@ const origin = Astro.site!.origin;
 
 <BaseLayout
   title="Chi sono: percorso, esperienze e formazione"
-  description="Optometrista comportamentale: il mio percorso professionale, le esperienze in contesti diversi, la formazione e il modo in cui lavoro oggi, presso diversi studi."
+  description="Optometrista, Rieducatore visivo: il mio percorso professionale, le esperienze in contesti diversi, la formazione e il modo in cui lavoro oggi."
   jsonLd={[professionalSchema(origin)]}
 >
   <header class="about-intro">
     <div class="container split split--tablet" style="--split: minmax(0, 1.4fr) minmax(0, 0.8fr); --split-align: center">
       <div class="about-intro__text">
         <p class="eyebrow">Chi sono</p>
-        <h1>Sono <Fill value={site.name} />, optometrista comportamentale</h1>
+        <h1>Sono <Fill value={site.name} />, optometrista, rieducatore visivo</h1>
         <p class="lead">
           Valuto le abilità visive e seguo percorsi di rieducazione e potenziamento visivo. Lavoro soprattutto con i
           bambini, ma mi occupo anche di adulti e sportivi.
@@ -118,11 +118,11 @@ const origin = Astro.site!.origin;
       </div>
       <div class="prose">
         <p>
-          Nelle Marche sono stato l’unico ad avere uno studio dedicato esclusivamente all’optometria comportamentale e
-          alla rieducazione visiva. Oggi il mio modo di lavorare si sta evolvendo: mi sposto e ricevo presso diversi
-          studi, portando la mia competenza dove serve.
+          Nelle Marche sono stato l’unico ad avere uno studio dedicato esclusivamente all’analisi e alla
+          rieducazione visiva. Oggi il mio modo di lavorare si sta evolvendo: ricevo presso lo studio indicato
+          qui sotto, con la possibilità di aggiungerne altri in futuro.
         </p>
-        <p>Per sapere dove ricevo e come fissare un appuntamento, scrivimi su WhatsApp.</p>
+        <p>Per sapere come fissare un appuntamento, scrivimi su WhatsApp.</p>
         <ul class="checklist">
           {site.locations.map((place) => <li><Fill value={place} /></li>)}
         </ul>

@@ -1,6 +1,7 @@
 ---
 import Fill from '../../components/Fill.astro';
 import { formatPrice, getService } from '../../data/services';
+import { site } from '../../data/site';
 import ServiceLayout from '../../layouts/ServiceLayout.astro';
 
 const price = formatPrice(getService('analisi-visiva-optometrica'));
@@ -55,7 +56,7 @@ const price = formatPrice(getService('analisi-visiva-optometrica'));
       <li>
         <div>
           <h3>Ci si accorda su WhatsApp</h3>
-          <p>Mi scrivi e concordiamo giorno e studio: ricevo presso diversi studi.</p>
+          <p>Mi scrivi e concordiamo il giorno: ricevo presso {site.locations[0]}.</p>
         </div>
       </li>
       <li>
@@ -74,7 +75,8 @@ const price = formatPrice(getService('analisi-visiva-optometrica'));
       valutare insieme un percorso di <a href="/servizi/rieducazione-visiva/">rieducazione visiva</a>.
     </p>
     <p>
-      <Fill value="[INSERIRE COSA SUCCEDE AL TERMINE DELL’ANALISI: restituzione dei risultati, eventuale relazione scritta]" />
+      Al termine dell’analisi preparo un report scritto con quanto emerso. Successivamente ci sentiamo per una
+      chiamata in cui ti spiego e commento insieme a te i risultati.
     </p>
   </section>
 

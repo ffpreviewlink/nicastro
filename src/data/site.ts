@@ -1,4 +1,9 @@
-/** Indirizzo dell'attività: usato in footer, Contatti, dati strutturati e come primo studio in cui riceve. */
+/**
+ * Indirizzo dell'attività (sede legale/fiscale): usato in footer, Contatti (riga P.IVA)
+ * e dati strutturati. Non coincide necessariamente con lo studio in cui riceve i
+ * pazienti: per quello vedi `locations` più sotto.
+ * TODO(cliente): confermare che questo resti l'indirizzo corretto ai fini fiscali/P.IVA.
+ */
 const address = {
   street: 'Via Vittorio Bachelet, 15',
   postalCode: '62024',
@@ -19,12 +24,12 @@ export const site = {
   name: 'Nicolais Nicastro',
   /** Nome dell'attività: marchio in header e footer, titoli delle pagine, dati strutturati. */
   businessName: 'Studio Optometrico Nicastro',
-  role: 'Optometrista comportamentale',
-  /** Regione di riferimento per la ricerca locale. Nessun indirizzo: il professionista riceve in studi diversi. */
+  role: 'Optometrista, Rieducatore visivo',
+  /** Regione di riferimento per la ricerca locale (dati strutturati, aree di servizio). */
   region: 'Marche',
   locale: 'it_IT',
   description:
-    'Optometria comportamentale nelle Marche: analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi.',
+    'Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi, nelle Marche.',
   /** Immagine di anteprima per social e messaggistica (1200×630). */
   ogImage: '/images/og-default.jpg',
 
@@ -39,18 +44,18 @@ export const site = {
   phone: '',
   vatId: '02156950434',
 
-  /** Indirizzo dell'attività (footer, Contatti, dati strutturati). */
   address,
 
   social: {
     facebook: 'https://www.facebook.com/profile.php?id=61578618864824',
   },
 
-  /** Studi in cui riceve. Nessuna sede permanente: elencare solo dati reali. */
+  /**
+   * Studi in cui riceve attualmente. Elenco semplice ed estendibile: quando saranno
+   * confermate altre sedi (oggi in standby), basta aggiungere una voce qui.
+   */
   locations: [
-    `${address.street}, ${address.postalCode} ${address.city} (${address.province})`,
-    // TODO(cliente): aggiungere gli altri studi in cui riceve, oppure eliminare questa riga
-    '[INSERIRE ALTRI STUDI IN CUI RICEVE, se presenti]',
+    'Senigallia — Centro Aura',
   ],
 
   googleReviews: {

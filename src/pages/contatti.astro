@@ -16,7 +16,7 @@ const origin = Astro.site!.origin;
 
 <BaseLayout
   title="Contatti"
-  description="Come contattarmi: WhatsApp per prenotare o chiedere informazioni, oppure email. Ricevo presso diversi studi."
+  description={`Come contattarmi: WhatsApp per prenotare o chiedere informazioni, oppure email. Ricevo presso ${site.locations[0]}.`}
   jsonLd={[professionalSchema(origin)]}
   floatingCta={false}
 >
@@ -71,7 +71,7 @@ const origin = Astro.site!.origin;
         <div>
           <h2 class="contact__h">Dove ricevo</h2>
           <p>
-            Ricevo presso diversi studi. Per sapere dove e come fissare un appuntamento, scrivimi su WhatsApp.
+            Per sapere come fissare un appuntamento, scrivimi su WhatsApp.
           </p>
           <ul class="contact__list" role="list">
             {
