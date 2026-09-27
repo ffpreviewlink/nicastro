@@ -1,0 +1,362 @@
+---
+/**
+ * Struttura comune delle tre pagine servizio: testata con sintesi (per chi,
+ * costo, durata), corpo con riepilogo fisso su desktop, altri servizi e CTA finale.
+ * Ogni pagina servizio fornisce solo le sezioni di contenuto (slot).
+ */
+import BaseLayout from './BaseLayout.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Fill from '../components/Fill.astro';
+import SiteImage from '../components/SiteImage.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { formatPrice, getService, services } from '../data/services';
+import { emailUrl } from '../utils/whatsapp';
+import { professionalSchema, serviceSchema } from '../utils/schema';
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const service = getService(slug);
+const origin = Astro.site!.origin;
+const price = formatPrice(service);
+const others = services.filter((s) => s.slug !== service.slug);
+---
+
+<BaseLayout
+  title={service.seo.title}
+  description={service.seo.description}
+  jsonLd={[serviceSchema(service, origin), professionalSchema(origin)]}
+>
+  <header class="service-hero">
+    <div class="container service-hero__grid">
+      <div class="service-hero__text">
+        <nav class="breadcrumb" aria-label="Percorso di navigazione">
+          <ol role="list">
+            <li><a href="/">Home</a></li>
+            <li><a href="/servizi/">Servizi</a></li>
+            <li aria-current="page">{service.shortName}</li>
+          </ol>
+        </nav>
+        <h1>{service.name}</h1>
+        <p class="lead">{service.summary}</p>
+
+        <dl class="facts">
+          <div>
+            <dt>Per chi</dt>
+            <dd>{service.audience}</dd>
+          </div>
+          <div>
+            <dt>Costo</dt>
+            <dd>
+              <strong>{price.main}</strong>
+              {price.detail && <span> {price.detail}</span>}
+            </dd>
+          </div>
+          {
+            service.duration && (
+              <div>
+                <dt>Durata</dt>
+                <dd>
+                  <Fill value={service.duration} />
+                </dd>
+              </div>
+            )
+          }
+        </dl>
+
+        <div class="cta-row">
+          <WhatsAppButton message={service.whatsappMessage} label="Contatta su WhatsApp" size="lg" />
+        </div>
+      </div>
+      <SiteImage name={service.image} ratio="3 / 2" eager priority class="service-hero__image" />
+    </div>
+  </header>
+
+  <div class="container service-body">
+    <div class="service-body__main">
+      <slot />
+    </div>
+
+    <aside class="service-aside" aria-label="Riepilogo e contatto" data-cta>
+      <p class="service-aside__label">{service.shortName}</p>
+      <p class="service-aside__price">
+        <strong>{price.main}</strong>
+        {price.detail && <span>{price.detail}</span>}
+      </p>
+      {
+        service.duration && (
+          <p class="service-aside__row">
+            <span class="muted">Durata</span>
+            <Fill value={service.duration} />
+          </p>
+        )
+      }
+      <WhatsAppButton message={service.whatsappMessage} label="Contatta su WhatsApp" />
+      <a class="service-aside__mail" href={emailUrl(`Informazioni: ${service.name}`)}>Oppure scrivi via email</a>
+    </aside>
+  </div>
+
+  <section class="section section--sand others" aria-labelledby="altri-servizi">
+    <div class="container">
+      <h2 id="altri-servizi" class="others__title">Gli altri servizi</h2>
+      <ul class="others__list" role="list">
+        {
+          others.map((other) => (
+            <li>
+              <a href={other.path}>
+                <span class="others__name">{other.name}</span>
+                <span class="others__sum">{other.summary}</span>
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Vuoi capire se questo percorso può essere adatto?"
+    text="Scrivimi su WhatsApp e raccontami la situazione: ne parliamo insieme."
+    message={service.whatsappMessage}
+    emailSubject={`Informazioni: ${service.name}`}
+  />
+</BaseLayout>
+
+<style>
+  /* Testata */
+  .service-hero {
+    padding-block: clamp(1.75rem, 1.2rem + 3vw, 3.5rem) clamp(2.5rem, 2rem + 3vw, 4.5rem);
+    background: var(--color-bg-sand);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .service-hero__grid {
+    display: grid;
+    gap: 2rem;
+  }
+
+  .service-hero__text > * + * {
+    margin-top: 1.25rem;
+  }
+
+  .service-hero__text .breadcrumb {
+    margin-bottom: 1.5rem;
+  }
+
+  .breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--text-small);
+    color: var(--color-text-muted);
+  }
+
+  .breadcrumb li + li::before {
+    content: '/';
+    margin-right: 0.5rem;
+    color: var(--color-border-strong);
+  }
+
+  .breadcrumb a {
+    color: var(--color-text-muted);
+  }
+
+  .breadcrumb a:hover {
+    color: var(--color-primary);
+  }
+
+  .facts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 0.9rem 2rem;
+    margin-bottom: 0;
+    padding-block: 1.25rem;
+    border-block: 1px solid var(--color-border-strong);
+  }
+
+  .facts dt {
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .facts dd {
+    margin: 0.15rem 0 0;
+    font-weight: 500;
+  }
+
+  .facts strong {
+    font-family: var(--font-heading);
+    font-size: 1.375rem;
+    font-weight: 600;
+  }
+
+  /* Corpo */
+  .service-body {
+    display: grid;
+    gap: 3rem;
+    padding-block: var(--section-y);
+  }
+
+  .service-body__main {
+    min-width: 0;
+  }
+
+  .service-body__main :global(section + section) {
+    margin-top: clamp(2.5rem, 2rem + 2vw, 3.75rem);
+    padding-top: clamp(2.5rem, 2rem + 2vw, 3.75rem);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .service-body__main :global(section > h2) {
+    margin-bottom: 1.1rem;
+  }
+
+  .service-body__main :global(section > h3) {
+    margin-top: 1.75rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .service-body__main :global(section > p),
+  .service-body__main :global(section > .note),
+  .service-body__main :global(section > .checklist),
+  .service-body__main :global(section > .steps) {
+    max-width: 40rem;
+  }
+
+  .service-body__main :global(section > * + p),
+  .service-body__main :global(section > * + .note),
+  .service-body__main :global(section > * + .checklist),
+  .service-body__main :global(section > * + .steps) {
+    margin-top: 1rem;
+  }
+
+  /* Riepilogo: su mobile è già in testata e nella CTA finale */
+  .service-aside {
+    display: none;
+  }
+
+  /* Altri servizi */
+  .others__title {
+    margin-bottom: 1.5rem;
+    font-size: var(--text-h3);
+  }
+
+  .others__list {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .others__list a {
+    display: grid;
+    gap: 0.35rem;
+    height: 100%;
+    padding: 1.25rem 1.4rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-m);
+    background: var(--color-surface);
+    color: var(--color-text);
+    text-decoration: none;
+    transition: border-color 0.18s var(--ease), background-color 0.18s var(--ease);
+  }
+
+  .others__list a:hover {
+    border-color: var(--color-primary);
+    background: var(--color-primary-wash);
+  }
+
+  .others__name {
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .others__sum {
+    font-size: var(--text-small);
+    color: var(--color-text-muted);
+  }
+
+  @media (min-width: 48rem) {
+    .others__list {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* Tablet: testata a due colonne (testo + immagine) invece dell'immagine a tutta larghezza sotto il testo */
+  @media (min-width: 48rem) {
+    .service-hero__grid {
+      grid-template-columns: 1.15fr 1fr;
+      align-items: center;
+      gap: 2.5rem;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .service-hero__grid {
+      gap: 4rem;
+    }
+
+    .service-body {
+      grid-template-columns: minmax(0, 1fr) 19rem;
+      gap: 4.5rem;
+      align-items: start;
+    }
+
+    .service-aside {
+      position: sticky;
+      top: calc(var(--header-h) + 1.5rem);
+      display: grid;
+      gap: 0.9rem;
+      padding: 1.5rem;
+      border: 1px solid var(--color-border-strong);
+      border-radius: var(--radius-l);
+      background: var(--color-surface);
+    }
+
+    .service-aside__label {
+      font-size: var(--text-label);
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--color-text-muted);
+    }
+
+    .service-aside__price {
+      display: flex;
+      align-items: baseline;
+      flex-wrap: wrap;
+      gap: 0.25rem 0.5rem;
+    }
+
+    .service-aside__price strong {
+      font-family: var(--font-heading);
+      font-size: 1.75rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .service-aside__row {
+      display: grid;
+      gap: 0.1rem;
+      font-size: var(--text-small);
+    }
+
+    .service-aside__mail {
+      display: grid;
+      place-items: center;
+      min-height: var(--touch);
+      font-size: var(--text-small);
+      text-align: center;
+    }
+  }
+</style>

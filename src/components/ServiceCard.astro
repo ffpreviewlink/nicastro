@@ -1,0 +1,249 @@
+---
+/**
+ * Card di un servizio. Il titolo è l'unico link e la sua area cliccabile copre
+ * tutta la card (un solo elemento focalizzabile, nome del servizio come testo).
+ */
+import Icon from './Icon.astro';
+import Fill from './Fill.astro';
+import { formatPrice, type Service } from '../data/services';
+
+interface Props {
+  service: Service;
+  /** Posizione nell'elenco, mostrata come numero (1 → "01"). */
+  index: number;
+  headingLevel?: 'h2' | 'h3';
+}
+
+const { service, index, headingLevel = 'h3' } = Astro.props;
+const Heading = headingLevel;
+const price = formatPrice(service);
+---
+
+<div class="service-cell">
+<article class:list={['service-card', { 'service-card--note': service.note }]}>
+  <p class="service-card__index" aria-hidden="true">{String(index).padStart(2, '0')}</p>
+  {service.note && <p class="service-card__note">{service.note}</p>}
+
+  <Heading class="service-card__title">
+    <a href={service.path}>{service.name}</a>
+  </Heading>
+
+  <p class="service-card__summary">{service.summary}</p>
+
+  <dl class="service-card__facts">
+    <div>
+      <dt>Per chi</dt>
+      <dd>{service.audience}</dd>
+    </div>
+    <div>
+      <dt>Costo</dt>
+      <dd>
+        <strong>{price.main}</strong>
+        {price.detail && <span> {price.detail}</span>}
+      </dd>
+    </div>
+    {
+      service.duration && (
+        <div>
+          <dt>Durata</dt>
+          <dd>
+            <Fill value={service.duration} />
+          </dd>
+        </div>
+      )
+    }
+  </dl>
+
+  <p class="service-card__more" aria-hidden="true">
+    Scopri il servizio <Icon name="arrow" />
+  </p>
+</article>
+</div>
+
+<style>
+  /* La scheda si adatta alla larghezza della colonna in cui si trova, non a quella dello schermo:
+     stretta = verticale (3 colonne, telefono); larga (≥ 40rem, tablet a colonna singola) = orizzontale */
+  .service-cell {
+    container-type: inline-size;
+    display: grid;
+  }
+
+  .service-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 1.75rem 1.5rem 1.5rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-l);
+    background: var(--color-surface);
+    transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease);
+  }
+
+  .service-card:hover,
+  .service-card:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 14px 28px -20px rgb(15 110 86 / 0.6);
+  }
+
+  .service-card--note {
+    background: var(--color-primary-wash);
+    border-color: var(--color-primary);
+  }
+
+  .service-card__index {
+    font-family: var(--font-heading);
+    font-size: 2.25rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--color-accent);
+  }
+
+  .service-card__note {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    background: var(--color-primary-dark);
+    color: var(--color-on-dark);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .service-card__title {
+    margin-top: 1.25rem;
+  }
+
+  /* Area cliccabile estesa a tutta la card */
+  .service-card__title a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .service-card__title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--radius-l);
+  }
+
+  .service-card__title a:focus-visible {
+    outline: none;
+  }
+
+  .service-card__title a:focus-visible::after {
+    outline: 3px solid var(--color-focus);
+    outline-offset: 3px;
+  }
+
+  .service-card__summary {
+    margin-top: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  .service-card__facts {
+    display: grid;
+    gap: 0.7rem;
+    margin: 1.5rem 0 0;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--color-border);
+    font-size: var(--text-small);
+  }
+
+  .service-card__facts div {
+    display: grid;
+    grid-template-columns: 5rem 1fr;
+    gap: 0.75rem;
+  }
+
+  .service-card__facts dt {
+    color: var(--color-text-muted);
+  }
+
+  .service-card__facts dd {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .service-card__facts strong {
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+
+  .service-card__more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 1.5rem;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .service-card__more :global(svg) {
+    width: 1.1rem;
+    height: 1.1rem;
+    transition: transform 0.18s var(--ease);
+  }
+
+  .service-card:hover .service-card__more :global(svg) {
+    transform: translateX(3px);
+  }
+
+  @container (min-width: 40rem) {
+    .service-card {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 15rem;
+      grid-template-areas:
+        'index facts'
+        'title facts'
+        'summary facts'
+        'more facts';
+      grid-template-rows: auto auto auto 1fr;
+      column-gap: 2.5rem;
+      padding: 2rem;
+    }
+
+    .service-card__index {
+      grid-area: index;
+    }
+
+    .service-card__title {
+      grid-area: title;
+    }
+
+    .service-card__summary {
+      grid-area: summary;
+    }
+
+    .service-card__more {
+      grid-area: more;
+      align-self: end;
+    }
+
+    .service-card__facts {
+      grid-area: facts;
+      align-content: start;
+      margin: 0;
+      padding: 0 0 0 2rem;
+      border-top: 0;
+      border-left: 1px solid var(--color-border);
+    }
+
+    /* Il badge sta nella colonna del titolo, non sopra i dettagli */
+    .service-card__note {
+      position: static;
+      grid-area: index;
+      justify-self: end;
+      align-self: start;
+    }
+
+    .service-card__facts div {
+      grid-template-columns: 1fr;
+      gap: 0.1rem;
+    }
+  }
+</style>

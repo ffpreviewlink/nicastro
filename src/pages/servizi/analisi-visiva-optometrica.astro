@@ -1,0 +1,90 @@
+---
+import Fill from '../../components/Fill.astro';
+import { formatPrice, getService } from '../../data/services';
+import ServiceLayout from '../../layouts/ServiceLayout.astro';
+
+const price = formatPrice(getService('analisi-visiva-optometrica'));
+---
+
+<ServiceLayout slug="analisi-visiva-optometrica">
+  <section aria-labelledby="cose">
+    <h2 id="cose">Che cos’è</h2>
+    <p>
+      L’analisi visiva optometrica è una valutazione delle abilità visive. Serve a capire come la vista viene usata
+      nelle attività di ogni giorno: leggere, scrivere, copiare dalla lavagna, seguire un oggetto in movimento.
+    </p>
+    <p>
+      Le abilità visive sono le capacità che permettono agli occhi e al cervello di lavorare bene insieme.
+    </p>
+    <p class="note">
+      Non è una visita medica e non sostituisce il controllo dall’oculista: è una valutazione optometrica.
+    </p>
+  </section>
+
+  <section aria-labelledby="cosa-valuta">
+    <h2 id="cosa-valuta">Cosa viene valutato</h2>
+    <p>
+      Vengono valutate le abilità visive, cioè le capacità che servono a usare la vista con efficacia nelle attività
+      quotidiane.
+    </p>
+    <ul class="checklist">
+      <li><Fill value="[INSERIRE ABILITÀ VISIVA VALUTATA]" /></li>
+      <li><Fill value="[INSERIRE ABILITÀ VISIVA VALUTATA]" /></li>
+      <li><Fill value="[INSERIRE ABILITÀ VISIVA VALUTATA]" /></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="a-chi">
+    <h2 id="a-chi">A chi può essere rivolta</h2>
+    <p>
+      L’analisi è pensata soprattutto per i bambini, il pubblico con cui lavoro più spesso, ma è rivolta anche agli
+      adulti e agli sportivi.
+    </p>
+    <p>
+      Ci si arriva in due modi: su indicazione di un altro professionista (per esempio una logopedista, uno psicologo o
+      una neuropsicomotricista) oppure perché un genitore, o la persona stessa, ha un dubbio da chiarire.
+    </p>
+    <h3>Quando può avere senso</h3>
+    <ul class="checklist">
+      <li><Fill value="[INSERIRE UNA SITUAZIONE IN CUI PUÒ AVERE SENSO UN’ANALISI VISIVA]" /></li>
+      <li><Fill value="[INSERIRE UNA SITUAZIONE IN CUI PUÒ AVERE SENSO UN’ANALISI VISIVA]" /></li>
+      <li><Fill value="[INSERIRE UNA SITUAZIONE IN CUI PUÒ AVERE SENSO UN’ANALISI VISIVA]" /></li>
+    </ul>
+  </section>
+
+  <section aria-labelledby="come-si-svolge">
+    <h2 id="come-si-svolge">Come si svolge</h2>
+    <ol class="steps">
+      <li>
+        <div>
+          <h3>Ci si accorda su WhatsApp</h3>
+          <p>Mi scrivi e concordiamo giorno e studio: ricevo presso diversi studi.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>L’analisi</h3>
+          <p><Fill value="[INSERIRE COME SI SVOLGE L’ANALISI: cosa avviene durante l’incontro]" /></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="dopo">
+    <h2 id="dopo">Cosa succede dopo</h2>
+    <p>
+      Se dall’analisi emerge che alcune abilità visive non sono adeguate rispetto a quanto atteso per l’età, si può
+      valutare insieme un percorso di <a href="/servizi/rieducazione-visiva/">rieducazione visiva</a>.
+    </p>
+    <p>
+      <Fill value="[INSERIRE COSA SUCCEDE AL TERMINE DELL’ANALISI: restituzione dei risultati, eventuale relazione scritta]" />
+    </p>
+  </section>
+
+  <section aria-labelledby="costo">
+    <h2 id="costo">Costo</h2>
+    <p>
+      L’analisi visiva optometrica costa <strong>{price.main}</strong>, {price.detail}: si paga una sola volta.
+    </p>
+  </section>
+</ServiceLayout>

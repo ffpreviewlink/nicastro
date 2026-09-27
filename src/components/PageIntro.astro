@@ -1,0 +1,62 @@
+---
+/**
+ * Testata delle pagine interne: eyebrow, titolo (h1) e introduzione.
+ * Il titolo può essere una stringa (prop) oppure contenuto (slot "title").
+ * Il contenuto di default dello slot diventa il testo introduttivo.
+ */
+interface Props {
+  eyebrow?: string;
+  title?: string;
+}
+
+const { eyebrow, title } = Astro.props;
+---
+
+<header class="page-intro">
+  <div class="container">
+    <div class="page-intro__inner">
+      {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+      <h1>
+        <slot name="title">{title}</slot>
+      </h1>
+      {
+        Astro.slots.has('default') && (
+          <div class="page-intro__lead lead">
+            <slot />
+          </div>
+        )
+      }
+      {
+        Astro.slots.has('actions') && (
+          <div class="cta-row page-intro__actions">
+            <slot name="actions" />
+          </div>
+        )
+      }
+    </div>
+  </div>
+</header>
+
+<style>
+  .page-intro {
+    padding-block: clamp(2.5rem, 1.8rem + 3.5vw, 5rem) clamp(2.25rem, 1.6rem + 3vw, 4rem);
+    background: var(--color-bg-sand);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .page-intro__inner {
+    max-width: 46rem;
+  }
+
+  .page-intro__lead {
+    margin-top: 1.25rem;
+  }
+
+  .page-intro__lead > :global(* + *) {
+    margin-top: 0.9rem;
+  }
+
+  .page-intro__actions {
+    margin-top: 1.75rem;
+  }
+</style>

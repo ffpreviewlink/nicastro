@@ -1,0 +1,79 @@
+---
+import Fill from '../../components/Fill.astro';
+import { formatPrice, getService } from '../../data/services';
+import ServiceLayout from '../../layouts/ServiceLayout.astro';
+
+const service = getService('rieducazione-visiva');
+const price = formatPrice(service);
+---
+
+<ServiceLayout slug="rieducazione-visiva">
+  <section aria-labelledby="cose">
+    <h2 id="cose">Che cos’è il visual training</h2>
+    <p>
+      La rieducazione visiva, o visual training, è un percorso fatto di sedute in cui si lavora sulle abilità visive.
+    </p>
+    <p>
+      Le abilità visive sono le capacità che permettono agli occhi e al cervello di lavorare bene insieme. A volte
+      alcune di queste abilità risultano non adeguate rispetto a quanto ci si aspetta per l’età: il percorso serve a
+      lavorare proprio su quelle.
+    </p>
+    <p class="note">
+      Non è una terapia medica e non garantisce un risultato: ogni persona ha i suoi tempi, per questo la durata è
+      indicativa.
+    </p>
+  </section>
+
+  <section aria-labelledby="perche">
+    <h2 id="perche">Perché può essere proposto</h2>
+    <p>
+      Il visual training viene proposto quando alcune abilità visive risultano non adeguate rispetto a quanto atteso per
+      l’età. Di solito lo si scopre con un’<a href="/servizi/analisi-visiva-optometrica/">analisi visiva optometrica</a>.
+    </p>
+    <p>È il trattamento che propongo più spesso.</p>
+  </section>
+
+  <section aria-labelledby="come-funziona">
+    <h2 id="come-funziona">Come funziona il percorso</h2>
+    <ol class="steps">
+      <li>
+        <div>
+          <h3>Si parte dalle abilità da rafforzare</h3>
+          <p>Il percorso si costruisce sulle abilità visive che risultano non adeguate.</p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Si lavora per sedute</h3>
+          <p>Ogni seduta costa {price.main}.</p>
+          <p><Fill value="[INSERIRE DURATA E FREQUENZA DELLE SEDUTE]" /></p>
+          <p><Fill value="[INSERIRE SE SONO PREVISTI ESERCIZI DA SVOLGERE A CASA]" /></p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Si prosegue nel tempo</h3>
+          <p>Il percorso dura {service.duration?.toLowerCase()}, con tempi che variano da persona a persona.</p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="abilita">
+    <h2 id="abilita">Cosa significa lavorare sulle abilità visive</h2>
+    <p>
+      Significa concentrarsi, seduta dopo seduta, sulle singole abilità visive che risultano non adeguate rispetto a
+      quanto atteso per l’età. Il percorso mira a lavorare su queste abilità.
+    </p>
+    <p>
+      <Fill value="[INSERIRE ESEMPI DI ABILITÀ SU CUI SI LAVORA E DI ESERCIZI PROPOSTI]" />
+    </p>
+  </section>
+
+  <section aria-labelledby="costo">
+    <h2 id="costo">Costo e durata</h2>
+    <p>
+      Ogni seduta costa <strong>{price.main}</strong>. Durata del percorso: {service.duration?.toLowerCase()}.
+    </p>
+  </section>
+</ServiceLayout>

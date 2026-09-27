@@ -1,43 +1,495 @@
-<header>
-    <nav>
-        <a href="/">Home</a>
-        <a href="/chi-sono">Chi sono</a>
+---
+/**
+ * Header con navigazione principale.
+ * - Mobile: barra con logo + pulsante Menu; il pannello si apre sotto la barra.
+ *   I tre servizi sono sempre visibili sotto "Servizi" (un tocco in meno).
+ * - Desktop (≥ 76rem): voci in linea; "Servizi" è un link alla pagina Servizi
+ *   più un pulsante che apre il sottomenu (Esc lo chiude, focus rispettato).
+ * - Senza JavaScript il menu resta interamente visibile e navigabile.
+ */
+import Fill from './Fill.astro';
+import Icon from './Icon.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import { navigation } from '../data/navigation';
+import { site } from '../data/site';
 
-        <div class="dropdown">
-            <button class="dropdown-toggle" aria-expanded="false" aria-controls="menu-servizi">
-                Servizi
-            </button>
-            <ul class="dropdown-menu" id="menu-servizi" hidden>
-                <li><a href="/servizi/analisi-visiva-optometrica">Analisi visiva optometrica</a></li>
-                <li><a href="/servizi/rieducazione-visiva">Rieducazione visiva</a></li>
-                <li><a href="/servizi/potenziamento-visivo-sportivo">Potenziamento visivo sportivo</a></li>
-            </ul>
-        </div>
-    </nav>
-</header>
-<script>
-    const dropdown = document.querySelector('.dropdown');
-    const dropdownToggle = document.querySelector('.dropdown-toggle');
-    const dropdownMenu = document.querySelector('.dropdown-menu');
+const path = Astro.url.pathname;
+const isCurrent = (href: string) => path === href;
+const isSection = (href: string) => href !== '/' && path.startsWith(href);
+---
 
-    dropdownToggle?.addEventListener('click', () => {
-        if(dropdownMenu) {
-                dropdownMenu.toggleAttribute('hidden');
-                dropdownToggle.setAttribute('aria-expanded', String(!dropdownMenu.hasAttribute('hidden')));
+<header class="site-header" data-header>
+  <div class="container site-header__bar">
+    <a class="brand" href="/">
+      <img class="brand__mark" src="/favicon.svg" alt="" width="40" height="40" />
+      <span class="brand__text">
+        <span class="brand__name"><Fill value={site.businessName} /></span>
+        <span class="brand__role">{site.role}</span>
+      </span>
+    </a>
+
+    <button
+      class="nav-toggle"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+    >
+      <Icon name="menu" class="nav-toggle__open" />
+      <Icon name="close" class="nav-toggle__close" />
+      <span class="nav-toggle__label">Menu</span>
+    </button>
+
+    <nav class="site-nav" id="site-nav" aria-label="Principale">
+      <ul class="site-nav__list" role="list">
+        {
+          navigation.map((item) =>
+            item.children ? (
+              <li class="has-sub" data-sub>
+                <a
+                  href={item.href}
+                  aria-current={isCurrent(item.href) ? 'page' : undefined}
+                  data-active={isSection(item.href) ? '' : undefined}
+                >
+                  {item.label}
+                </a>
+                <button
+                  class="sub-toggle"
+                  type="button"
+                  aria-expanded="false"
+                  aria-controls="menu-servizi"
+                >
+                  <Icon name="chevron" />
+                  <span class="visually-hidden">Mostra i tre servizi</span>
+                </button>
+                <ul class="sub-menu" id="menu-servizi" role="list">
+                  {item.children.map((child) => (
+                    <li>
+                      <a href={child.href} aria-current={isCurrent(child.href) ? 'page' : undefined}>
+                        {child.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ) : (
+              <li>
+                <a href={item.href} aria-current={isCurrent(item.href) ? 'page' : undefined}>
+                  {item.label}
+                </a>
+              </li>
+            ),
+          )
         }
+      </ul>
+      <WhatsAppButton class="site-nav__cta" size="sm" label="WhatsApp" />
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    view-transition-name: site-header;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .site-header__bar {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0 1rem;
+    min-height: var(--header-h);
+  }
+
+  /* Marchio */
+  .brand {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    padding-block: 0.5rem;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .brand:hover {
+    color: var(--color-text);
+  }
+
+  .brand__mark {
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+  }
+
+  .brand__text {
+    display: grid;
+    min-width: 0;
+    line-height: 1.25;
+  }
+
+  .brand__name {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+  }
+
+  .brand__role {
+    font-size: 0.8125rem;
+    color: var(--color-text-muted);
+  }
+
+  /* Pulsante Menu (solo con JS, solo mobile) */
+  .nav-toggle {
+    display: none;
+    flex: none;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 2.75rem;
+    padding: 0.25rem 0.9rem;
+    border: 1.5px solid var(--color-border-strong);
+    border-radius: 999px;
+    background: transparent;
+    font-family: var(--font-heading);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  :global(html.js) .nav-toggle {
+    display: inline-flex;
+  }
+
+  .nav-toggle :global(svg) {
+    width: 1.35rem;
+    height: 1.35rem;
+  }
+
+  /* Le icone sono in un altro componente: servono selettori :global */
+  .nav-toggle :global(.nav-toggle__close),
+  .nav-toggle[aria-expanded='true'] :global(.nav-toggle__open) {
+    display: none;
+  }
+
+  .nav-toggle[aria-expanded='true'] :global(.nav-toggle__close) {
+    display: block;
+  }
+
+  /* Navigazione: mobile */
+  .site-nav {
+    flex-basis: 100%;
+    padding-bottom: 1.25rem;
+  }
+
+  :global(html.js) .site-nav {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: calc(100dvh - var(--header-h));
+    overflow-y: auto;
+    padding: 0.5rem var(--pr) 1.5rem var(--pl);
+    background: var(--color-bg);
+    border-bottom: 1px solid var(--color-border);
+    box-shadow: 0 14px 24px -16px rgb(30 42 39 / 0.35);
+  }
+
+  :global(html.js) .site-nav[data-open] {
+    display: block;
+  }
+
+  .site-nav__list,
+  .sub-menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-nav a:not(.btn) {
+    display: flex;
+    align-items: center;
+    min-height: 3rem;
+    color: var(--color-text);
+    text-decoration: none;
+    font-family: var(--font-heading);
+    font-weight: 500;
+  }
+
+  .site-nav__list > li {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .site-nav a[aria-current='page'],
+  .site-nav a[data-active] {
+    color: var(--color-primary);
+    font-weight: 600;
+  }
+
+  .sub-toggle {
+    display: none;
+  }
+
+  .sub-menu {
+    padding: 0 0 0.6rem 1rem;
+  }
+
+  .sub-menu a:not(.btn) {
+    min-height: 2.75rem;
+    font-family: var(--font-body);
+    font-size: 0.9875rem;
+    color: var(--color-text-muted);
+  }
+
+  .site-nav a:not(.btn):hover {
+    color: var(--color-primary);
+  }
+
+  .site-nav :global(.site-nav__cta) {
+    width: 100%;
+    margin-top: 1.25rem;
+  }
+
+  /* Navigazione: desktop */
+  @media (min-width: 76rem) {
+    .site-header__bar {
+      flex-wrap: nowrap;
+    }
+
+    .brand {
+      flex: none;
+    }
+
+    :global(html.js) .nav-toggle {
+      display: none;
+    }
+
+    .site-nav,
+    :global(html.js) .site-nav {
+      display: flex;
+      flex: 1;
+      flex-basis: auto;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 1rem;
+      position: static;
+      max-height: none;
+      overflow: visible;
+      padding: 0;
+      border: 0;
+      box-shadow: none;
+      background: transparent;
+    }
+
+    .site-nav__list {
+      display: flex;
+      align-items: center;
+      gap: 0.1rem;
+    }
+
+    .site-nav__list > li {
+      position: relative;
+      display: flex;
+      align-items: center;
+      border: 0;
+    }
+
+    .site-nav a:not(.btn) {
+      min-height: 2.75rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: var(--radius-s);
+      font-size: 0.9375rem;
+    }
+
+    .site-nav__list > li > a[aria-current='page'],
+    .site-nav__list > li > a[data-active] {
+      box-shadow: inset 0 -3px 0 var(--color-primary);
+      border-radius: 0;
+    }
+
+    .site-nav :global(.site-nav__cta) {
+      width: auto;
+      margin: 0;
+      flex: none;
+    }
+
+    /* Sottomenu Servizi */
+    .sub-toggle {
+      display: inline-grid;
+      place-items: center;
+      width: var(--touch);
+      height: var(--touch);
+      margin-inline: -0.9rem -0.35rem;
+      padding: 0;
+      border: 0;
+      border-radius: var(--radius-s);
+      background: transparent;
+      color: var(--color-text);
+    }
+
+    .sub-toggle:hover {
+      color: var(--color-primary);
+    }
+
+    .sub-toggle :global(svg) {
+      width: 1.1rem;
+      height: 1.1rem;
+      transition: transform 0.18s var(--ease);
+    }
+
+    .sub-toggle[aria-expanded='true'] :global(svg) {
+      transform: rotate(180deg);
+    }
+
+    .sub-menu {
+      display: none;
+      position: absolute;
+      top: calc(100% + 0.25rem);
+      left: 0;
+      z-index: 10;
+      min-width: 19rem;
+      padding: 0.5rem;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-m);
+      background: var(--color-surface);
+      box-shadow: 0 16px 32px -18px rgb(30 42 39 / 0.4);
+    }
+
+    .has-sub[data-open] .sub-menu {
+      display: block;
+    }
+
+    /* Senza JS il sottomenu si apre con hover/focus da tastiera */
+    :global(html:not(.js)) .has-sub:hover .sub-menu,
+    :global(html:not(.js)) .has-sub:focus-within .sub-menu {
+      display: block;
+    }
+
+    .sub-menu a:not(.btn) {
+      min-height: 2.75rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.9375rem;
+      color: var(--color-text);
+    }
+
+    .sub-menu a:not(.btn):hover,
+    .sub-menu a[aria-current='page'] {
+      background: var(--color-primary-wash);
+      color: var(--color-primary);
+    }
+  }
+
+  /* Sottomenu e pannello mobile: comparsa in 160 ms (opacity + 4px) */
+  @keyframes menu-in {
+    from {
+      opacity: 0;
+      transform: translateY(-4px);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    :global(html.js) .site-nav[data-open] {
+      animation: menu-in 0.16s var(--ease);
+    }
+
+    .has-sub[data-open] .sub-menu {
+      animation: menu-in 0.16s var(--ease);
+    }
+  }
+
+  /* Telefono in orizzontale: 68px di header fisso sono quasi un quinto dello schermo, quindi scorre via */
+  @media (max-height: 30rem) and (orientation: landscape) {
+    .site-header {
+      position: static;
+    }
+
+    :global(html) {
+      scroll-padding-top: 1rem;
+    }
+  }
+
+  /* Nome lungo (o segnaposto) su schermi piccoli: il marchio può andare su due righe */
+  /* Telefono: il marchio resta su una riga (senza ruolo) e il pulsante Menu diventa solo icona 44×44.
+     Il nome accessibile resta «Menu»: l'etichetta è nascosta visivamente, non rimossa. */
+  @media (max-width: 30rem) {
+    .brand__role {
+      display: none;
+    }
+
+    .nav-toggle {
+      justify-content: center;
+      width: var(--touch);
+      padding: 0;
+    }
+
+    .nav-toggle__label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip-path: inset(50%);
+      white-space: nowrap;
+    }
+  }
+</style>
+
+<script>
+  const header = document.querySelector<HTMLElement>('[data-header]');
+
+  if (header) {
+    const toggle = header.querySelector<HTMLButtonElement>('.nav-toggle');
+    const nav = header.querySelector<HTMLElement>('#site-nav');
+    const sub = header.querySelector<HTMLElement>('[data-sub]');
+    const subToggle = sub?.querySelector<HTMLButtonElement>('.sub-toggle');
+    const desktop = window.matchMedia('(min-width: 76rem)');
+
+    const setNav = (open: boolean) => {
+      nav?.toggleAttribute('data-open', open);
+      toggle?.setAttribute('aria-expanded', String(open));
+    };
+
+    const setSub = (open: boolean) => {
+      sub?.toggleAttribute('data-open', open);
+      subToggle?.setAttribute('aria-expanded', String(open));
+    };
+
+    toggle?.addEventListener('click', () => setNav(toggle.getAttribute('aria-expanded') !== 'true'));
+
+    subToggle?.addEventListener('click', () => setSub(subToggle.getAttribute('aria-expanded') !== 'true'));
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape') return;
+      if (subToggle?.getAttribute('aria-expanded') === 'true') {
+        setSub(false);
+        subToggle.focus();
+      } else if (toggle?.getAttribute('aria-expanded') === 'true') {
+        setNav(false);
+        toggle.focus();
+      }
     });
 
     document.addEventListener('click', (event) => {
-        if(!dropdownMenu?.hasAttribute('hidden') && event.target instanceof Node && !dropdown?.contains(event.target)) {
-                dropdownMenu?.toggleAttribute('hidden');
-                dropdownToggle?.setAttribute('aria-expanded', 'false');
-        }
+      const target = event.target;
+      if (!(target instanceof Node)) return;
+      if (sub && !sub.contains(target)) setSub(false);
+      if (!desktop.matches && toggle && nav && !nav.contains(target) && !toggle.contains(target)) setNav(false);
     });
 
-    document.addEventListener('keydown', (event) => {
-        if(!dropdownMenu?.hasAttribute('hidden') && event.key == 'Escape') {
-            dropdownMenu?.toggleAttribute('hidden');
-            dropdownToggle?.setAttribute('aria-expanded', 'false');
-        }
+    // Chiude il sottomenu quando il focus da tastiera ne esce
+    sub?.addEventListener('focusout', (event) => {
+      if (event.relatedTarget instanceof Node && !sub.contains(event.relatedTarget)) setSub(false);
     });
+
+    desktop.addEventListener('change', () => {
+      setNav(false);
+      setSub(false);
+    });
+  }
 </script>

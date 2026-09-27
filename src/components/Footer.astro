@@ -1,0 +1,215 @@
+---
+import Fill from './Fill.astro';
+import Icon from './Icon.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import { navigation } from '../data/navigation';
+import { services } from '../data/services';
+import { site } from '../data/site';
+import { emailUrl } from '../utils/whatsapp';
+import { formatAddress } from '../utils/format';
+import { hasValue } from '../utils/placeholder';
+
+const year = new Date().getFullYear();
+const pages = navigation.filter((item) => item.href !== '/servizi/');
+---
+
+<footer class="site-footer on-dark">
+  <div class="container footer__grid">
+    <div class="footer__brand">
+      <p class="footer__name"><Fill value={site.businessName} /></p>
+      <p class="footer__role">{site.role}</p>
+      <p class="footer__note small">
+        Ricevo presso diversi studi. Per sapere dove e come fissare un appuntamento, scrivimi su WhatsApp.
+      </p>
+    </div>
+
+    <nav class="footer__col" aria-labelledby="footer-servizi">
+      <h2 class="footer__title" id="footer-servizi">Servizi</h2>
+      <ul role="list">
+        {
+          services.map((service) => (
+            <li>
+              <a href={service.path}>{service.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <nav class="footer__col" aria-labelledby="footer-pagine">
+      <h2 class="footer__title" id="footer-pagine">Il sito</h2>
+      <ul role="list">
+        {
+          pages.map((item) => (
+            <li>
+              <a href={item.href}>{item.label}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="footer__col footer__contact" data-cta>
+      <h2 class="footer__title">Contatti</h2>
+      <WhatsAppButton variant="light" size="sm" label="Scrivimi su WhatsApp" />
+      <ul role="list" class="footer__contact-list">
+        <li>
+          <Icon name="mail" />
+          {
+            hasValue(site.email) ? (
+              <a href={emailUrl()}>{site.email}</a>
+            ) : (
+              <a href="/contatti/#scrivimi">
+                <Fill value={site.email} />
+              </a>
+            )
+          }
+        </li>
+        {
+          hasValue(site.phone) && (
+            <li>
+              <Icon name="phone" />
+              <a href={`tel:${site.phone.replace(/[^\d+]/g, '')}`}>{site.phone}</a>
+            </li>
+          )
+        }
+        {
+          hasValue(site.social.facebook) && (
+            <li>
+              <Icon name="facebook" />
+              <a href={site.social.facebook} target="_blank" rel="noopener noreferrer">
+                Facebook<span class="visually-hidden"> (si apre in una nuova scheda)</span>
+              </a>
+            </li>
+          )
+        }
+      </ul>
+    </div>
+  </div>
+
+  <div class="container footer__legal">
+    <p class="small">
+      © {year} <Fill value={site.businessName} /> · {formatAddress()} · P.IVA <Fill value={site.vatId} />
+    </p>
+    <p class="small">
+      Optometria comportamentale: non sono un medico e non eseguo interventi chirurgici. Le informazioni di questo sito
+      non sostituiscono il parere del medico o dell’oculista.
+    </p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: auto;
+    padding-top: clamp(3rem, 2rem + 4vw, 5rem);
+    background: var(--color-primary-deep);
+    color: var(--color-on-dark);
+  }
+
+  .footer__grid {
+    display: grid;
+    gap: 2.25rem 2rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .footer__name {
+    font-family: var(--font-heading);
+    font-size: 1.25rem;
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .footer__role {
+    margin-top: 0.15rem;
+    color: var(--color-on-dark-muted);
+  }
+
+  .footer__note {
+    margin-top: 1rem;
+    max-width: 24rem;
+    color: var(--color-on-dark-muted);
+  }
+
+  .footer__title {
+    margin-bottom: 0.9rem;
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-primary-light);
+  }
+
+  .footer__col ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer__col a:not(.btn) {
+    display: inline-flex;
+    align-items: center;
+    min-height: var(--touch);
+    color: var(--color-on-dark);
+    text-decoration-color: rgb(251 249 244 / 0.4);
+  }
+
+  .footer__col a:not(.btn):hover {
+    color: #fff;
+    text-decoration-color: currentColor;
+  }
+
+  .footer__contact-list {
+    margin-top: 0.5rem !important;
+  }
+
+  .footer__contact-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-height: var(--touch);
+  }
+
+  .footer__contact-list :global(svg) {
+    flex: none;
+    width: 1.15rem;
+    height: 1.15rem;
+    color: var(--color-primary-light);
+  }
+
+  /* Il padding basso lascia libero lo spazio del pulsante WhatsApp fisso */
+  .footer__legal {
+    display: grid;
+    gap: 0.6rem;
+    padding-block: 1.5rem calc(5.5rem + env(safe-area-inset-bottom));
+    border-top: 1px solid var(--color-line-on-dark);
+    color: var(--color-on-dark-muted);
+  }
+
+  .footer__legal p {
+    max-width: 52rem;
+  }
+
+  /* Da telefono grande: navigazione su due colonne, marchio e contatti a tutta larghezza */
+  @media (min-width: 30rem) {
+    .footer__grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .footer__brand,
+    .footer__contact {
+      grid-column: 1 / -1;
+    }
+  }
+
+  /* Quattro colonne solo quando c'è spazio per link lunghi senza andare a capo */
+  @media (min-width: 76rem) {
+    .footer__grid {
+      grid-template-columns: 1.4fr 1.1fr 0.8fr 1.1fr;
+    }
+
+    .footer__brand,
+    .footer__contact {
+      grid-column: auto;
+    }
+  }
+</style>

@@ -1,7 +1,177 @@
 ---
-import Layout from '../layouts/BaseLayout.astro';
+import CtaBand from '../components/CtaBand.astro';
+import Fill from '../components/Fill.astro';
+import Hero from '../components/Hero.astro';
+import ReviewCard from '../components/ReviewCard.astro';
+import ServiceCard from '../components/ServiceCard.astro';
+import SiteImage from '../components/SiteImage.astro';
+import TrustList from '../components/TrustList.astro';
+import { reviews } from '../data/reviews';
+import { services } from '../data/services';
+import { site } from '../data/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { hasValue } from '../utils/placeholder';
+import { professionalSchema } from '../utils/schema';
+
+const origin = Astro.site!.origin;
+// Tre riquadri: recensioni reali se presenti, altrimenti segnaposto
+const previews = Array.from({ length: 3 }, (_, i) => reviews[i]);
+const { rating, count } = site.googleReviews;
 ---
 
-<Layout title="Home - Opto Visual Trainer">
-	<h1>Benvenuto</h1>
-</Layout>
+<BaseLayout
+  title={`Optometria comportamentale nelle ${site.region}`}
+  description="Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi. Optometria comportamentale nelle Marche."
+  jsonLd={[professionalSchema(origin)]}
+>
+  <Hero />
+
+  <!-- Chi è -->
+  <section class="section" aria-labelledby="chi-e">
+    <div class="container split split--tablet about" style="--split: minmax(0, 1.3fr) minmax(0, 0.8fr); --split-align: center">
+      <div class="about__text">
+        <p class="eyebrow">Chi sono</p>
+        <h2 id="chi-e">Mi occupo di come la vista viene usata ogni giorno</h2>
+        <p>
+          Sono <Fill value={site.name} />, optometrista comportamentale. Valuto le abilità visive e seguo percorsi di
+          rieducazione e potenziamento visivo, soprattutto con i bambini, ma anche con adulti e sportivi.
+        </p>
+        <p>
+          Non sono un medico e non eseguo interventi chirurgici. Ho lavorato in contesti diversi e, nelle Marche, sono
+          stato l’unico ad avere uno studio dedicato esclusivamente a questa attività. Oggi ricevo presso diversi studi.
+        </p>
+        <p><a class="btn btn--secondary" href="/chi-sono/">Scopri il mio percorso</a></p>
+      </div>
+      <SiteImage name="professionista" class="about__photo" />
+    </div>
+  </section>
+
+  <!-- Servizi -->
+  <section class="section section--sand" aria-labelledby="servizi">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Servizi</p>
+        <h2 id="servizi">Tre servizi, per situazioni diverse</h2>
+        <p class="lead">Dalla valutazione delle abilità visive al percorso vero e proprio.</p>
+      </div>
+      <div class="card-grid">
+        {services.map((service, i) => <ServiceCard service={service} index={i + 1} />)}
+      </div>
+    </div>
+  </section>
+
+  <!-- Perché affidarsi -->
+  <section class="section" aria-labelledby="perche">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 2fr)">
+      <div class="section-head trust-head">
+        <p class="eyebrow">Perché affidarsi</p>
+        <h2 id="perche">Esperienza, formazione e un lavoro condiviso con altri professionisti</h2>
+      </div>
+      <TrustList />
+    </div>
+  </section>
+
+  <!-- Recensioni -->
+  <section class="section section--dark on-dark" aria-labelledby="recensioni">
+    <div class="container">
+      <div class="section-head">
+        <p class="eyebrow">Recensioni</p>
+        <h2 id="recensioni">Cosa dicono di me su Google</h2>
+        {
+          hasValue(rating) && (
+            <p class="lead">
+              Valutazione {rating} su 5{hasValue(count) && `, su ${count} recensioni`}.
+            </p>
+          )
+        }
+      </div>
+      <div class="review-columns">
+        {previews.map((review) => <ReviewCard review={review} />)}
+      </div>
+      <p class="reviews-cta">
+        <a class="btn btn--light" href="/recensioni/">Leggi tutte le recensioni</a>
+      </p>
+    </div>
+  </section>
+
+  <!-- Per i professionisti -->
+  <section class="section section--sand" aria-labelledby="professionisti">
+    <div class="container split pro" style="--split: minmax(0, 1.2fr) minmax(0, 1fr); --split-align: center">
+      <div>
+        <p class="eyebrow">Per i professionisti</p>
+        <h2 id="professionisti"><span class="fit-text">Se lavori con i bambini come logopedista, psicologo o <span class="nowrap">neuropsicomotricista</span></span></h2>
+        <p class="lead">
+          Una parte importante delle famiglie che seguo mi viene indirizzata da altri professionisti. Nella pagina
+          dedicata trovi come lavoro e come contattarmi.
+        </p>
+        <p><a class="btn btn--primary" href="/professionisti/">Vai alla pagina per i professionisti</a></p>
+      </div>
+      <ul class="chip-list" role="list" aria-label="Professionisti a cui è rivolta la pagina">
+        <li>Logopedisti</li>
+        <li>Psicologi</li>
+        <li>Neuropsicomotricisti</li>
+        <li>Altri professionisti</li>
+      </ul>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Vuoi capire se questo percorso può essere adatto?"
+    text="Scrivimi su WhatsApp e raccontami la situazione: ne parliamo insieme."
+  />
+</BaseLayout>
+
+<style>
+  .about__text > * + * {
+    margin-top: 1.1rem;
+  }
+
+  .about__text .eyebrow {
+    margin-bottom: 0;
+  }
+
+  .about__text h2 {
+    margin-top: 1rem;
+  }
+
+  .about__text p:last-child {
+    margin-top: 1.75rem;
+  }
+
+  .about :global(.about__photo) {
+    width: 100%;
+    max-width: 18rem;
+  }
+
+  .trust-head {
+    margin-bottom: 0;
+  }
+
+  .reviews-cta {
+    margin-top: 2.25rem;
+  }
+
+  .pro > div > * + * {
+    margin-top: 1.1rem;
+  }
+
+  .pro > div > .lead + p {
+    margin-top: 1.75rem;
+  }
+
+  @media (min-width: 48rem) {
+    .about :global(.about__photo) {
+      justify-self: end;
+      max-width: none;
+    }
+  }
+
+  @media (min-width: 64rem) {
+
+    .trust-head {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+
+  }
+</style>

@@ -1,0 +1,59 @@
+---
+/**
+ * Immagine del sito, letta da src/data/images.ts.
+ * Il riquadro ha proporzioni fisse (niente salti di layout) e la foto viene
+ * ritagliata con object-fit: cover, quindi una foto vera con proporzioni diverse
+ * da quelle del placeholder si adatta senza deformarsi.
+ */
+import { images, type ImageKey } from '../data/images';
+
+interface Props {
+  name: ImageKey;
+  /** Proporzioni del riquadro, es. "4 / 5". Default: quelle dell'immagine. */
+  ratio?: string;
+  /** true per le immagini in cima alla pagina o fuori vista ma subito necessarie (es. slide del carosello). */
+  eager?: boolean;
+  /** true per l'immagine più grande visibile al primo schermo (LCP): priorità di rete alta. */
+  priority?: boolean;
+  /** Punto di messa a fuoco del ritaglio, es. "center 20%". */
+  position?: string;
+  class?: string;
+}
+
+const { name, ratio, eager = false, priority = false, position = 'center', class: className } = Astro.props;
+const image = images[name];
+---
+
+<div
+  class:list={['site-image', className]}
+  style={`--ratio: ${ratio ?? `${image.width} / ${image.height}`}`}
+>
+  <img
+    src={image.src}
+    alt={image.alt}
+    width={image.width}
+    height={image.height}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding="async"
+    fetchpriority={priority ? 'high' : undefined}
+    style={`object-position: ${position}`}
+    data-placeholder={image.placeholder ? '' : undefined}
+  />
+</div>
+
+<style>
+  .site-image {
+    aspect-ratio: var(--ratio);
+    /* Telefono in orizzontale: l'immagine non supera l'altezza dello schermo (viene ritagliata, non deformata) */
+    max-height: max(16rem, 75svh);
+    overflow: hidden;
+    border-radius: var(--radius-l);
+    background: var(--color-bg-sand-deep);
+  }
+
+  .site-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+</style>

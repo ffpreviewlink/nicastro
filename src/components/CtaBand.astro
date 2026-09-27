@@ -1,0 +1,63 @@
+---
+/**
+ * Fascia di chiusura con la CTA principale (WhatsApp) e quella secondaria (email).
+ * Ne compare una sola per pagina, in fondo. Il pulsante WhatsApp fisso si
+ * nasconde mentre questa fascia è in vista (data-cta).
+ */
+import WhatsAppButton from './WhatsAppButton.astro';
+import { emailUrl } from '../utils/whatsapp';
+
+interface Props {
+  title: string;
+  text?: string;
+  /** Messaggio WhatsApp precompilato. */
+  message?: string;
+  emailSubject?: string;
+  emailLabel?: string;
+}
+
+const { title, text, message, emailSubject, emailLabel = 'Scrivi via email' } = Astro.props;
+---
+
+<section class="section section--dark on-dark cta-band" data-cta aria-labelledby="cta-title">
+  <div class="container cta-band__inner">
+    <div class="cta-band__copy">
+      <h2 id="cta-title">{title}</h2>
+      {text && <p class="lead">{text}</p>}
+    </div>
+    <div class="cta-row cta-band__actions">
+      <WhatsAppButton variant="light" size="lg" message={message} label="Contatta su WhatsApp" />
+      <a class="btn btn--outline-light btn--lg" href={emailUrl(emailSubject)}>{emailLabel}</a>
+    </div>
+  </div>
+</section>
+
+<style>
+  .cta-band__inner {
+    display: grid;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .cta-band__copy {
+    max-width: 38rem;
+  }
+
+  .cta-band__copy .lead {
+    margin-top: 1rem;
+  }
+
+  @media (max-width: 30rem) {
+    .cta-band__actions {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .cta-band__inner {
+      grid-template-columns: 1fr auto;
+      gap: 4rem;
+    }
+  }
+</style>

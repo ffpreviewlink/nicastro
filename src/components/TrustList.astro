@@ -1,0 +1,68 @@
+---
+/**
+ * Elementi di autorevolezza: esperienza, studio dedicato, formazione, lavoro con
+ * altri professionisti. I contenuti stanno in src/data/credentials.ts (trustPoints).
+ * Sono righe in stile "scheda" e non card, per far leggere ogni voce come un fatto.
+ */
+import Fill from './Fill.astro';
+import { trustPoints } from '../data/credentials';
+---
+
+<dl class="trust">
+  {
+    trustPoints.map((point) => (
+      <div class="trust__row">
+        <dt>{point.title}</dt>
+        <dd>
+          {point.text && <p>{point.text}</p>}
+          {
+            point.placeholder && (
+              <p>
+                <Fill value={point.placeholder} />
+              </p>
+            )
+          }
+        </dd>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  .trust {
+    container-type: inline-size;
+    margin: 0;
+    border-top: 2px solid var(--color-text);
+  }
+
+  .trust__row {
+    display: grid;
+    gap: 0.4rem 2rem;
+    padding-block: 1.35rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .trust dt {
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  .trust dd {
+    margin: 0;
+    color: var(--color-text-muted);
+  }
+
+  .trust dd p + p {
+    margin-top: 0.5rem;
+  }
+
+  /* Titolo e testo affiancati solo se la colonna ha spazio per entrambi */
+  @container (min-width: 34rem) {
+    .trust__row {
+      grid-template-columns: 14rem 1fr;
+    }
+  }
+</style>

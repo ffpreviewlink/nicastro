@@ -1,0 +1,29 @@
+---
+import CtaBand from '../../components/CtaBand.astro';
+import PageIntro from '../../components/PageIntro.astro';
+import ServiceCard from '../../components/ServiceCard.astro';
+import { services } from '../../data/services';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Servizi di optometria comportamentale"
+  description="Analisi visiva optometrica, rieducazione visiva (visual training) e potenziamento visivo sportivo: cosa sono, a chi sono rivolti, costi e come funzionano."
+>
+  <PageIntro eyebrow="Servizi" title="Analisi, rieducazione e potenziamento">
+    Di solito si parte dall’analisi visiva; se ne emerge la necessità, si prosegue con un percorso di rieducazione
+    visiva. Il potenziamento sportivo è pensato per chi pratica sport.
+  </PageIntro>
+
+  <section class="section" aria-label="I tre servizi">
+    <div class="container card-grid">
+      {services.map((service, i) => <ServiceCard service={service} index={i + 1} headingLevel="h2" />)}
+    </div>
+  </section>
+
+  <CtaBand
+    title="Non sai quale servizio fa al caso tuo?"
+    text="Scrivimi su WhatsApp e raccontami la situazione: ti aiuto a capire da dove partire."
+  />
+</BaseLayout>
+

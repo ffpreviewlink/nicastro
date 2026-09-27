@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="Pagina non trovata" noindex>
+  <section class="section">
+    <div class="container container--narrow">
+      <p class="eyebrow">Errore 404</p>
+      <h1>Questa pagina non esiste</h1>
+      <p class="lead nf-text">Il link potrebbe essere sbagliato o la pagina spostata.</p>
+      <div class="cta-row">
+        <a class="btn btn--primary" href="/">Torna alla home</a>
+        <a class="btn btn--secondary" href="/servizi/">Vedi i servizi</a>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf-text {
+    margin-block: 1.25rem 2rem;
+  }
+</style>

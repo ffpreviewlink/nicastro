@@ -1,0 +1,362 @@
+---
+/**
+ * Hero della home: presentazione fissa (chi è, cosa fa) + selettore dei tre
+ * pubblici (bambini, adulti, sportivi) con una slide ciascuno.
+ *
+ * Il carosello è un miglioramento progressivo:
+ * - senza JavaScript le tre slide sono semplicemente impilate e leggibili;
+ * - con JavaScript diventa scorrevole (swipe nativo con scroll-snap) e un
+ *   selettore a schede (tablist) permette di scegliere il pubblico;
+ * - non c'è scorrimento automatico: l'utente decide, e prefers-reduced-motion
+ *   disattiva anche l'animazione dello scorrimento.
+ */
+import Fill from './Fill.astro';
+import SiteImage from './SiteImage.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import { audiences } from '../data/audiences';
+import { site } from '../data/site';
+---
+
+<section class="hero" aria-labelledby="hero-title">
+  <div class="container">
+    <div class="hero__intro">
+      <p class="eyebrow">Optometria comportamentale</p>
+      <h1 class="display" id="hero-title">Analisi, rieducazione e potenziamento delle abilità visive</h1>
+      <p class="lead">
+        Sono <Fill value={site.name} />, optometrista. Valuto le abilità visive e accompagno bambini, adulti e
+        sportivi in percorsi di rieducazione e potenziamento.
+      </p>
+    </div>
+
+    <div class="carousel" data-carousel data-cta>
+      <div class="carousel__tabs" data-tabs hidden>
+        {
+          audiences.map((audience) => (
+            <button type="button" class="carousel__tab" id={`tab-${audience.id}`}>
+              {audience.label}
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="carousel__track" data-track>
+        {
+          audiences.map((audience, index) => (
+            <section class="slide" id={`slide-${audience.id}`} aria-labelledby={`slide-title-${audience.id}`}>
+              <div class="slide__text">
+                <h2 class="slide__title" id={`slide-title-${audience.id}`}>
+                  {audience.title}
+                </h2>
+                <p class="slide__desc">{audience.text}</p>
+                <div class="cta-row">
+                  <a class="btn btn--primary" href={audience.cta.href}>
+                    {audience.cta.label}
+                  </a>
+                  <WhatsAppButton variant="secondary" message={audience.whatsappMessage} />
+                </div>
+              </div>
+              <div class="slide__media">
+                <SiteImage name={audience.image} eager priority={index === 0} />
+              </div>
+            </section>
+          ))
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero {
+    padding-block: clamp(1.75rem, 1.2rem + 3vw, 3.75rem) clamp(2.5rem, 2rem + 4vw, 5rem);
+  }
+
+  .hero__intro {
+    display: grid;
+    gap: 1.1rem;
+    margin-bottom: clamp(1.75rem, 1.3rem + 2vw, 2.75rem);
+  }
+
+  .hero__intro .eyebrow {
+    margin-bottom: 0;
+  }
+
+  /* Le slide e il carosello sono contenitori posizionati: i testi .visually-hidden
+     (position: absolute) restano ritagliati insieme alla slide e non allargano la pagina */
+  .carousel {
+    position: relative;
+  }
+
+  /* --- Senza JavaScript: slide impilate --- */
+  .slide {
+    position: relative;
+    display: grid;
+    gap: 1.5rem;
+    padding-block: 1.75rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .slide__title {
+    font-size: var(--text-h2);
+  }
+
+  .slide__desc {
+    margin-top: 0.85rem;
+    max-width: 34rem;
+    color: var(--color-text-muted);
+  }
+
+  .slide .cta-row {
+    margin-top: 1.5rem;
+  }
+
+  .slide__media {
+    max-width: 34rem;
+  }
+
+  /* --- Con JavaScript: selettore + carosello scorrevole --- */
+  .carousel[data-enhanced] {
+    overflow: hidden;
+    border-radius: var(--radius-l);
+    background: var(--color-bg-sand);
+  }
+
+  .carousel__tabs {
+    display: flex;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .carousel__tab {
+    flex: 1;
+    min-height: 3.25rem;
+    padding: 0.5rem 0.75rem;
+    border: 0;
+    border-bottom: 3px solid transparent;
+    background: transparent;
+    font-family: var(--font-heading);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    transition: color 0.18s var(--ease), border-color 0.18s var(--ease), background-color 0.18s var(--ease);
+  }
+
+  .carousel__tab:hover {
+    color: var(--color-primary);
+    background: rgb(255 255 255 / 0.5);
+  }
+
+  .carousel__tab[aria-selected='true'] {
+    color: var(--color-primary);
+    border-bottom-color: var(--color-primary);
+  }
+
+  .carousel__tab:focus-visible {
+    outline-offset: -4px;
+  }
+
+  .carousel[data-enhanced] .carousel__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  .carousel[data-enhanced] .carousel__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .carousel[data-enhanced] .slide {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    padding: 1.5rem 1.25rem 1.75rem;
+    border-top: 0;
+  }
+
+  .carousel[data-enhanced] .slide__media {
+    max-width: none;
+  }
+
+  /* Un pulsante per riga su schermi stretti */
+  @media (max-width: 30rem) {
+    .slide .cta-row {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  /* Tablet e oltre: schede a larghezza naturale, slide a due colonne (testo + immagine) */
+  @media (min-width: 48rem) {
+    .carousel__tab {
+      flex: none;
+      padding-inline: 1.75rem;
+    }
+
+    .carousel[data-enhanced] .slide {
+      padding: 2.25rem 2.5rem 2.5rem;
+    }
+
+    .slide {
+      grid-template-columns: 1.05fr 1fr;
+      align-items: center;
+      gap: 2.5rem;
+    }
+
+    .slide__media {
+      max-width: none;
+    }
+
+    .carousel[data-enhanced] .slide__media {
+      max-width: none;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .slide {
+      gap: 3rem;
+    }
+
+    .carousel[data-enhanced] .slide {
+      padding: 2.5rem 3rem 3rem;
+    }
+  }
+
+  /* Su schermi larghi titolo a sinistra, testo introduttivo a destra */
+  @media (min-width: 64rem) {
+    .hero__intro {
+      grid-template-columns: 1.35fr 1fr;
+      column-gap: 4rem;
+      align-items: end;
+    }
+
+    .hero__intro .eyebrow {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .carousel[data-enhanced] .carousel__track {
+      scroll-behavior: auto;
+    }
+  }
+
+  /* Ingresso: titolo subito, poi introduzione e carosello con uno scarto minimo (keyframes in global.css) */
+  @media (prefers-reduced-motion: no-preference) {
+    .hero__intro > * {
+      animation: rise 0.46s var(--ease) backwards;
+    }
+
+    .hero__intro > .lead {
+      animation-delay: 60ms;
+    }
+
+    .carousel {
+      animation: rise 0.46s var(--ease) 140ms backwards;
+    }
+  }
+</style>
+
+<script>
+  const root = document.querySelector<HTMLElement>('[data-carousel]');
+  const track = root?.querySelector<HTMLElement>('[data-track]');
+  const tablist = root?.querySelector<HTMLElement>('[data-tabs]');
+
+  if (root && track && tablist) {
+    const slides = Array.from(track.children) as HTMLElement[];
+    const tabs = Array.from(tablist.querySelectorAll<HTMLButtonElement>('button'));
+
+    if (slides.length > 1 && slides.length === tabs.length) {
+      const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let active = 0;
+      let target: number | null = null;
+      let settle = 0;
+
+      // Da elenco impilato a carosello con selettore a schede
+      root.setAttribute('data-enhanced', '');
+      root.setAttribute('role', 'region');
+      root.setAttribute('aria-roledescription', 'carousel');
+      root.setAttribute('aria-label', 'Per chi lavoro');
+      tablist.hidden = false;
+      tablist.setAttribute('role', 'tablist');
+      tablist.setAttribute('aria-label', 'Scegli il tuo caso');
+      tabs.forEach((tab, i) => {
+        tab.setAttribute('role', 'tab');
+        tab.setAttribute('aria-controls', slides[i].id);
+        slides[i].setAttribute('role', 'tabpanel');
+        slides[i].setAttribute('aria-labelledby', tab.id);
+      });
+
+      const select = (index: number) => {
+        active = index;
+        tabs.forEach((tab, i) => {
+          tab.setAttribute('aria-selected', String(i === index));
+          tab.tabIndex = i === index ? 0 : -1;
+        });
+        // Le slide fuori vista non sono raggiungibili né da tastiera né da screen reader
+        slides.forEach((slide, i) => {
+          slide.inert = i !== index;
+        });
+      };
+
+      const goTo = (index: number) => {
+        select(index);
+        target = index;
+        window.clearTimeout(settle);
+        settle = window.setTimeout(() => (target = null), 900);
+        track.scrollTo({
+          left: index * track.clientWidth,
+          behavior: reduceMotion.matches ? 'instant' : 'smooth',
+        });
+      };
+
+      tabs.forEach((tab, i) => tab.addEventListener('click', () => goTo(i)));
+
+      tablist.addEventListener('keydown', (event) => {
+        const last = tabs.length - 1;
+        const next =
+          event.key === 'ArrowRight' ? (active === last ? 0 : active + 1)
+          : event.key === 'ArrowLeft' ? (active === 0 ? last : active - 1)
+          : event.key === 'Home' ? 0
+          : event.key === 'End' ? last
+          : null;
+        if (next === null) return;
+        event.preventDefault();
+        goTo(next);
+        tabs[next].focus();
+      });
+
+      // Swipe / scorrimento manuale: la scheda attiva segue la slide visibile
+      let frame = 0;
+      track.addEventListener(
+        'scroll',
+        () => {
+          cancelAnimationFrame(frame);
+          frame = requestAnimationFrame(() => {
+            const width = track.clientWidth;
+            if (target !== null) {
+              if (Math.abs(track.scrollLeft - target * width) < 2) target = null;
+              return;
+            }
+            const index = Math.round(track.scrollLeft / width);
+            if (index !== active) select(index);
+          });
+        },
+        { passive: true },
+      );
+
+      // Se cambia la larghezza (rotazione, resize) resta allineata alla slide attiva
+      let resizeTimer = 0;
+      window.addEventListener('resize', () => {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => {
+          track.scrollTo({ left: active * track.clientWidth, behavior: 'instant' });
+        }, 120);
+      });
+
+      select(0);
+    }
+  }
+</script>

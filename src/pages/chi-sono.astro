@@ -1,0 +1,261 @@
+---
+import CtaBand from '../components/CtaBand.astro';
+import Fill from '../components/Fill.astro';
+import SiteImage from '../components/SiteImage.astro';
+import { education, experiences, specializations } from '../data/credentials';
+import { site } from '../data/site';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { professionalSchema } from '../utils/schema';
+
+const origin = Astro.site!.origin;
+---
+
+<BaseLayout
+  title="Chi sono: percorso, esperienze e formazione"
+  description="Optometrista comportamentale: il mio percorso professionale, le esperienze in contesti diversi, la formazione e il modo in cui lavoro oggi, presso diversi studi."
+  jsonLd={[professionalSchema(origin)]}
+>
+  <header class="about-intro">
+    <div class="container split split--tablet" style="--split: minmax(0, 1.4fr) minmax(0, 0.8fr); --split-align: center">
+      <div class="about-intro__text">
+        <p class="eyebrow">Chi sono</p>
+        <h1>Sono <Fill value={site.name} />, optometrista comportamentale</h1>
+        <p class="lead">
+          Valuto le abilità visive e seguo percorsi di rieducazione e potenziamento visivo. Lavoro soprattutto con i
+          bambini, ma mi occupo anche di adulti e sportivi.
+        </p>
+        <p>
+          Non sono un medico e non eseguo interventi chirurgici: il mio lavoro riguarda la valutazione delle abilità
+          visive e i percorsi che ne possono derivare.
+        </p>
+      </div>
+      <SiteImage name="professionista" eager priority class="about-intro__photo" />
+    </div>
+  </header>
+
+  <!-- Percorso ed esperienze: una timeline, perché l'ordine delle tappe è parte del racconto -->
+  <section class="section" aria-labelledby="esperienze">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 2fr)">
+      <div class="section-head side-head">
+        <p class="eyebrow">Percorso</p>
+        <h2 id="esperienze">Esperienze</h2>
+        <p class="muted">Le tappe principali del mio percorso professionale, in contesti diversi.</p>
+      </div>
+      <ol class="timeline" role="list">
+        {
+          experiences.map((item) => (
+            <li class="timeline__item">
+              <p class="timeline__period">
+                <Fill value={item.period} />
+              </p>
+              <div>
+                <h3>
+                  <Fill value={item.title} />
+                </h3>
+                {item.place && <p class="timeline__place">{item.place}</p>}
+                <p class="muted">
+                  <Fill value={item.description} />
+                </p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="section section--sand" aria-labelledby="formazione">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 2fr)">
+      <div class="section-head side-head">
+        <p class="eyebrow">Studi</p>
+        <h2 id="formazione">Formazione</h2>
+      </div>
+      <ul class="education" role="list">
+        {
+          education.map((item) => (
+            <li>
+              <h3>
+                <Fill value={item.title} />
+              </h3>
+              <p class="muted">
+                <Fill value={item.place} /> · <Fill value={item.period} />
+              </p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="specializzazioni">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 2fr)">
+      <div class="section-head side-head">
+        <p class="eyebrow">Competenze</p>
+        <h2 id="specializzazioni">Specializzazioni</h2>
+      </div>
+      <ul class="chip-list" role="list">
+        {specializations.map((item) => <li><Fill value={item} /></li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--sand" aria-labelledby="approccio">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 2fr)">
+      <div class="section-head side-head">
+        <p class="eyebrow">Approccio</p>
+        <h2 id="approccio">Il mio modo di lavorare</h2>
+      </div>
+      <div class="prose">
+        <p>
+          Lavoro spesso a fianco di altri professionisti che seguono le stesse persone: logopedisti, psicologi,
+          neuropsicomotricisti. Una parte importante delle famiglie arriva proprio su loro indicazione.
+        </p>
+        <p><Fill value="[INSERIRE APPROCCIO PERSONALE: come imposto il lavoro con bambini e famiglie]" /></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="oggi">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 2fr)">
+      <div class="section-head side-head">
+        <p class="eyebrow">Oggi</p>
+        <h2 id="oggi">Dove e come lavoro adesso</h2>
+      </div>
+      <div class="prose">
+        <p>
+          Nelle Marche sono stato l’unico ad avere uno studio dedicato esclusivamente all’optometria comportamentale e
+          alla rieducazione visiva. Oggi il mio modo di lavorare si sta evolvendo: mi sposto e ricevo presso diversi
+          studi, portando la mia competenza dove serve.
+        </p>
+        <p>Per sapere dove ricevo e come fissare un appuntamento, scrivimi su WhatsApp.</p>
+        <ul class="checklist">
+          {site.locations.map((place) => <li><Fill value={place} /></li>)}
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <CtaBand
+    title="Vuoi capire se questo percorso può essere adatto?"
+    text="Scrivimi su WhatsApp e raccontami la situazione: ne parliamo insieme."
+  />
+</BaseLayout>
+
+<style>
+  .about-intro {
+    padding-block: clamp(2rem, 1.4rem + 3.5vw, 4.5rem) clamp(2.5rem, 2rem + 3.5vw, 5rem);
+    background: var(--color-bg-sand);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .about-intro__text > * + * {
+    margin-top: 1.25rem;
+  }
+
+  .about-intro__text .eyebrow {
+    margin-bottom: 1rem;
+  }
+
+  .about-intro :global(.about-intro__photo) {
+    width: 100%;
+    max-width: 18rem;
+  }
+
+  .side-head {
+    margin-bottom: 0;
+  }
+
+  /* Timeline: rail verticale, un punto per tappa */
+  .timeline {
+    container-type: inline-size;
+    position: relative;
+    display: grid;
+    gap: 2rem;
+    margin: 0;
+    padding: 0 0 0 1.5rem;
+    list-style: none;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0.3rem;
+    top: 0.5rem;
+    bottom: 0.5rem;
+    width: 2px;
+    background: var(--color-border-strong);
+  }
+
+  .timeline__item {
+    position: relative;
+    display: grid;
+    gap: 0.35rem 2rem;
+  }
+
+  .timeline__item::before {
+    content: '';
+    position: absolute;
+    left: -1.5rem;
+    top: 0.45rem;
+    width: 0.8rem;
+    height: 0.8rem;
+    border: 2px solid var(--color-primary);
+    border-radius: 50%;
+    background: var(--color-bg);
+  }
+
+  .timeline__period {
+    font-family: var(--font-heading);
+    font-size: var(--text-small);
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .timeline__place {
+    font-size: var(--text-small);
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+
+  .timeline h3 {
+    margin-bottom: 0.15rem;
+  }
+
+  .timeline__item > div > * + p {
+    margin-top: 0.4rem;
+  }
+
+  .education {
+    display: grid;
+    gap: 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .education h3 {
+    margin-bottom: 0.2rem;
+  }
+
+  /* Periodo accanto alla tappa solo quando la colonna è abbastanza larga */
+  @container (min-width: 34rem) {
+    .timeline__item {
+      grid-template-columns: 8.5rem 1fr;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .side-head {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+
+  }
+
+  @media (min-width: 48rem) {
+    .about-intro :global(.about-intro__photo) {
+      justify-self: end;
+      max-width: none;
+    }
+  }
+</style>

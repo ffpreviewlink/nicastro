@@ -1,21 +1,115 @@
 ---
-const { title } = Astro.props;
-import '../styles/global.css';
+/**
+ * Layout comune a tutte le pagine: metadata SEO, font, header, footer e
+ * pulsante WhatsApp fisso. Ogni pagina passa solo titolo e descrizione.
+ */
+import { Font } from 'astro:assets';
+import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
---- 
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { site } from '../data/site';
+import '../styles/global.css';
 
-<!DOCTYPE html>
+interface Props {
+  /** Titolo della pagina. Viene completato con " | Nome" salvo fullTitle. */
+  title: string;
+  description?: string;
+  /** Usa il titolo così com'è (home, 404). */
+  fullTitle?: boolean;
+  /** Percorso o URL assoluto dell'immagine di anteprima (Open Graph). */
+  image?: string;
+  /** Dati strutturati schema.org da inserire nella pagina. */
+  jsonLd?: (object | null)[];
+  noindex?: boolean;
+  /** false per le pagine che hanno già una CTA WhatsApp in primo piano (Contatti). */
+  floatingCta?: boolean;
+}
+
+const {
+  title,
+  description = site.description,
+  fullTitle = false,
+  image = site.ogImage,
+  jsonLd = [],
+  noindex = false,
+  floatingCta = true,
+} = Astro.props;
+
+const pageTitle = fullTitle ? title : `${title} | ${site.businessName}`;
+const canonical = new URL(Astro.url.pathname, Astro.site);
+const imageUrl = new URL(image, Astro.site);
+const structuredData = jsonLd.filter(Boolean);
+---
+
+<!doctype html>
 <html lang="it">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
-    <title>{title}</title>
-</head>
-<body>
-    <slot/>
-    <Header/>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <script is:inline>
+      document.documentElement.classList.add('js');
+    </script>
+
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={canonical} />
+    {noindex && <meta name="robots" content="noindex, follow" />}
+    <meta name="theme-color" content="#FBF9F4" />
+
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={site.businessName} />
+    <meta property="og:locale" content={site.locale} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:image" content={imageUrl} />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <Font cssVariable="--font-inter" preload={[{ subset: 'latin', style: 'normal' }]} />
+    <Font cssVariable="--font-poppins" preload={[{ subset: 'latin', weight: 600 }]} />
+
+    {
+      structuredData.map((data) => (
+        <script
+          is:inline
+          type="application/ld+json"
+          set:html={JSON.stringify(data).replace(/</g, '\\u003c')}
+        />
+      ))
+    }
+  </head>
+  <body>
+    <a class="skip-link" href="#contenuto">Vai al contenuto</a>
+    <Header />
+    <main id="contenuto" tabindex="-1">
+      <slot />
+      {floatingCta && <WhatsAppButton variant="floating" />}
+    </main>
+    <Footer />
+  </body>
 </html>
+
+<script>
+  import '../scripts/reveal';
+
+  // Il pulsante WhatsApp fisso si nasconde quando nella schermata c'è già una CTA WhatsApp
+  // in pagina (sezioni marcate con data-cta): niente doppioni, niente contenuti coperti.
+  const fab = document.querySelector<HTMLElement>('[data-fab]');
+  const zones = document.querySelectorAll('[data-cta]');
+
+  if (fab && zones.length && 'IntersectionObserver' in window) {
+    const visible = new Set<Element>();
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.isIntersecting) visible.add(entry.target);
+        else visible.delete(entry.target);
+      }
+      fab.toggleAttribute('data-away', visible.size > 0);
+    });
+    zones.forEach((zone) => observer.observe(zone));
+  }
+</script>

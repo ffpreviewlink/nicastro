@@ -1,0 +1,233 @@
+---
+/**
+ * Modulo di contatto: nome, recapito, messaggio.
+ *
+ * Invio (configurato in src/data/site.ts):
+ * - con site.contactForm.endpoint: POST verso il servizio scelto (Formspree, Web3Forms, ...);
+ * - senza endpoint: si apre il programma di posta con il messaggio già scritto (mailto).
+ * Senza JavaScript funziona la validazione nativa del browser e l'invio via mailto.
+ */
+import { site } from '../data/site';
+import { hasValue } from '../utils/placeholder';
+
+const email = hasValue(site.email) ? site.email : '';
+const endpoint = site.contactForm.endpoint;
+---
+
+<form
+  class="contact-form"
+  id="scrivimi"
+  method="post"
+  action={endpoint || (email ? `mailto:${email}` : undefined)}
+  enctype={endpoint ? undefined : 'text/plain'}
+  data-endpoint={endpoint || undefined}
+  data-email={email || undefined}
+>
+  <div class="field">
+    <label class="field__label" for="cf-nome">Nome</label>
+    <input class="field__control" id="cf-nome" name="nome" type="text" autocomplete="name" required />
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="cf-contatto">Email o telefono</label>
+    <span class="field__hint" id="cf-contatto-hint">Il recapito a cui preferisci essere ricontattato.</span>
+    <input
+      class="field__control"
+      id="cf-contatto"
+      name="contatto"
+      type="text"
+      autocomplete="email"
+      aria-describedby="cf-contatto-hint"
+      required
+    />
+  </div>
+
+  <div class="field">
+    <label class="field__label" for="cf-messaggio">Messaggio</label>
+    <textarea class="field__control" id="cf-messaggio" name="messaggio" rows="5" minlength="10" required></textarea>
+  </div>
+
+  <!-- Campo trappola per i bot: le persone non lo vedono né lo raggiungono con Tab -->
+  <div class="contact-form__trap" aria-hidden="true">
+    <label>Lascia vuoto questo campo <input type="text" name="_gotcha" tabindex="-1" autocomplete="off" /></label>
+  </div>
+
+  <p class="contact-form__privacy small muted">I dati inseriti servono solo per rispondere alla tua richiesta.</p>
+
+  <button class="btn btn--primary btn--lg" type="submit">Invia il messaggio</button>
+
+  <p class="contact-form__status" role="status" data-status></p>
+</form>
+
+<style>
+  .contact-form__trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .contact-form__privacy {
+    margin-top: 1.25rem;
+  }
+
+  .contact-form .btn {
+    margin-top: 1.25rem;
+  }
+
+  .contact-form .btn[aria-disabled='true'] {
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  .contact-form__status {
+    margin-top: 1.1rem;
+    font-weight: 500;
+  }
+
+  .contact-form__status:not(:empty) {
+    padding: 0.85rem 1rem;
+    border-radius: var(--radius-m);
+    background: var(--color-success-wash);
+    border: 1px solid var(--color-primary);
+    color: var(--color-primary-dark);
+  }
+
+  .contact-form__status[data-state='error'] {
+    background: var(--color-danger-wash);
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+  }
+</style>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('.contact-form');
+
+  if (form) {
+    const status = form.querySelector<HTMLElement>('[data-status]')!;
+    const submit = form.querySelector<HTMLButtonElement>('button[type="submit"]')!;
+    const endpoint = form.dataset.endpoint;
+    const email = form.dataset.email;
+
+    type Field = HTMLInputElement | HTMLTextAreaElement;
+    const fields = Array.from(form.querySelectorAll<Field>('.field__control'));
+
+    // Il controllo è nostro (messaggi in italiano, associati ai campi), non del browser
+    form.noValidate = true;
+
+    const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+
+    const errorFor = (field: Field): string => {
+      const value = field.value.trim();
+      switch (field.name) {
+        case 'nome':
+          return value ? '' : 'Scrivi il tuo nome.';
+        case 'contatto':
+          if (!value) return 'Lascia un’email o un numero di telefono per poterti rispondere.';
+          return emailPattern.test(value) || value.replace(/\D/g, '').length >= 6
+            ? ''
+            : 'Controlla il recapito: serve un’email valida o un numero di telefono.';
+        case 'messaggio':
+          if (!value) return 'Scrivi un breve messaggio.';
+          return value.length >= 10 ? '' : 'Aggiungi qualche dettaglio in più (almeno 10 caratteri).';
+        default:
+          return '';
+      }
+    };
+
+    const setError = (field: Field, message: string) => {
+      const id = `${field.id}-error`;
+      const previous = form.querySelector(`#${id}`);
+      previous?.remove();
+      const describedBy = (field.getAttribute('aria-describedby') ?? '')
+        .split(' ')
+        .filter((token) => token && token !== id);
+
+      if (message) {
+        const error = document.createElement('p');
+        error.id = id;
+        error.className = 'field__error';
+        error.textContent = message;
+        field.closest('.field')?.append(error);
+        field.setAttribute('aria-invalid', 'true');
+        describedBy.push(id);
+      } else {
+        field.removeAttribute('aria-invalid');
+      }
+
+      if (describedBy.length) field.setAttribute('aria-describedby', describedBy.join(' '));
+      else field.removeAttribute('aria-describedby');
+    };
+
+    const say = (message: string, state: 'ok' | 'error' = 'ok') => {
+      status.textContent = message;
+      if (message) status.dataset.state = state;
+      else delete status.dataset.state;
+    };
+
+    // Ricontrolla un campo già segnalato appena l'utente lo corregge
+    fields.forEach((field) => {
+      field.addEventListener('input', () => {
+        if (field.getAttribute('aria-invalid') === 'true') setError(field, errorFor(field));
+      });
+      field.addEventListener('blur', () => {
+        if (field.value.trim() !== '') setError(field, errorFor(field));
+      });
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      say('');
+
+      const invalid = fields.filter((field) => {
+        const message = errorFor(field);
+        setError(field, message);
+        return message !== '';
+      });
+
+      if (invalid.length) {
+        say(
+          invalid.length === 1 ? 'C’è un campo da correggere.' : `Ci sono ${invalid.length} campi da correggere.`,
+          'error',
+        );
+        invalid[0].focus();
+        return;
+      }
+
+      const data = new FormData(form);
+      if (data.get('_gotcha')) return; // un bot ha compilato il campo trappola
+
+      const fallback =
+        'Non è stato possibile inviare il messaggio. Puoi scrivermi su WhatsApp o via email.';
+
+      if (endpoint) {
+        submit.setAttribute('aria-disabled', 'true');
+        try {
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            body: data,
+            headers: { Accept: 'application/json' },
+          });
+          if (!response.ok) throw new Error(String(response.status));
+          form.reset();
+          say('Grazie, il messaggio è stato inviato. Ti rispondo appena possibile.');
+        } catch {
+          say(fallback, 'error');
+        } finally {
+          submit.removeAttribute('aria-disabled');
+        }
+        return;
+      }
+
+      if (email) {
+        const body = `Nome: ${data.get('nome')}\nRecapito: ${data.get('contatto')}\n\n${data.get('messaggio')}`;
+        window.location.href = `mailto:${email}?subject=${encodeURIComponent('Richiesta dal sito')}&body=${encodeURIComponent(body)}`;
+        say('Si è aperto il tuo programma di posta con il messaggio già scritto: premi Invia per spedirlo.');
+        return;
+      }
+
+      say('Il modulo non è ancora attivo. Nel frattempo puoi scrivermi su WhatsApp.', 'error');
+    });
+  }
+</script>

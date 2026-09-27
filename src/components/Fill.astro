@@ -1,0 +1,16 @@
+---
+/**
+ * Mostra un valore configurato. Se è ancora un segnaposto "[INSERIRE ...]"
+ * lo evidenzia (classe .placeholder) così non passa inosservato in revisione.
+ * Con un valore reale rende semplice testo, senza markup aggiuntivo.
+ */
+import { isPlaceholder } from '../utils/placeholder';
+
+interface Props {
+  value: string;
+}
+
+const { value } = Astro.props;
+---
+
+{isPlaceholder(value) ? <span class="placeholder">{value}</span> : value}

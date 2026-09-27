@@ -1,0 +1,47 @@
+---
+import Fill from '../../components/Fill.astro';
+import { formatPrice, getService } from '../../data/services';
+import ServiceLayout from '../../layouts/ServiceLayout.astro';
+
+const price = formatPrice(getService('potenziamento-visivo-sportivo'));
+---
+
+<ServiceLayout slug="potenziamento-visivo-sportivo">
+  <section aria-labelledby="a-chi">
+    <h2 id="a-chi">A chi è rivolto</h2>
+    <p>
+      Il potenziamento visivo sportivo è rivolto a chi pratica sport: sportivi e atleti, a livello amatoriale o
+      agonistico.
+    </p>
+  </section>
+
+  <section aria-labelledby="due-fasi">
+    <h2 id="due-fasi">Un percorso in due fasi</h2>
+    <p>
+      Non è una generica proposta di allenamento visivo. Il percorso ha due fasi, in quest’ordine: il potenziamento
+      arriva dopo la correzione, non al suo posto.
+    </p>
+    <ol class="steps">
+      <li>
+        <div>
+          <h3>Correzione</h3>
+          <p>Si parte dalla correzione: prima di potenziare, si lavora su ciò che va corretto.</p>
+          <p><Fill value="[INSERIRE COSA SI INTENDE PER CORREZIONE E COME SI SVOLGE]" /></p>
+        </div>
+      </li>
+      <li>
+        <div>
+          <h3>Potenziamento</h3>
+          <p>Solo dopo si passa al potenziamento vero e proprio.</p>
+          <p><Fill value="[INSERIRE COME SI SVOLGE IL POTENZIAMENTO]" /></p>
+        </div>
+      </li>
+    </ol>
+  </section>
+
+  <section aria-labelledby="costo">
+    <h2 id="costo">Costo</h2>
+    <!-- TODO(cliente): sostituire "su valutazione" con il prezzo definitivo in src/data/services.ts -->
+    <p>{price.main}. Scrivimi su WhatsApp per avere maggiori informazioni.</p>
+  </section>
+</ServiceLayout>

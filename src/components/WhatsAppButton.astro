@@ -1,0 +1,111 @@
+---
+/**
+ * CTA WhatsApp. Numero e messaggio di default vengono da src/data/site.ts.
+ * Varianti: primary / secondary / light / outline-light (pulsanti in pagina)
+ * e floating (pulsante fisso, montato una sola volta in BaseLayout).
+ */
+import Icon from './Icon.astro';
+import { isWhatsappConfigured, whatsappUrl } from '../utils/whatsapp';
+
+interface Props {
+  message?: string;
+  label?: string;
+  variant?: 'primary' | 'secondary' | 'light' | 'outline-light' | 'floating';
+  size?: 'sm' | 'lg';
+  class?: string;
+}
+
+const {
+  message,
+  label = 'Scrivimi su WhatsApp',
+  variant = 'primary',
+  size,
+  class: className,
+} = Astro.props;
+
+const href = whatsappUrl(message);
+const isFloating = variant === 'floating';
+const classes = [
+  isFloating ? 'whatsapp-fab' : `btn btn--${variant}`,
+  !isFloating && size ? `btn--${size}` : '',
+  className ?? '',
+]
+  .filter(Boolean)
+  .join(' ');
+---
+
+<a
+  class={classes}
+  href={href}
+  target={isWhatsappConfigured ? '_blank' : undefined}
+  rel={isWhatsappConfigured ? 'noopener noreferrer' : undefined}
+  data-whatsapp
+  data-fab={isFloating ? '' : undefined}
+>
+  <Icon name="whatsapp" />
+  <span>{isFloating ? 'WhatsApp' : label}</span>
+  {isFloating && <span class="visually-hidden">: scrivimi un messaggio</span>}
+  {isWhatsappConfigured && <span class="visually-hidden"> (si apre in una nuova scheda)</span>}
+</a>
+
+<style>
+  /* Pulsante fisso: sempre a portata di pollice, senza coprire il footer né i bordi/notch */
+  .whatsapp-fab {
+    view-transition-name: whatsapp-fab;
+    position: fixed;
+    z-index: 90;
+    right: max(1rem, env(safe-area-inset-right));
+    bottom: max(1rem, env(safe-area-inset-bottom));
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-height: 3.25rem;
+    padding: 0.5rem 1.15rem 0.5rem 0.95rem;
+    border-radius: 999px;
+    background: var(--color-primary-dark);
+    color: var(--color-on-dark);
+    font-family: var(--font-heading);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    text-decoration: none;
+    box-shadow: 0 6px 18px rgb(6 46 37 / 0.28);
+    transition:
+      background-color 0.18s var(--ease),
+      opacity 0.2s var(--ease),
+      transform 0.2s var(--ease),
+      visibility 0.2s;
+  }
+
+  .whatsapp-fab:hover {
+    background: var(--color-primary-deep);
+    color: var(--color-on-dark);
+  }
+
+  .whatsapp-fab:focus-visible {
+    outline: 3px solid var(--color-focus-on-dark);
+    outline-offset: 3px;
+    box-shadow:
+      0 0 0 3px var(--color-primary-deep),
+      0 6px 18px rgb(6 46 37 / 0.28);
+  }
+
+  .whatsapp-fab :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+    flex: none;
+  }
+
+  /* Si nasconde quando nella schermata c'è già una CTA WhatsApp in pagina (vedi BaseLayout) */
+  .whatsapp-fab[data-away] {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(0.5rem);
+  }
+
+  @media (min-width: 56rem) {
+    .whatsapp-fab {
+      right: max(1.5rem, env(safe-area-inset-right));
+      bottom: max(1.5rem, env(safe-area-inset-bottom));
+    }
+  }
+</style>

@@ -1,0 +1,119 @@
+---
+import CtaBand from '../components/CtaBand.astro';
+import Fill from '../components/Fill.astro';
+import PageIntro from '../components/PageIntro.astro';
+import TrustList from '../components/TrustList.astro';
+import WhatsAppButton from '../components/WhatsAppButton.astro';
+import { formatPrice, getService } from '../data/services';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { emailUrl } from '../utils/whatsapp';
+
+const analysisPrice = formatPrice(getService('analisi-visiva-optometrica'));
+const message = 'Buongiorno, vorrei avere informazioni su come indirizzare un paziente.';
+---
+
+<BaseLayout
+  title="Per logopedisti, psicologi e neuropsicomotricisti"
+  description="Per i professionisti che seguono bambini: quando può essere pertinente una valutazione delle abilità visive, come funziona la collaborazione e come contattarmi."
+>
+  <PageIntro eyebrow="Per i professionisti">
+    <Fragment slot="title"
+      ><span class="fit-text">Per logopedisti, psicologi, <span class="nowrap">neuropsicomotricisti</span> e altri professionisti</span></Fragment
+    >
+    Sei una logopedista, uno psicologo, una neuropsicomotricista? Se nel tuo lavoro ti capita di chiederti se una
+    valutazione delle abilità visive possa essere pertinente, questa pagina è per te.
+    <Fragment slot="actions">
+      <WhatsAppButton message={message} label="Contattami su WhatsApp" size="lg" />
+      <a class="btn btn--secondary btn--lg" href={emailUrl('Collaborazione tra professionisti')}>Scrivimi via email</a>
+    </Fragment>
+  </PageIntro>
+
+  <section class="section" aria-labelledby="quando">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 2fr)">
+      <div class="section-head side-head">
+        <p class="eyebrow">Quando</p>
+        <h2 id="quando">Quando può avere senso indirizzare un paziente</h2>
+      </div>
+      <div class="prose">
+        <p>Situazioni in cui una valutazione delle abilità visive può essere pertinente:</p>
+        <ul class="checklist">
+          <li><Fill value="[INSERIRE SEGNALE O SITUAZIONE INDICATA DAL PROFESSIONISTA]" /></li>
+          <li><Fill value="[INSERIRE SEGNALE O SITUAZIONE INDICATA DAL PROFESSIONISTA]" /></li>
+          <li><Fill value="[INSERIRE SEGNALE O SITUAZIONE INDICATA DAL PROFESSIONISTA]" /></li>
+          <li><Fill value="[INSERIRE SEGNALE O SITUAZIONE INDICATA DAL PROFESSIONISTA]" /></li>
+        </ul>
+        <p class="note">
+          Non sono un medico: la valutazione riguarda le abilità visive e non sostituisce il parere medico.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section section--sand" aria-labelledby="collaborazione">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 2fr)">
+      <div class="section-head side-head">
+        <p class="eyebrow">Collaborazione</p>
+        <h2 id="collaborazione">Come funziona</h2>
+      </div>
+      <ol class="steps">
+        <li>
+          <div>
+            <h3>Mi contatti</h3>
+            <p>
+              Puoi scrivermi su WhatsApp o via email, per segnalare una situazione o per chiedere maggiori
+              informazioni.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>La famiglia prende appuntamento</h3>
+            <p>
+              Gli appuntamenti si fissano soprattutto su WhatsApp. Si parte dall’<a
+                href="/servizi/analisi-visiva-optometrica/">analisi visiva optometrica</a
+              >, che costa {analysisPrice.main} {analysisPrice.detail}.
+            </p>
+          </div>
+        </li>
+        <li>
+          <div>
+            <h3>Il ritorno a te</h3>
+            <p>
+              <Fill value="[INSERIRE SE E COME VIENE CONDIVISO L’ESITO CON IL PROFESSIONISTA CHE HA INVIATO IL PAZIENTE]" />
+            </p>
+          </div>
+        </li>
+      </ol>
+    </div>
+  </section>
+
+  <section class="section" aria-labelledby="perche">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 2fr)">
+      <div class="section-head side-head">
+        <p class="eyebrow">Perché affidarsi</p>
+        <h2 id="perche">Esperienza e lavoro con altri professionisti</h2>
+      </div>
+      <TrustList />
+    </div>
+  </section>
+
+  <CtaBand
+    title="Vuoi segnalarmi una situazione o saperne di più?"
+    text="Scrivimi su WhatsApp o via email."
+    message={message}
+    emailSubject="Collaborazione tra professionisti"
+  />
+</BaseLayout>
+
+<style>
+  .side-head {
+    margin-bottom: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .side-head {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>
