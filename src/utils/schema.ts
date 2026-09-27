@@ -9,7 +9,8 @@ import { hasValue } from './placeholder';
  */
 export function professionalSchema(origin: string) {
   if (!hasValue(site.businessName)) return null;
-  const sameAs = [site.social.facebook, site.googleReviews.url].filter(hasValue);
+  const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleReviews.placeId}`;
+  const sameAs = [site.social.facebook, mapsUrl].filter(hasValue);
   return {
     '@context': 'https://schema.org',
     '@type': 'ProfessionalService',

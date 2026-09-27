@@ -95,9 +95,3 @@ export const education: Education[] = [
     period: '[INSERIRE ANNO]',
   },
 ];
-
-export const specializations: string[] = [
-  '[INSERIRE SPECIALIZZAZIONE]',
-  '[INSERIRE SPECIALIZZAZIONE]',
-  '[INSERIRE SPECIALIZZAZIONE]',
-];

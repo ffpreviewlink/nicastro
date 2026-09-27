@@ -1,0 +1,8 @@
+# Nessun elenco del contenuto della cartella (nomi dei file non devono essere esplorabili).
+Options -Indexes
+
+# Nega l'accesso diretto ai file sensibili di questa cartella: la chiave API (.env)
+# non deve mai essere scaricabile via HTTP.
+<FilesMatch "^\.env$">
+    Require all denied
+</FilesMatch>

@@ -1,0 +1,2 @@
+# Cartella di cache: nessun file qui dentro deve essere raggiungibile via HTTP.
+Require all denied

@@ -37,8 +37,7 @@ export const site = {
   email: 'studio.nicastronico@gmail.com',
   /** Facoltativo. Lascia vuoto ('') per non mostrare alcun numero di telefono. */
   phone: '',
-  /** [INSERIRE P.IVA] — quando sarà fornita */
-  vatId: '[INSERIRE P.IVA]',
+  vatId: '02156950434',
 
   /** Indirizzo dell'attività (footer, Contatti, dati strutturati). */
   address,
@@ -55,14 +54,14 @@ export const site = {
   ],
 
   googleReviews: {
-    /** Link alla scheda Google dell'attività (per "Vedi tutte su Google"). Vuoto = link nascosto. */
-    url: '',
-    /** Valutazione media reale, es. '5,0'. Vuoto = riquadro segnaposto. */
-    rating: '',
-    /** Numero reale di recensioni, es. '48'. */
-    count: '',
-    /** Codice del widget/embed Google Reviews (HTML). Vuoto = nessun widget. */
-    embedHtml: '',
+    /**
+     * Place ID della scheda Google Business Profile dell'attività (non è un
+     * segreto: è un riferimento pubblico e permanente). Usato per costruire
+     * il link "Vedi su Google" e, lato server, dall'endpoint
+     * public/api/google-reviews.php per interrogare Google Places API.
+     * Se cambia va aggiornato in ENTRAMBI i posti.
+     */
+    placeId: 'ChIJAxnfu4PFLRMRqZ-Zw4r50fI',
   },
 
   contactForm: {

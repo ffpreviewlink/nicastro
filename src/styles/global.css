@@ -8,7 +8,7 @@
      30rem  (480px)   telefoni grandi: pulsanti in riga, dettagli secondari
      48rem  (768px)   tablet verticale: griglie a 2 colonne, hero a 2 colonne
      64rem  (1024px)  laptop: griglie a 3 colonne, colonne laterali, riepilogo fisso
-     76rem  (1216px)  solo header: spazio che serve davvero a logo + 6 voci + CTA (~1170px)
+     76rem  (1216px)  solo header: spazio che serve davvero a nome studio + 6 voci + CTA (~1170px)
    I componenti che cambiano in base alla PROPRIA larghezza (schede servizio, timeline,
    elenco «perché affidarsi») usano container query, non la larghezza dello schermo.
    ========================================================================== */
@@ -454,31 +454,6 @@ a:hover {
     }
 }
 
-/* Recensioni: a colonne (masonry), così testi di lunghezza diversa non lasciano buchi
-   e tre recensioni su due colonne restano bilanciate. */
-.review-columns {
-    display: grid;
-    gap: 1.25rem;
-}
-
-@media (min-width: 48rem) {
-    .review-columns {
-        display: block;
-        column-count: 2;
-        column-gap: 1.25rem;
-    }
-
-    .review-columns > * {
-        margin-bottom: 1.25rem;
-        break-inside: avoid;
-    }
-}
-
-@media (min-width: 64rem) {
-    .review-columns {
-        column-count: 3;
-    }
-}
 
 /* --------------------------------------------------------------------------
    Pulsanti
@@ -861,21 +836,3 @@ textarea.field__control {
     transform: rotate(-45deg);
 }
 
-/* Etichette in linea (professioni, specializzazioni) */
-.chip-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.6rem;
-    padding: 0;
-    list-style: none;
-}
-
-.chip-list > li {
-    padding: 0.45rem 1rem;
-    border: 1px solid var(--color-border-strong);
-    border-radius: 999px;
-    background: var(--color-surface);
-    font-family: var(--font-heading);
-    font-size: 0.9375rem;
-    font-weight: 500;
-}

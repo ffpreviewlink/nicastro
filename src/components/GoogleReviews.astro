@@ -1,0 +1,868 @@
+---
+/**
+ * Recensioni Google reali, recuperate lato client dal nostro endpoint PHP
+ * (public/api/google-reviews.php), che a sua volta interroga Google Places
+ * API (New) e mantiene una cache server-side. Il browser non chiama mai
+ * Google direttamente e non conosce alcuna chiave API. La pipeline dati
+ * (Google → PHP → cache → questo componente) non va toccata da qui.
+ *
+ * Il sito resta statico: qui non c'è alcun dato finto né un valore costruito
+ * a tempo di build. Finché l'endpoint non è configurato (o mentre risponde),
+ * il componente mostra uno stato di caricamento e poi, se necessario, uno
+ * stato vuoto onesto — mai numeri, distribuzioni o testi inventati.
+ *
+ * Presentazione: un blocco valutazione editoriale (non una "dashboard" di
+ * statistiche) seguito da un carosello leggero, a scorrimento nativo
+ * (overflow-x + scroll-snap, come il carosello del Hero) — niente librerie.
+ */
+import Icon from './Icon.astro';
+import { site } from '../data/site';
+
+interface Props {
+  /** Numero massimo di recensioni da mostrare (default: tutte quelle restituite, fino a 5). */
+  limit?: number;
+  /** Mostra il link e il blocco CTA verso Google Maps. Default: true. */
+  showGoogleLink?: boolean;
+}
+
+const { limit, showGoogleLink = true } = Astro.props;
+const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleReviews.placeId}`;
+---
+
+<div class="google-reviews" data-google-reviews data-limit={limit ?? ''} data-maps-url={mapsUrl}>
+  <div class="reviews-rating" aria-live="polite" data-google-reviews-summary>
+    <p class="reviews-rating__status">Caricamento delle recensioni…</p>
+  </div>
+
+  <div class="reviews-carousel" data-carousel hidden>
+    <ul class="reviews-carousel__track" data-track role="list"></ul>
+
+    <div class="reviews-carousel__nav" data-nav hidden>
+      <button type="button" class="reviews-carousel__arrow" data-prev aria-label="Recensione precedente">
+        <Icon name="arrow" class="reviews-carousel__arrow-icon reviews-carousel__arrow-icon--prev" />
+      </button>
+      <div class="reviews-carousel__progress-wrap">
+        <div class="reviews-carousel__progress" aria-hidden="true">
+          <div class="reviews-carousel__progress-bar" data-progress-bar></div>
+        </div>
+        <p class="reviews-carousel__counter" data-counter aria-hidden="true"></p>
+      </div>
+      <button type="button" class="reviews-carousel__arrow" data-next aria-label="Recensione successiva">
+        <Icon name="arrow" class="reviews-carousel__arrow-icon" />
+      </button>
+    </div>
+  </div>
+
+  <p class="google-reviews__empty" data-google-reviews-empty hidden>
+    Le recensioni non sono disponibili al momento.
+  </p>
+
+  {
+    showGoogleLink && (
+      <div class="google-reviews__cta" data-google-reviews-cta hidden>
+        <p class="google-reviews__cta-title">Vuoi leggere tutte le esperienze?</p>
+        <a
+          class="btn btn--secondary"
+          href={mapsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-google-reviews-link
+        >
+          Leggi tutte le recensioni su Google Maps
+          <Icon name="arrow" />
+          <span class="visually-hidden"> (si apre in una nuova scheda)</span>
+        </a>
+      </div>
+    )
+  }
+
+  <noscript>
+    <p class="google-reviews__noscript">
+      Per vedere le recensioni più recenti, <a href={mapsUrl} target="_blank" rel="noopener noreferrer">visita la nostra scheda Google</a>.
+    </p>
+  </noscript>
+</div>
+
+<script>
+  const STAR_SVG =
+    '<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false"><path d="m12 2.8 2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.6l-5.8 3.1 1.1-6.5-4.7-4.6 6.5-.9L12 2.8Z" /></svg>';
+
+  const ESCAPE_MAP: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;',
+  };
+
+  function escapeHtml(value: unknown): string {
+    return String(value ?? '').replace(/[&<>"']/g, (char) => ESCAPE_MAP[char]);
+  }
+
+  /**
+   * Verifica che un URI ricevuto dal nostro endpoint sia effettivamente HTTPS
+   * prima di usarlo come href/src. Se non lo è, il valore viene scartato:
+   * niente conversioni, niente fallback verso altri URL.
+   */
+  function isHttpsUrl(value: unknown): value is string {
+    return typeof value === 'string' && /^https:\/\//i.test(value);
+  }
+
+  function starRow(rating: unknown): string {
+    const n = Math.round(Math.max(0, Math.min(5, Number(rating) || 0)));
+    return STAR_SVG.repeat(n);
+  }
+
+  function formatRating(value: unknown): string | null {
+    if (typeof value !== 'number' || Number.isNaN(value)) return null;
+    return value.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  }
+
+  interface GoogleReview {
+    authorName: string;
+    authorPhotoUri: string | null;
+    authorProfileUri: string | null;
+    rating: number | null;
+    text: string | null;
+    translated: boolean;
+    originalText: string | null;
+    relativeTime: string | null;
+    reviewUri: string | null;
+  }
+
+  interface GoogleReviewsPayload {
+    available: boolean;
+    name?: string;
+    rating?: number | null;
+    userRatingCount?: number | null;
+    googleMapsUri?: string | null;
+    reviews?: GoogleReview[];
+  }
+
+  function renderSummary(root: HTMLElement, data: GoogleReviewsPayload): void {
+    const summary = root.querySelector<HTMLElement>('[data-google-reviews-summary]');
+    if (!summary) return;
+
+    const ratingText = formatRating(data.rating);
+    const countText = typeof data.userRatingCount === 'number' ? `Basato su ${data.userRatingCount} recensioni Google` : '';
+
+    summary.hidden = false;
+    summary.innerHTML = `
+      <div class="reviews-rating__main">
+        <p class="reviews-rating__badge">Google Maps</p>
+        <div class="reviews-rating__headline">
+          ${ratingText ? `<span class="reviews-rating__number">${ratingText}</span>` : ''}
+          <span class="reviews-rating__stars" role="img" aria-label="${data.rating ?? 0} stelle su 5">${starRow(data.rating)}</span>
+        </div>
+        ${countText ? `<p class="reviews-rating__caption">${countText}</p>` : ''}
+      </div>
+    `;
+
+    const link = root.querySelector<HTMLAnchorElement>('[data-google-reviews-link]');
+    if (link && isHttpsUrl(data.googleMapsUri)) link.href = data.googleMapsUri;
+
+    // Il link discreto verso Google Maps compare solo dove è previsto anche il
+    // blocco CTA finale (prop showGoogleLink): sulla homepage compatta resta nascosto.
+    const showLinks = root.querySelector('[data-google-reviews-cta]') !== null;
+    if (showLinks && isHttpsUrl(data.googleMapsUri)) {
+      summary.insertAdjacentHTML(
+        'beforeend',
+        `<a class="reviews-rating__link link-arrow" href="${escapeHtml(data.googleMapsUri)}" target="_blank" rel="noopener noreferrer">
+          Vedi il profilo su Google Maps
+          <span class="visually-hidden"> (si apre in una nuova scheda)</span>
+        </a>`,
+      );
+    }
+  }
+
+  function reviewMarkup(review: GoogleReview): string {
+    const photoUri = isHttpsUrl(review.authorPhotoUri) ? review.authorPhotoUri : null;
+    const profileUri = isHttpsUrl(review.authorProfileUri) ? review.authorProfileUri : null;
+    const reviewUri = isHttpsUrl(review.reviewUri) ? review.reviewUri : null;
+
+    const avatar = photoUri
+      ? `<img class="google-review__avatar" src="${escapeHtml(photoUri)}" alt="" width="40" height="40" loading="lazy" referrerpolicy="no-referrer" />`
+      : `<span class="google-review__avatar google-review__avatar--fallback" aria-hidden="true">${escapeHtml(review.authorName.trim().charAt(0).toUpperCase() || '?')}</span>`;
+
+    const authorName = profileUri
+      ? `<a class="google-review__author-name" href="${escapeHtml(profileUri)}" target="_blank" rel="noopener noreferrer nofollow ugc">${escapeHtml(review.authorName)}</a>`
+      : `<span class="google-review__author-name">${escapeHtml(review.authorName)}</span>`;
+
+    const stars =
+      typeof review.rating === 'number'
+        ? `<span class="google-review__stars" role="img" aria-label="${review.rating} stelle su 5">${starRow(review.rating)}</span>`
+        : '';
+
+    // Recensione tradotta da Google: si mostra il testo tradotto, con un avviso
+    // discreto e un pulsante per vedere l'originale, solo se davvero disponibile.
+    const showOriginalToggle = review.translated && !!review.originalText;
+    const text = review.text
+      ? `<blockquote class="google-review__text">
+          <p data-text-translated>${escapeHtml(review.text)}</p>
+          ${showOriginalToggle ? `<p data-text-original hidden>${escapeHtml(review.originalText)}</p>` : ''}
+        </blockquote>`
+      : '';
+
+    const translatedNotice = review.translated
+      ? `<p class="google-review__translated">
+          <span>Tradotto da Google</span>
+          ${showOriginalToggle ? `<button type="button" class="google-review__toggle-original" data-toggle-original>Mostra originale</button>` : ''}
+        </p>`
+      : '';
+
+    // La data compare già accanto al nome (autore-sub): qui solo il link alla fonte.
+    const meta = reviewUri
+      ? `<a href="${escapeHtml(reviewUri)}" target="_blank" rel="noopener noreferrer nofollow ugc">Leggi su Google</a>`
+      : '';
+
+    return `
+      <li class="google-review">
+        <figure class="google-review__figure">
+          ${stars}
+          ${text}
+          ${translatedNotice}
+          <figcaption class="google-review__author">
+            ${avatar}
+            <span class="google-review__author-info">
+              ${authorName}
+              <span class="google-review__author-sub">Recensione Google${review.relativeTime ? ` · ${escapeHtml(review.relativeTime)}` : ''}</span>
+            </span>
+          </figcaption>
+          ${meta ? `<p class="google-review__meta">${meta}</p>` : ''}
+        </figure>
+      </li>
+    `;
+  }
+
+  function bindOriginalToggle(track: HTMLElement): void {
+    track.addEventListener('click', (event) => {
+      const button = (event.target as HTMLElement).closest<HTMLButtonElement>('[data-toggle-original]');
+      if (!button) return;
+
+      const figure = button.closest('.google-review__figure');
+      const translatedEl = figure?.querySelector<HTMLElement>('[data-text-translated]');
+      const originalEl = figure?.querySelector<HTMLElement>('[data-text-original]');
+      if (!translatedEl || !originalEl) return;
+
+      const showingOriginal = !originalEl.hidden;
+      originalEl.hidden = showingOriginal;
+      translatedEl.hidden = !showingOriginal;
+      button.textContent = showingOriginal ? 'Mostra originale' : 'Mostra traduzione';
+    });
+  }
+
+  /**
+   * Carosello leggero a scorrimento nativo (overflow-x + scroll-snap), sullo
+   * stesso principio del carosello del Hero: nessuna libreria, swipe/scroll
+   * nativo su touch e trackpad, frecce e tastiera solo per rifinire l'esperienza.
+   */
+  function setupCarousel(root: HTMLElement): void {
+    const carousel = root.querySelector<HTMLElement>('[data-carousel]');
+    const track = root.querySelector<HTMLElement>('[data-track]');
+    const nav = root.querySelector<HTMLElement>('[data-nav]');
+    const prevBtn = root.querySelector<HTMLButtonElement>('[data-prev]');
+    const nextBtn = root.querySelector<HTMLButtonElement>('[data-next]');
+    const progressBar = root.querySelector<HTMLElement>('[data-progress-bar]');
+    const counter = root.querySelector<HTMLElement>('[data-counter]');
+    if (!carousel || !track) return;
+
+    const slides = Array.from(track.children) as HTMLElement[];
+    if (!slides.length) return;
+
+    carousel.hidden = false;
+
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const multi = slides.length > 1;
+    let active = 0;
+
+    carousel.setAttribute('role', 'region');
+    carousel.setAttribute('aria-roledescription', 'carousel');
+    carousel.setAttribute('aria-label', 'Recensioni Google');
+    slides.forEach((slide, i) => {
+      slide.setAttribute('role', 'group');
+      slide.setAttribute('aria-roledescription', 'recensione');
+      slide.setAttribute('aria-label', `Recensione ${i + 1} di ${slides.length}`);
+    });
+
+    if (!multi) {
+      slides[0].classList.add('is-active');
+      return;
+    }
+
+    if (nav) nav.hidden = false;
+
+    const update = () => {
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === active);
+        slide.inert = i !== active;
+      });
+      if (progressBar) progressBar.style.width = `${((active + 1) / slides.length) * 100}%`;
+      if (counter) {
+        counter.textContent = `${String(active + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      }
+      if (prevBtn) prevBtn.disabled = active === 0;
+      if (nextBtn) nextBtn.disabled = active === slides.length - 1;
+    };
+
+    let settling = false;
+    let settleTimer = 0;
+    const goTo = (index: number) => {
+      const clamped = Math.max(0, Math.min(slides.length - 1, index));
+      active = clamped;
+      settling = true;
+      window.clearTimeout(settleTimer);
+      settleTimer = window.setTimeout(() => (settling = false), 500);
+      slides[clamped].scrollIntoView({
+        behavior: reduceMotion.matches ? 'instant' : 'smooth',
+        inline: 'start',
+        block: 'nearest',
+      });
+      update();
+    };
+
+    prevBtn?.addEventListener('click', () => goTo(active - 1));
+    nextBtn?.addEventListener('click', () => goTo(active + 1));
+
+    carousel.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        goTo(active + 1);
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goTo(active - 1);
+      } else if (event.key === 'Home') {
+        event.preventDefault();
+        goTo(0);
+      } else if (event.key === 'End') {
+        event.preventDefault();
+        goTo(slides.length - 1);
+      }
+    });
+
+    // Segue lo swipe / scorrimento manuale: la posizione attiva rincorre la slide visibile
+    let frame = 0;
+    track.addEventListener(
+      'scroll',
+      () => {
+        if (settling) return;
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          const trackLeft = track.getBoundingClientRect().left;
+          let closest = 0;
+          let closestDistance = Infinity;
+          slides.forEach((slide, i) => {
+            const distance = Math.abs(slide.getBoundingClientRect().left - trackLeft);
+            if (distance < closestDistance) {
+              closestDistance = distance;
+              closest = i;
+            }
+          });
+          if (closest !== active) {
+            active = closest;
+            update();
+          }
+        });
+      },
+      { passive: true },
+    );
+
+    // Se cambia la larghezza (rotazione, resize) resta allineata alla slide attiva
+    let resizeTimer = 0;
+    window.addEventListener('resize', () => {
+      window.clearTimeout(resizeTimer);
+      resizeTimer = window.setTimeout(() => {
+        slides[active]?.scrollIntoView({ inline: 'start', block: 'nearest', behavior: 'instant' });
+      }, 120);
+    });
+
+    update();
+  }
+
+  function renderReviews(root: HTMLElement, reviews: GoogleReview[], limit?: number): boolean {
+    const track = root.querySelector<HTMLElement>('[data-track]');
+    if (!track) return false;
+
+    const items = limit ? reviews.slice(0, limit) : reviews;
+    if (!items.length) return false;
+
+    track.innerHTML = items.map(reviewMarkup).join('');
+    bindOriginalToggle(track);
+    setupCarousel(root);
+    return true;
+  }
+
+  async function init(root: HTMLElement): Promise<void> {
+    const limitAttr = Number(root.dataset.limit);
+    const limit = Number.isFinite(limitAttr) && limitAttr > 0 ? limitAttr : undefined;
+
+    const summaryEl = root.querySelector<HTMLElement>('[data-google-reviews-summary]');
+    const emptyEl = root.querySelector<HTMLElement>('[data-google-reviews-empty]');
+    const ctaEl = root.querySelector<HTMLElement>('[data-google-reviews-cta]');
+
+    const showEmpty = () => {
+      if (summaryEl) summaryEl.hidden = true;
+      if (emptyEl) emptyEl.hidden = false;
+      if (ctaEl) ctaEl.hidden = false;
+    };
+
+    try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
+      const response = await fetch('/api/google-reviews.php', {
+        signal: controller.signal,
+        headers: { Accept: 'application/json' },
+      });
+      clearTimeout(timeoutId);
+
+      if (!response.ok) throw new Error(`http ${response.status}`);
+      const data: GoogleReviewsPayload = await response.json();
+
+      if (!data || data.available !== true) {
+        showEmpty();
+        return;
+      }
+
+      renderSummary(root, data);
+      const hasReviews = renderReviews(root, Array.isArray(data.reviews) ? data.reviews : [], limit);
+      if (!hasReviews && emptyEl) emptyEl.hidden = false;
+      if (ctaEl) ctaEl.hidden = false;
+    } catch {
+      showEmpty();
+    }
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-google-reviews]').forEach((root) => {
+    void init(root);
+  });
+</script>
+
+<style>
+  /*
+   * Blocco valutazione: un riquadro editoriale a sé stante (sfondo sabbia,
+   * come le altre superfici "quiete" del sito), non una card di statistiche.
+   * Colori sempre quelli "chiari": il riquadro resta leggibile identico sia
+   * su sezioni chiare sia sulla sezione scura della homepage.
+   */
+  .reviews-rating {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.25rem 2rem;
+    min-height: 7rem;
+    margin-bottom: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
+    padding: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem) clamp(1.5rem, 1.2rem + 2vw, 2.5rem);
+    border-radius: var(--radius-l);
+    background: var(--color-bg-sand);
+  }
+
+  .reviews-rating__status {
+    color: var(--color-text-muted);
+  }
+
+  :global(.reviews-rating__main) {
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  /*
+   * Attribution testuale "Google Maps" (in alternativa al logo, ammessa quando
+   * lo spazio è limitato). Requisiti verificati: testo esatto "Google Maps",
+   * peso 400, corpo 12–16px, colore tra bianco/nero/#1F1F1F/#5E5E5E con
+   * contrasto ≥ 4.5:1. Usiamo il font body del sito (non Roboto, per non
+   * introdurre una famiglia tipografica in più solo per questa etichetta):
+   * dimensione, peso e colore restano quelli richiesti.
+   */
+  :global(.reviews-rating__badge) {
+    display: inline-flex;
+    align-items: center;
+    align-self: start;
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: #1f1f1f;
+    font-family: var(--font-body);
+    font-size: var(--text-label);
+    font-weight: 400;
+    letter-spacing: 0.01em;
+  }
+
+  :global(.reviews-rating__headline) {
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  :global(.reviews-rating__number) {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 1.9rem + 2.6vw, 3.75rem);
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-primary-dark);
+  }
+
+  :global(.reviews-rating__stars) {
+    display: inline-flex;
+    gap: 0.2rem;
+    color: var(--color-accent);
+  }
+
+  :global(.reviews-rating__stars svg) {
+    width: 1.375rem;
+    height: 1.375rem;
+  }
+
+  :global(.reviews-rating__caption) {
+    color: var(--color-text-muted);
+  }
+
+  :global(.reviews-rating__link) {
+    flex: none;
+  }
+
+  .google-reviews__empty {
+    color: var(--color-text-muted);
+  }
+
+  :global(.section--dark) .google-reviews__empty {
+    color: var(--color-on-dark-muted);
+  }
+
+  /* --------------------------------------------------------------------
+     Carosello: scorrimento nativo (overflow-x + scroll-snap), come il Hero.
+     Su tablet/desktop la slide successiva resta parzialmente visibile, a
+     suggerire che ci sono altre recensioni da leggere.
+     -------------------------------------------------------------------- */
+  .reviews-carousel {
+    position: relative;
+  }
+
+  .reviews-carousel__track {
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 100%;
+    gap: 1rem;
+    margin: 0;
+    padding: 0.2rem 0.2rem 0.35rem;
+    list-style: none;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  .reviews-carousel__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  @media (min-width: 48rem) {
+    .reviews-carousel__track {
+      grid-auto-columns: 76%;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .reviews-carousel__track {
+      grid-auto-columns: 60%;
+    }
+  }
+
+  /* --------------------------------------------------------------------
+     Card recensione: la citazione è l'elemento dominante, i dati
+     sull'autore restano quieti in fondo. Sempre su superficie chiara,
+     indipendentemente dalla sezione che la ospita.
+     -------------------------------------------------------------------- */
+  :global(.google-review) {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+    opacity: 0.5;
+    transition: opacity 0.25s var(--ease);
+  }
+
+  :global(.google-review.is-active) {
+    opacity: 1;
+  }
+
+  :global(.google-review__figure) {
+    display: flex;
+    height: 100%;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.75rem 1.6rem;
+    border: 1px solid transparent;
+    border-radius: var(--radius-l);
+    background: var(--color-surface);
+    color: var(--color-text);
+    transition: border-color 0.25s var(--ease);
+  }
+
+  :global(.google-review.is-active .google-review__figure) {
+    border-color: var(--color-border);
+  }
+
+  :global(.google-review__stars) {
+    display: inline-flex;
+    gap: 0.2rem;
+    color: var(--color-accent);
+  }
+
+  :global(.google-review__stars svg) {
+    width: 1.05rem;
+    height: 1.05rem;
+  }
+
+  :global(.google-review__text) {
+    margin: 0;
+    flex: 1;
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 500;
+    line-height: 1.55;
+    letter-spacing: -0.005em;
+    /* Recensioni molto lunghe restano leggibili senza far esplodere l'altezza
+       della card: oltre 7 righe il testo si interrompe con "…" — il testo
+       integrale resta comunque a un tocco su "Leggi su Google". */
+    display: -webkit-box;
+    -webkit-line-clamp: 7;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  :global(.google-review__text p) {
+    margin: 0;
+  }
+
+  :global(.google-review__text p + p) {
+    margin-top: 0.6rem;
+  }
+
+  :global(.google-review__translated) {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-size: var(--text-small);
+    font-style: italic;
+    color: var(--color-text-muted);
+  }
+
+  :global(.google-review__toggle-original) {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    font-style: normal;
+    font-weight: 600;
+    color: var(--color-primary);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  :global(.google-review__toggle-original:hover) {
+    color: var(--color-primary-hover);
+  }
+
+  :global(.google-review__author) {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 0.9rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  :global(.google-review__avatar) {
+    flex: none;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  :global(.google-review__avatar--fallback) {
+    display: grid;
+    place-items: center;
+    background: var(--color-primary-tint);
+    color: var(--color-primary-dark);
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+
+  :global(.google-review__author-info) {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 0;
+  }
+
+  :global(.google-review__author-name) {
+    font-family: var(--font-heading);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  :global(a.google-review__author-name:hover) {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  :global(.google-review__author-sub) {
+    font-size: var(--text-small);
+    color: var(--color-text-muted);
+  }
+
+  :global(.google-review__meta) {
+    margin: 0;
+    font-size: var(--text-small);
+  }
+
+  :global(.google-review__meta a) {
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  :global(.google-review__meta a:hover) {
+    text-decoration: underline;
+  }
+
+  /* --------------------------------------------------------------------
+     Navigazione: frecce discrete + progress line minimale + contatore.
+     Niente pallini: una linea sottile comunica la posizione senza
+     appesantire la sezione.
+     -------------------------------------------------------------------- */
+  .reviews-carousel__nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1.25rem;
+  }
+
+  .reviews-carousel__arrow {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: var(--touch);
+    height: var(--touch);
+    border: 1.5px solid var(--color-border-strong);
+    border-radius: 999px;
+    background: var(--color-surface);
+    color: var(--color-primary-dark);
+    transition: background-color 0.18s var(--ease), border-color 0.18s var(--ease);
+  }
+
+  .reviews-carousel__arrow:hover:not(:disabled) {
+    background: var(--color-primary-tint);
+    border-color: var(--color-primary);
+  }
+
+  .reviews-carousel__arrow:disabled {
+    opacity: 0.35;
+  }
+
+  :global(.reviews-carousel__arrow-icon) {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  :global(.reviews-carousel__arrow-icon--prev) {
+    transform: rotate(180deg);
+  }
+
+  .reviews-carousel__progress-wrap {
+    display: grid;
+    flex: 1;
+    gap: 0.4rem;
+  }
+
+  .reviews-carousel__progress {
+    height: 2px;
+    border-radius: 999px;
+    background: var(--color-border);
+    overflow: hidden;
+  }
+
+  :global(.section--dark) .reviews-carousel__progress {
+    background: var(--color-line-on-dark);
+  }
+
+  .reviews-carousel__progress-bar {
+    width: 0%;
+    height: 100%;
+    border-radius: inherit;
+    background: var(--color-primary);
+    transition: width 0.3s var(--ease);
+  }
+
+  .reviews-carousel__counter {
+    font-family: var(--font-heading);
+    font-size: var(--text-label);
+    font-weight: 600;
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+
+  :global(.section--dark) .reviews-carousel__counter {
+    color: var(--color-on-dark-muted);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.google-review) {
+      transition: none;
+    }
+
+    .reviews-carousel__progress-bar {
+      transition: none;
+    }
+  }
+
+  /* --------------------------------------------------------------------
+     CTA finale verso Google Maps: un momento a sé, non un link tecnico
+     in coda alla sezione.
+     -------------------------------------------------------------------- */
+  .google-reviews__cta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 1.5rem;
+    margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
+    padding-top: clamp(1.5rem, 1.2rem + 1vw, 2rem);
+    border-top: 1px solid var(--color-border);
+  }
+
+  :global(.section--dark) .google-reviews__cta {
+    border-top-color: var(--color-line-on-dark);
+  }
+
+  .google-reviews__cta-title {
+    margin: 0;
+    font-family: var(--font-heading);
+    font-size: 1.1875rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  :global(.section--dark) .google-reviews__cta-title {
+    color: var(--color-on-dark);
+  }
+
+  .google-reviews__noscript p {
+    color: var(--color-text-muted);
+  }
+
+  @media (max-width: 47.9375rem) {
+    .reviews-rating {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .google-reviews__cta {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>

@@ -1,0 +1,357 @@
+---
+/**
+ * Slider automatico delle specializzazioni.
+ *
+ * Contenuto: i tre servizi reali (src/data/services.ts). Non esiste, nel
+ * progetto, un elenco di "specializzazioni" distinto e già compilato
+ * (src/data/credentials.ts aveva solo segnaposto "[INSERIRE SPECIALIZZAZIONE]",
+ * mai forniti dal cliente): i servizi sono l'unico contenuto reale, verificato
+ * e con una pagina di destinazione effettiva che descrive le aree di
+ * competenza, quindi sono la fonte usata qui. Nessun testo inventato.
+ *
+ * Un solo elemento visibile alla volta (dissolvenza + leggero movimento
+ * verticale, CSS puro), avanzamento automatico ogni 4,5s. Si ferma su
+ * hover/focus e riprende poco dopo; con prefers-reduced-motion l'autoplay è
+ * disattivato del tutto (non solo rallentato). Nessuna libreria.
+ */
+import Icon from './Icon.astro';
+import { services } from '../data/services';
+---
+
+<div class="spec-slider" data-spec-slider role="region" aria-roledescription="carousel" aria-label="Specializzazioni">
+  <div class="spec-slider__viewport" data-viewport tabindex="-1">
+    {
+      services.map((service, i) => (
+        <article
+          class="spec-slide"
+          data-slide
+          role="group"
+          aria-roledescription="slide"
+          aria-label={`Specializzazione ${i + 1} di ${services.length}`}
+        >
+          <p class="spec-slide__index">
+            {String(i + 1).padStart(2, '0')} <span>/ {String(services.length).padStart(2, '0')}</span>
+          </p>
+          <h3 class="spec-slide__title">{service.name}</h3>
+          <p class="spec-slide__text">{service.summary}</p>
+          <a class="spec-slide__link link-arrow" href={service.path}>
+            Scopri il servizio
+            <Icon name="arrow" />
+          </a>
+        </article>
+      ))
+    }
+  </div>
+
+  {
+    services.length > 1 && (
+      <div class="spec-slider__nav">
+        <button type="button" class="spec-slider__arrow" data-prev aria-label="Specializzazione precedente">
+          <Icon name="arrow" class="spec-slider__arrow-icon spec-slider__arrow-icon--prev" />
+        </button>
+        <div class="spec-slider__progress-wrap">
+          <div class="spec-slider__progress" data-progress-track aria-hidden="true">
+            <div class="spec-slider__progress-bar" data-progress></div>
+          </div>
+          <p class="spec-slider__counter" data-counter aria-hidden="true" />
+        </div>
+        <button type="button" class="spec-slider__arrow" data-next aria-label="Specializzazione successiva">
+          <Icon name="arrow" class="spec-slider__arrow-icon" />
+        </button>
+      </div>
+    )
+  }
+</div>
+
+<script>
+  // Deve combaciare con la durata dell'animazione CSS "spec-progress" (vedi <style> sotto).
+  const DURATION_MS = 4500;
+
+  function setup(root: HTMLElement): void {
+    const viewport = root.querySelector<HTMLElement>('[data-viewport]');
+    const slides = Array.from(root.querySelectorAll<HTMLElement>('[data-slide]'));
+    const prevBtn = root.querySelector<HTMLButtonElement>('[data-prev]');
+    const nextBtn = root.querySelector<HTMLButtonElement>('[data-next]');
+    const progressBar = root.querySelector<HTMLElement>('[data-progress]');
+    const counter = root.querySelector<HTMLElement>('[data-counter]');
+    if (!viewport || slides.length === 0) return;
+
+    const total = slides.length;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let active = 0;
+    let paused = false;
+    let timer = 0;
+
+    const applyMotionPreference = () => {
+      root.classList.toggle('is-static', reduceMotion.matches);
+    };
+
+    const isFocusable = (el: HTMLElement | null): el is HTMLElement => !!el && el.offsetParent !== null;
+
+    const update = () => {
+      // Se il focus da tastiera è dentro una slide che sta per diventare
+      // inert, va spostato prima: altrimenti il browser lo perde (bloccando
+      // la navigazione da tastiera dopo il primo cambio slide).
+      const focusWasInDeactivatedSlide = slides.some(
+        (slide, i) => i !== active && slide.contains(document.activeElement),
+      );
+      if (focusWasInDeactivatedSlide) {
+        (isFocusable(nextBtn) ? nextBtn : isFocusable(prevBtn) ? prevBtn : viewport)?.focus();
+      }
+
+      slides.forEach((slide, i) => {
+        slide.classList.toggle('is-active', i === active);
+        slide.inert = i !== active;
+      });
+      if (counter) {
+        counter.textContent = `${String(active + 1).padStart(2, '0')} / ${String(total).padStart(2, '0')}`;
+      }
+    };
+
+    const restartProgress = () => {
+      if (!progressBar) return;
+      progressBar.style.animation = 'none';
+      // Forza il reflow per poter far ripartire l'animazione da capo.
+      void progressBar.offsetWidth;
+      progressBar.style.animation = '';
+    };
+
+    const scheduleNext = () => {
+      window.clearTimeout(timer);
+      if (total <= 1 || paused || reduceMotion.matches) return;
+      timer = window.setTimeout(() => goTo(active + 1), DURATION_MS);
+    };
+
+    function goTo(index: number): void {
+      active = ((index % total) + total) % total;
+      update();
+      restartProgress();
+      scheduleNext();
+    }
+
+    const pause = () => {
+      paused = true;
+      window.clearTimeout(timer);
+    };
+
+    const resume = () => {
+      paused = false;
+      scheduleNext();
+    };
+
+    prevBtn?.addEventListener('click', () => goTo(active - 1));
+    nextBtn?.addEventListener('click', () => goTo(active + 1));
+
+    root.addEventListener('keydown', (event) => {
+      if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        goTo(active + 1);
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        goTo(active - 1);
+      }
+    });
+
+    root.addEventListener('mouseenter', pause);
+    root.addEventListener('mouseleave', resume);
+    root.addEventListener('focusin', pause);
+    root.addEventListener('focusout', (event) => {
+      const next = (event as FocusEvent).relatedTarget as Node | null;
+      if (!next || !root.contains(next)) resume();
+    });
+
+    // Swipe: solo lo scarto orizzontale conta, così lo scroll verticale della
+    // pagina non viene mai intercettato (listener passivi, nessun preventDefault).
+    let touchStartX = 0;
+    let touchStartY = 0;
+    viewport.addEventListener(
+      'touchstart',
+      (event) => {
+        const touch = event.touches[0];
+        touchStartX = touch.clientX;
+        touchStartY = touch.clientY;
+        pause();
+      },
+      { passive: true },
+    );
+
+    viewport.addEventListener(
+      'touchend',
+      (event) => {
+        const touch = event.changedTouches[0];
+        const dx = touch.clientX - touchStartX;
+        const dy = touch.clientY - touchStartY;
+        paused = false;
+        if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)) {
+          goTo(dx < 0 ? active + 1 : active - 1);
+        } else {
+          scheduleNext();
+        }
+      },
+      { passive: true },
+    );
+
+    reduceMotion.addEventListener('change', () => {
+      applyMotionPreference();
+      if (reduceMotion.matches) window.clearTimeout(timer);
+      else scheduleNext();
+    });
+
+    applyMotionPreference();
+    update();
+    scheduleNext();
+  }
+
+  document.querySelectorAll<HTMLElement>('[data-spec-slider]').forEach(setup);
+</script>
+
+<style>
+  .spec-slider {
+    max-width: 34rem;
+  }
+
+  .spec-slider__viewport {
+    display: grid;
+  }
+
+  /* Le slide occupano tutte la stessa cella (si sovrappongono): l'altezza del
+     contenitore segue quella più alta, senza bisogno di calcoli via JS. */
+  :global(.spec-slide) {
+    grid-area: 1 / 1;
+    padding: 0.1rem 0 0.1rem 1.75rem;
+    border-left: 3px solid var(--color-border-strong);
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.7s var(--ease), transform 0.7s var(--ease);
+    pointer-events: none;
+  }
+
+  :global(.spec-slide.is-active) {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  :global(.spec-slide > * + *) {
+    margin-top: 0.85rem;
+  }
+
+  :global(.spec-slide__index) {
+    font-family: var(--font-heading);
+    font-size: 1rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-primary);
+  }
+
+  :global(.spec-slide__index span) {
+    font-weight: 500;
+    color: var(--color-text-muted);
+  }
+
+  :global(.spec-slide__title) {
+    font-size: clamp(1.5rem, 1.3rem + 1vw, 2rem);
+    line-height: 1.2;
+  }
+
+  :global(.spec-slide__text) {
+    max-width: 30rem;
+    color: var(--color-text-muted);
+    line-height: 1.6;
+  }
+
+  :global(.spec-slide__link) {
+    margin-top: 1.25rem !important;
+  }
+
+  .spec-slider__nav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-left: 1.75rem;
+  }
+
+  .spec-slider__arrow {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1.5px solid var(--color-border-strong);
+    border-radius: 999px;
+    background: transparent;
+    color: var(--color-text-muted);
+    transition: background-color 0.18s var(--ease), border-color 0.18s var(--ease), color 0.18s var(--ease);
+  }
+
+  .spec-slider__arrow:hover {
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+    background: var(--color-primary-tint);
+  }
+
+  :global(.spec-slider__arrow-icon) {
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+
+  :global(.spec-slider__arrow-icon--prev) {
+    transform: rotate(180deg);
+  }
+
+  .spec-slider__progress-wrap {
+    display: grid;
+    flex: 1;
+    gap: 0.4rem;
+  }
+
+  .spec-slider__progress {
+    height: 2px;
+    border-radius: 999px;
+    background: var(--color-border);
+    overflow: hidden;
+  }
+
+  .spec-slider__progress-bar {
+    width: 100%;
+    height: 100%;
+    background: var(--color-primary);
+    transform: scaleX(0);
+    transform-origin: left;
+    animation: spec-progress 4.5s linear;
+  }
+
+  @keyframes spec-progress {
+    from {
+      transform: scaleX(0);
+    }
+    to {
+      transform: scaleX(1);
+    }
+  }
+
+  .spec-slider__counter {
+    font-family: var(--font-heading);
+    font-size: var(--text-label);
+    font-weight: 600;
+    text-align: center;
+    color: var(--color-text-muted);
+  }
+
+  /* prefers-reduced-motion: l'autoplay è disattivato via JS; qui si nasconde
+     anche la barra di avanzamento (altrimenti, con la transizione azzerata
+     dalla regola sitewide, resterebbe sempre a piena "carica" senza motivo:
+     l'autoplay non riparte più). Il contatore resta, la navigazione manuale
+     (frecce, tastiera, swipe) funziona regolarmente. */
+  .spec-slider.is-static .spec-slider__progress {
+    display: none;
+  }
+
+  @media (max-width: 47.9375rem) {
+    .spec-slider__arrow {
+      display: none;
+    }
+  }
+</style>

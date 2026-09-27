@@ -1,16 +1,8 @@
 ---
 import CtaBand from '../components/CtaBand.astro';
-import Fill from '../components/Fill.astro';
+import GoogleReviews from '../components/GoogleReviews.astro';
 import PageIntro from '../components/PageIntro.astro';
-import ReviewCard from '../components/ReviewCard.astro';
-import { reviews } from '../data/reviews';
-import { site } from '../data/site';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { hasValue } from '../utils/placeholder';
-
-const { rating, count, url, embedHtml } = site.googleReviews;
-// Finché non ci sono recensioni reali: tre riquadri segnaposto
-const cards = reviews.length ? reviews : [undefined, undefined, undefined];
 ---
 
 <BaseLayout
@@ -23,37 +15,8 @@ const cards = reviews.length ? reviews : [undefined, undefined, undefined];
 
   <section class="section" aria-labelledby="valutazione">
     <div class="container">
-      <div class="rating">
-        <h2 id="valutazione" class="visually-hidden">Valutazione complessiva</h2>
-        {
-          hasValue(rating) ? (
-            <p class="rating__score">
-              <strong>{rating}</strong> su 5{hasValue(count) && <span> · {count} recensioni</span>}
-            </p>
-          ) : (
-            <p class="rating__score">
-              <Fill value="[INSERIRE VALUTAZIONE MEDIA E NUMERO DI RECENSIONI GOOGLE]" />
-            </p>
-          )
-        }
-        {
-          hasValue(url) && (
-            <a class="link-arrow" href={url} target="_blank" rel="noopener noreferrer">
-              Vedi tutte le recensioni su Google
-              <span class="visually-hidden"> (si apre in una nuova scheda)</span>
-            </a>
-          )
-        }
-      </div>
-
-      <div class="review-columns">
-        {cards.map((review) => <ReviewCard review={review} />)}
-      </div>
-
-      {
-        /* Widget/embed Google Reviews: incollare il codice in site.googleReviews.embedHtml (src/data/site.ts) */
-        hasValue(embedHtml) && <div class="reviews-widget" set:html={embedHtml} />
-      }
+      <h2 id="valutazione" class="visually-hidden">Valutazione complessiva</h2>
+      <GoogleReviews />
     </div>
   </section>
 
@@ -62,31 +25,3 @@ const cards = reviews.length ? reviews : [undefined, undefined, undefined];
     text="Scrivimi su WhatsApp e raccontami la situazione: ne parliamo insieme."
   />
 </BaseLayout>
-
-<style>
-  .rating {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: 0.75rem 2rem;
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--color-border);
-  }
-
-  .rating__score {
-    font-family: var(--font-heading);
-    font-size: var(--text-h3);
-    font-weight: 500;
-  }
-
-  .rating__score strong {
-    font-size: 2rem;
-    font-weight: 600;
-  }
-
-  .reviews-widget {
-    margin-top: 3rem;
-  }
-
-</style>

@@ -1,22 +1,17 @@
 ---
 import CtaBand from '../components/CtaBand.astro';
 import Fill from '../components/Fill.astro';
+import GoogleReviews from '../components/GoogleReviews.astro';
 import Hero from '../components/Hero.astro';
-import ReviewCard from '../components/ReviewCard.astro';
 import ServiceCard from '../components/ServiceCard.astro';
 import SiteImage from '../components/SiteImage.astro';
 import TrustList from '../components/TrustList.astro';
-import { reviews } from '../data/reviews';
 import { services } from '../data/services';
 import { site } from '../data/site';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { hasValue } from '../utils/placeholder';
 import { professionalSchema } from '../utils/schema';
 
 const origin = Astro.site!.origin;
-// Tre riquadri: recensioni reali se presenti, altrimenti segnaposto
-const previews = Array.from({ length: 3 }, (_, i) => reviews[i]);
-const { rating, count } = site.googleReviews;
 ---
 
 <BaseLayout
@@ -37,8 +32,8 @@ const { rating, count } = site.googleReviews;
           rieducazione e potenziamento visivo, soprattutto con i bambini, ma anche con adulti e sportivi.
         </p>
         <p>
-          Non sono un medico e non eseguo interventi chirurgici. Ho lavorato in contesti diversi e, nelle Marche, sono
-          stato l’unico ad avere uno studio dedicato esclusivamente a questa attività. Oggi ricevo presso diversi studi.
+          Ho lavorato in contesti diversi e, nelle Marche, sono stato l’unico ad avere uno studio dedicato
+          esclusivamente a questa attività. Oggi ricevo presso diversi studi.
         </p>
         <p><a class="btn btn--secondary" href="/chi-sono/">Scopri il mio percorso</a></p>
       </div>
@@ -77,17 +72,8 @@ const { rating, count } = site.googleReviews;
       <div class="section-head">
         <p class="eyebrow">Recensioni</p>
         <h2 id="recensioni">Cosa dicono di me su Google</h2>
-        {
-          hasValue(rating) && (
-            <p class="lead">
-              Valutazione {rating} su 5{hasValue(count) && `, su ${count} recensioni`}.
-            </p>
-          )
-        }
       </div>
-      <div class="review-columns">
-        {previews.map((review) => <ReviewCard review={review} />)}
-      </div>
+      <GoogleReviews limit={3} showGoogleLink={false} />
       <p class="reviews-cta">
         <a class="btn btn--light" href="/recensioni/">Leggi tutte le recensioni</a>
       </p>
@@ -106,12 +92,28 @@ const { rating, count } = site.googleReviews;
         </p>
         <p><a class="btn btn--primary" href="/professionisti/">Vai alla pagina per i professionisti</a></p>
       </div>
-      <ul class="chip-list" role="list" aria-label="Professionisti a cui è rivolta la pagina">
-        <li>Logopedisti</li>
-        <li>Psicologi</li>
-        <li>Neuropsicomotricisti</li>
-        <li>Altri professionisti</li>
-      </ul>
+      <div class="pro-network">
+        <p class="pro-network__eyebrow">Collaborazione</p>
+        <p class="pro-network__lead">Una rete di professionisti attorno al bambino</p>
+        <ol class="pro-network__list" aria-label="Professionisti a cui è rivolta la pagina">
+          <li>
+            <span class="pro-network__index">01</span>
+            <span class="pro-network__name">Logopedisti</span>
+          </li>
+          <li>
+            <span class="pro-network__index">02</span>
+            <span class="pro-network__name">Psicologi</span>
+          </li>
+          <li>
+            <span class="pro-network__index">03</span>
+            <span class="pro-network__name">Neuropsicomotricisti</span>
+          </li>
+          <li>
+            <span class="pro-network__index">04</span>
+            <span class="pro-network__name">Altri professionisti</span>
+          </li>
+        </ol>
+      </div>
     </div>
   </section>
 
@@ -157,6 +159,85 @@ const { rating, count } = site.googleReviews;
 
   .pro > div > .lead + p {
     margin-top: 1.75rem;
+  }
+
+  /* Rete di collaborazione: composizione editoriale al posto dei tag/pill
+     (eyebrow + breve frase + elenco numerato con divisori sottili, sullo
+     stesso principio del bordo di TrustList ma in versione più raccolta). */
+  .pro-network__eyebrow {
+    margin: 0 0 0.6rem;
+    font-family: var(--font-heading);
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--color-primary);
+  }
+
+  .pro-network__lead {
+    margin: 0 0 1.5rem;
+    max-width: 20rem;
+    font-family: var(--font-heading);
+    font-size: 1.1875rem;
+    font-weight: 500;
+    line-height: 1.35;
+    color: var(--color-text);
+  }
+
+  .pro-network__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid var(--color-text);
+  }
+
+  .pro-network__list li {
+    display: flex;
+    align-items: baseline;
+    gap: 1rem;
+    padding-block: 0.9rem;
+    border-bottom: 1px solid var(--color-border);
+    transition: border-color 0.25s var(--ease);
+  }
+
+  .pro-network__index {
+    flex: none;
+    width: 1.75rem;
+    font-family: var(--font-heading);
+    font-size: var(--text-label);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    color: var(--color-text-muted);
+    transition: color 0.25s var(--ease);
+  }
+
+  .pro-network__name {
+    font-family: var(--font-heading);
+    font-size: 1.0625rem;
+    font-weight: 600;
+    color: var(--color-text);
+    transition: color 0.25s var(--ease), transform 0.25s var(--ease);
+  }
+
+  .pro-network__list li:hover {
+    border-bottom-color: var(--color-primary);
+  }
+
+  .pro-network__list li:hover .pro-network__index {
+    color: var(--color-primary);
+  }
+
+  .pro-network__list li:hover .pro-network__name {
+    color: var(--color-primary-dark);
+    transform: translateX(3px);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pro-network__list li,
+    .pro-network__index,
+    .pro-network__name {
+      transition: none;
+    }
   }
 
   @media (min-width: 48rem) {

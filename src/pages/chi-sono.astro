@@ -2,7 +2,8 @@
 import CtaBand from '../components/CtaBand.astro';
 import Fill from '../components/Fill.astro';
 import SiteImage from '../components/SiteImage.astro';
-import { education, experiences, specializations } from '../data/credentials';
+import SpecializationSlider from '../components/SpecializationSlider.astro';
+import { education, experiences } from '../data/credentials';
 import { site } from '../data/site';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { professionalSchema } from '../utils/schema';
@@ -23,10 +24,6 @@ const origin = Astro.site!.origin;
         <p class="lead">
           Valuto le abilità visive e seguo percorsi di rieducazione e potenziamento visivo. Lavoro soprattutto con i
           bambini, ma mi occupo anche di adulti e sportivi.
-        </p>
-        <p>
-          Non sono un medico e non eseguo interventi chirurgici: il mio lavoro riguarda la valutazione delle abilità
-          visive e i percorsi che ne possono derivare.
         </p>
       </div>
       <SiteImage name="professionista" eager priority class="about-intro__photo" />
@@ -93,9 +90,7 @@ const origin = Astro.site!.origin;
         <p class="eyebrow">Competenze</p>
         <h2 id="specializzazioni">Specializzazioni</h2>
       </div>
-      <ul class="chip-list" role="list">
-        {specializations.map((item) => <li><Fill value={item} /></li>)}
-      </ul>
+      <SpecializationSlider />
     </div>
   </section>
 
