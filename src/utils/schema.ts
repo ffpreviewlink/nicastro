@@ -20,7 +20,7 @@ export function professionalSchema(origin: string) {
     ...(hasValue(site.name) && { founder: { '@type': 'Person', name: site.name } }),
     url: `${origin}/`,
     image: `${origin}${site.ogImage}`,
-    areaServed: { '@type': 'AdministrativeArea', name: site.region },
+    areaServed: site.regions.map((name) => ({ '@type': 'AdministrativeArea', name })),
     ...(hasValue(site.email) && { email: site.email }),
     ...(hasValue(site.phone) && { telephone: site.phone }),
     address: {
@@ -42,7 +42,7 @@ export function serviceSchema(service: Service, origin: string) {
     name: service.name,
     description: service.seo.description,
     url: `${origin}${service.path}`,
-    areaServed: { '@type': 'AdministrativeArea', name: site.region },
+    areaServed: site.regions.map((name) => ({ '@type': 'AdministrativeArea', name })),
     ...(hasValue(site.businessName) && {
       provider: { '@type': 'ProfessionalService', '@id': `${origin}/#professional`, name: site.businessName },
     }),

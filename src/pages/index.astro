@@ -15,8 +15,8 @@ const origin = Astro.site!.origin;
 ---
 
 <BaseLayout
-  title={`Analisi e rieducazione visiva nelle ${site.region}`}
-  description="Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi, nelle Marche."
+  title={`Analisi e rieducazione visiva in ${site.regions.join(' e ')}`}
+  description="Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi, in Marche e Umbria."
   jsonLd={[professionalSchema(origin)]}
 >
   <Hero />

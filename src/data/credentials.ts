@@ -7,8 +7,6 @@
  * da sostituire con le informazioni reali fornite dal professionista.
  */
 
-import { site } from './site';
-
 export interface TrustPoint {
   title: string;
   text: string;
@@ -20,8 +18,7 @@ export interface TrustPoint {
 export const trustPoints: TrustPoint[] = [
   {
     title: 'Esperienza in contesti diversi',
-    text: 'Il mio percorso attraversa realtà professionali diverse. Le tappe principali sono raccontate nella pagina Chi sono.',
-    placeholder: '[INSERIRE SINTESI DELLE ESPERIENZE PRINCIPALI]',
+    text: 'Ottico-optometrista in diversi centri italiani, poi insegnante di Ottica: un percorso professionale che attraversa realtà diverse, raccontato nella pagina Chi sono.',
   },
   {
     title: 'Uno studio dedicato',
@@ -29,8 +26,7 @@ export const trustPoints: TrustPoint[] = [
   },
   {
     title: 'Formazione e specializzazioni',
-    text: '',
-    placeholder: '[INSERIRE FORMAZIONE E SPECIALIZZAZIONI PRINCIPALI]',
+    text: 'Ottico (2019), Optometria e Rieducazione visiva (2024), Visione e Postura (2025). Il percorso completo è nella pagina Chi sono.',
   },
   {
     title: 'Il lavoro con altri professionisti',
@@ -38,7 +34,7 @@ export const trustPoints: TrustPoint[] = [
   },
   {
     title: 'Dove ricevo',
-    text: `Oggi ricevo presso ${site.locations[0]}, con la possibilità di aggiungere altre sedi in futuro.`,
+    text: 'Le sedi in cui ricevo sono in aggiornamento: scrivimi su WhatsApp per saperne di più.',
   },
 ];
 
@@ -55,27 +51,30 @@ export interface Experience {
  */
 export const experiences: Experience[] = [
   {
-    period: '[INSERIRE PERIODO]',
-    title: '[INSERIRE RUOLO E STRUTTURA]',
-    description: '[INSERIRE DESCRIZIONE BREVE DELL’ESPERIENZA]',
+    period: '2019 – 2024',
+    title: 'Ottico-optometrista',
+    place: 'Fano, Perugia, Imola, Bolzano, Trento',
+    description: 'Ho svolto la professione di ottico-optometrista in diversi centri italiani.',
   },
   {
-    period: '[INSERIRE PERIODO]',
-    title: '[INSERIRE RUOLO E STRUTTURA]',
-    description: '[INSERIRE DESCRIZIONE BREVE DELL’ESPERIENZA]',
+    // TODO(cliente): confermare l'anno esatto di questa esperienza (collocata tra il 2024 e l'apertura dello studio nel 2025)
+    period: '[INSERIRE ANNO]',
+    title: 'Insegnante di Ottica',
+    place: 'Istituto Don E. Pocognoni, Matelica',
+    description: 'Sono stato chiamato come insegnante di Ottica.',
   },
   {
-    period: '[INSERIRE PERIODO]',
+    period: 'Dal 2025',
     title: 'Studio dedicato all’analisi e alla rieducazione visiva',
     place: 'Marche',
     description:
-      'Sono stato l’unico, nelle Marche, ad avere uno studio dedicato esclusivamente a questa attività.',
+      'Ho aperto lo Studio Optometrico Nicastro: sono stato l’unico, nelle Marche, ad avere uno studio dedicato esclusivamente a questa attività.',
   },
   {
     period: 'Oggi',
-    title: `Presso ${site.locations[0]}`,
+    title: 'Verso nuove sedi',
     description:
-      'Il mio modo di lavorare si sta evolvendo: ricevo presso questo studio, con la possibilità di aggiungerne altri in futuro.',
+      'Il mio modo di lavorare si sta evolvendo: le sedi in cui ricevo sono in aggiornamento. Scrivimi su WhatsApp per sapere come fissare un appuntamento.',
   },
 ];
 
@@ -87,13 +86,23 @@ export interface Education {
 
 export const education: Education[] = [
   {
-    title: '[INSERIRE TITOLO DI STUDIO O CORSO]',
-    place: '[INSERIRE ENTE / UNIVERSITÀ]',
-    period: '[INSERIRE ANNO]',
+    title: 'Ottico – Arte ausiliaria delle professioni sanitarie',
+    place: '[INSERIRE ENTE / ISTITUTO]',
+    period: '2019',
   },
   {
-    title: '[INSERIRE TITOLO DI STUDIO O CORSO]',
-    place: '[INSERIRE ENTE / UNIVERSITÀ]',
-    period: '[INSERIRE ANNO]',
+    title: 'Optometria',
+    place: '[INSERIRE ENTE / ISTITUTO]',
+    period: '2024',
+  },
+  {
+    title: 'Rieducazione visiva',
+    place: '[INSERIRE ENTE / ISTITUTO]',
+    period: '2024',
+  },
+  {
+    title: 'Visione e Postura',
+    place: '[INSERIRE ENTE / ISTITUTO]',
+    period: '2025',
   },
 ];

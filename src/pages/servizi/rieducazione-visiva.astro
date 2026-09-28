@@ -1,5 +1,4 @@
 ---
-import Fill from '../../components/Fill.astro';
 import { formatPrice, getService } from '../../data/services';
 import ServiceLayout from '../../layouts/ServiceLayout.astro';
 
@@ -46,8 +45,14 @@ const price = formatPrice(service);
         <div>
           <h3>Si lavora per sedute</h3>
           <p>Ogni seduta costa {price.main} e dura 50 minuti.</p>
-          <p><Fill value="[INSERIRE FREQUENZA DELLE SEDUTE]" /></p>
-          <p><Fill value="[INSERIRE SE SONO PREVISTI ESERCIZI DA SVOLGERE A CASA]" /></p>
+          <p>
+            Le sedute si svolgono una volta a settimana o, quando non è possibile per motivi organizzativi, al
+            massimo una volta ogni due settimane.
+          </p>
+          <p>
+            A casa vengono assegnati alcuni esercizi: preparano gli occhi alla seduta successiva, velocizzando il
+            percorso e migliorandone il risultato.
+          </p>
         </div>
       </li>
       <li>
@@ -66,7 +71,9 @@ const price = formatPrice(service);
       quanto atteso per l’età. Il percorso mira a lavorare su queste abilità.
     </p>
     <p>
-      <Fill value="[INSERIRE ESEMPI DI ABILITÀ SU CUI SI LAVORA E DI ESERCIZI PROPOSTI]" />
+      Per esempio, per migliorare l’ampiezza dell’accomodazione si guardano delle lettere stampate incollate su una
+      penna, con un occhio coperto da una benda: si avvicina il target finché non diventa sfocato e si ripete il
+      movimento alcune volte, per aumentare la capacità di vedere nitido da vicino.
     </p>
   </section>
 

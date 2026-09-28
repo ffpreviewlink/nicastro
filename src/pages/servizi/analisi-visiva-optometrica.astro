@@ -1,7 +1,5 @@
 ---
-import Fill from '../../components/Fill.astro';
 import { formatPrice, getService } from '../../data/services';
-import { site } from '../../data/site';
 import ServiceLayout from '../../layouts/ServiceLayout.astro';
 
 const price = formatPrice(getService('analisi-visiva-optometrica'));
@@ -26,9 +24,10 @@ const price = formatPrice(getService('analisi-visiva-optometrica'));
       quotidiane.
     </p>
     <ul class="checklist">
-      <li><Fill value="[INSERIRE ABILITÀ VISIVA VALUTATA]" /></li>
-      <li><Fill value="[INSERIRE ABILITÀ VISIVA VALUTATA]" /></li>
-      <li><Fill value="[INSERIRE ABILITÀ VISIVA VALUTATA]" /></li>
+      <li>Accomodazione</li>
+      <li>Fusione</li>
+      <li>Movimenti oculari</li>
+      <li>Percezione della tridimensionalità</li>
     </ul>
   </section>
 
@@ -44,9 +43,9 @@ const price = formatPrice(getService('analisi-visiva-optometrica'));
     </p>
     <h3>Quando può avere senso</h3>
     <ul class="checklist">
-      <li><Fill value="[INSERIRE UNA SITUAZIONE IN CUI PUÒ AVERE SENSO UN’ANALISI VISIVA]" /></li>
-      <li><Fill value="[INSERIRE UNA SITUAZIONE IN CUI PUÒ AVERE SENSO UN’ANALISI VISIVA]" /></li>
-      <li><Fill value="[INSERIRE UNA SITUAZIONE IN CUI PUÒ AVERE SENSO UN’ANALISI VISIVA]" /></li>
+      <li>Difficoltà visive, affaticamento o disturbi durante lettura, studio, lavoro o attività sportive</li>
+      <li>Come controllo periodico delle abilità visive, anche in assenza di sintomi evidenti</li>
+      <li>Soprattutto in età scolare, o per chi svolge attività visive prolungate</li>
     </ul>
   </section>
 
@@ -56,13 +55,19 @@ const price = formatPrice(getService('analisi-visiva-optometrica'));
       <li>
         <div>
           <h3>Ci si accorda su WhatsApp</h3>
-          <p>Mi scrivi e concordiamo il giorno: ricevo presso {site.locations[0]}.</p>
+          <p>Mi scrivi e concordiamo il giorno e la sede.</p>
         </div>
       </li>
       <li>
         <div>
           <h3>L’analisi</h3>
-          <p><Fill value="[INSERIRE COME SI SVOLGE L’ANALISI: cosa avviene durante l’incontro]" /></p>
+          <p>
+            Prima dell’appuntamento ti invio un questionario da compilare a casa, utile per capire le difficoltà che
+            stai vivendo. In studio ti faccio molte domande per non tralasciare nulla, poi svolgo la valutazione vera
+            e propria: circa un’ora, anche di più nei casi più complessi. Vengono controllate tutte le abilità
+            visive e i dati raccolti vengono elaborati con uno strumento che, in base all’età, indica se sono in
+            norma o fuori norma. Al termine della seduta hai già un quadro chiaro della situazione.
+          </p>
         </div>
       </li>
     </ol>
@@ -75,8 +80,8 @@ const price = formatPrice(getService('analisi-visiva-optometrica'));
       valutare insieme un percorso di <a href="/servizi/rieducazione-visiva/">rieducazione visiva</a>.
     </p>
     <p>
-      Al termine dell’analisi preparo un report scritto con quanto emerso. Successivamente ci sentiamo per una
-      chiamata in cui ti spiego e commento insieme a te i risultati.
+      Al termine dell’analisi preparo un report scritto con quanto emerso, che ti invio. Per spiegarti i risultati
+      facciamo poi un colloquio, di persona o in videochiamata.
     </p>
   </section>
 

@@ -1,8 +1,7 @@
 /**
- * Indirizzo dell'attività (sede legale/fiscale): usato in footer, Contatti (riga P.IVA)
- * e dati strutturati. Non coincide necessariamente con lo studio in cui riceve i
+ * Indirizzo dell'attività (sede legale/fiscale, confermato dal cliente): usato in
+ * footer, Contatti (riga P.IVA) e dati strutturati. Non è una sede di ricezione
  * pazienti: per quello vedi `locations` più sotto.
- * TODO(cliente): confermare che questo resti l'indirizzo corretto ai fini fiscali/P.IVA.
  */
 const address = {
   street: 'Via Vittorio Bachelet, 15',
@@ -25,11 +24,11 @@ export const site = {
   /** Nome dell'attività: marchio in header e footer, titoli delle pagine, dati strutturati. */
   businessName: 'Studio Optometrico Nicastro',
   role: 'Optometrista, Rieducatore visivo',
-  /** Regione di riferimento per la ricerca locale (dati strutturati, aree di servizio). */
-  region: 'Marche',
+  /** Regioni in cui è disponibile (dati strutturati, aree di servizio, titoli e descrizioni). */
+  regions: ['Marche', 'Umbria'],
   locale: 'it_IT',
   description:
-    'Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi, nelle Marche.',
+    'Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi, in Marche e Umbria.',
   /** Immagine di anteprima per social e messaggistica (1200×630). */
   ogImage: '/images/og-default.jpg',
 
@@ -51,12 +50,11 @@ export const site = {
   },
 
   /**
-   * Studi in cui riceve attualmente. Elenco semplice ed estendibile: quando saranno
-   * confermate altre sedi (oggi in standby), basta aggiungere una voce qui.
+   * Studi in cui riceve attualmente. Nessuna sede confermata al momento: elenco
+   * vuoto finché il cliente non ne conferma una. Aggiungere una voce qui appena
+   * disponibile.
    */
-  locations: [
-    'Senigallia — Centro Aura',
-  ],
+  locations: [] as string[],
 
   googleReviews: {
     /**

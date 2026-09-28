@@ -34,7 +34,6 @@ export const services: Service[] = [
     shortName: 'Analisi visiva',
     summary:
       'Una valutazione delle abilità visive, per capire come gli occhi lavorano nelle attività di ogni giorno.',
-    // TODO(cliente): confermare a quali pubblici si rivolge l'analisi
     audience: 'Bambini, adulti e sportivi',
     price: { amount: 75, unit: 'una tantum' },
     duration: '1 ora',
