@@ -67,20 +67,36 @@ const origin = Astro.site!.origin;
         <p class="eyebrow">Studi</p>
         <h2 id="formazione">Formazione</h2>
       </div>
-      <ul class="education" role="list">
+      <ol class="timeline timeline--education" role="list">
         {
           education.map((item) => (
-            <li>
-              <h3>
-                <Fill value={item.title} />
-              </h3>
-              <p class="muted">
-                <Fill value={item.place} /> · <Fill value={item.period} />
+            <li class="timeline__item">
+              <p class="timeline__period">
+                <Fill value={item.period} />
               </p>
+              <div class="education-row">
+                <div class="logo-area">
+                  {item.logo ? (
+                    <img class="logo-area__img" src={item.logo} alt={item.place} loading="lazy" />
+                  ) : (
+                    <span class="logo-area__fallback" aria-hidden="true">
+                      {item.place.charAt(0)}
+                    </span>
+                  )}
+                </div>
+                <div>
+                  <h3>
+                    <Fill value={item.title} />
+                  </h3>
+                  <p class="timeline__place">
+                    <Fill value={item.place} />
+                  </p>
+                </div>
+              </div>
             </li>
           ))
         }
-      </ul>
+      </ol>
     </div>
   </section>
 
@@ -226,22 +242,67 @@ const origin = Astro.site!.origin;
     margin-top: 0.4rem;
   }
 
-  .education {
-    display: grid;
-    gap: 1.5rem;
-    margin: 0;
-    padding: 0;
-    list-style: none;
+  .timeline--education .timeline__item {
+    align-items: center;
   }
 
-  .education h3 {
-    margin-bottom: 0.2rem;
+  .timeline--education h3 {
+    margin-bottom: 0.15rem;
+  }
+
+  .education-row {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+  }
+
+  /* Area logo a dimensione fissa: ogni logo mantiene il proprio aspect ratio ed è
+     centrato al suo interno, così il testo parte sempre dalla stessa posizione. */
+  .logo-area {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 6rem;
+    height: 2.5rem;
+  }
+
+  .logo-area__img {
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    object-fit: contain;
+  }
+
+  .logo-area__fallback {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--color-border-strong);
+    border-radius: 50%;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-text-muted);
   }
 
   /* Periodo accanto alla tappa solo quando la colonna è abbastanza larga */
   @container (min-width: 34rem) {
     .timeline__item {
       grid-template-columns: 8.5rem 1fr;
+    }
+  }
+
+  @container (max-width: 26rem) {
+    .education-row {
+      gap: 1rem;
+    }
+
+    .logo-area {
+      width: 5rem;
+      height: 2.1rem;
     }
   }
 

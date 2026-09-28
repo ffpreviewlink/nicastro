@@ -57,8 +57,7 @@ export const experiences: Experience[] = [
     description: 'Ho svolto la professione di ottico-optometrista in diversi centri italiani.',
   },
   {
-    // TODO(cliente): confermare l'anno esatto di questa esperienza (collocata tra il 2024 e l'apertura dello studio nel 2025)
-    period: '[INSERIRE ANNO]',
+    period: '2023',
     title: 'Insegnante di Ottica',
     place: 'Istituto Don E. Pocognoni, Matelica',
     description: 'Sono stato chiamato come insegnante di Ottica.',
@@ -82,27 +81,38 @@ export interface Education {
   title: string;
   place: string;
   period: string;
+  /** Logo dell'ente, se disponibile (percorso in /public/images/logos). */
+  logo?: string;
 }
 
+/**
+ * Loghi ufficiali, scaricati dai siti istituzionali di riferimento (Istituto Don E.
+ * Pocognoni, IRSOO Vinci, OptoTube Academy). Se in futuro si aggiunge un ente senza un
+ * logo verificato, il campo va omesso: il componente mostra un fallback tipografico.
+ */
 export const education: Education[] = [
   {
     title: 'Ottico – Arte ausiliaria delle professioni sanitarie',
-    place: '[INSERIRE ENTE / ISTITUTO]',
+    place: 'Istituto Don E. Pocognoni, Matelica',
     period: '2019',
+    logo: '/images/logos/logo-ipsia-pocognoni.png',
   },
   {
     title: 'Optometria',
-    place: '[INSERIRE ENTE / ISTITUTO]',
+    place: 'IRSOO, Vinci (FI)',
     period: '2024',
+    logo: '/images/logos/logo-irsoo.png',
   },
   {
     title: 'Rieducazione visiva',
-    place: '[INSERIRE ENTE / ISTITUTO]',
+    place: 'OptoTube Academy',
     period: '2024',
+    logo: '/images/logos/logo-optotube-academy.png',
   },
   {
     title: 'Visione e Postura',
-    place: '[INSERIRE ENTE / ISTITUTO]',
+    place: 'OptoTube Academy',
     period: '2025',
+    logo: '/images/logos/logo-optotube-academy.png',
   },
 ];

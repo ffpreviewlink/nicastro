@@ -29,7 +29,6 @@ const TARGETS = [
   '.others__list > *',
   '.trust > *',
   '.timeline > *',
-  '.education > *',
   '.steps > *',
 ].join(',');
 
