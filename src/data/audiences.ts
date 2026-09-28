@@ -32,7 +32,7 @@ export const audiences: Audience[] = [
     id: 'adulti',
     label: 'Adulti',
     title: 'Anche per gli adulti',
-    text: "Le abilità visive non riguardano solo i bambini. Se sei un adulto e vuoi capire se una valutazione può avere senso per te, scrivimi: ne parliamo.",
+    text: "Le abilità visive non riguardano solo i bambini. Se sei un adulto e vuoi capire se una valutazione può essere utile, scrivimi su WhatsApp per maggiori informazioni.",
     cta: { label: 'Vedi i servizi', href: '/servizi/' },
     whatsappMessage:
       'Buongiorno, sono un adulto e vorrei capire se una valutazione delle abilità visive può avere senso per me.',

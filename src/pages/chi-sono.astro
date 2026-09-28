@@ -154,7 +154,7 @@ const origin = Astro.site!.origin;
 
   <CtaBand
     title="Vuoi capire se questo percorso può essere adatto?"
-    text="Scrivimi su WhatsApp e raccontami la situazione: ne parliamo insieme."
+    text="Scrivimi su WhatsApp descrivendo la situazione: valuterò se questo percorso è adatto."
   />
 </BaseLayout>
 
@@ -258,13 +258,21 @@ const origin = Astro.site!.origin;
 
   /* Area logo a dimensione fissa: ogni logo mantiene il proprio aspect ratio ed è
      centrato al suo interno, così il testo parte sempre dalla stessa posizione. */
+  /* Chip a dimensione fissa: normalizza la presenza di loghi con proporzioni molto
+     diverse (wordmark orizzontale, sigillo circolare, icona) senza deformarli. Ogni
+     ente occupa lo stesso ingombro visivo nella riga, indipendentemente dal formato
+     del proprio logo. */
   .logo-area {
     flex-shrink: 0;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 6rem;
-    height: 2.5rem;
+    width: 5.5rem;
+    height: 3.25rem;
+    padding: 0.5rem 0.65rem;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-m);
+    background: var(--color-surface);
   }
 
   .logo-area__img {
@@ -279,8 +287,8 @@ const origin = Astro.site!.origin;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 2rem;
+    height: 2rem;
     border: 1px solid var(--color-border-strong);
     border-radius: 50%;
     font-family: var(--font-heading);
@@ -301,8 +309,9 @@ const origin = Astro.site!.origin;
     }
 
     .logo-area {
-      width: 5rem;
-      height: 2.1rem;
+      width: 4.75rem;
+      height: 3rem;
+      padding: 0.4rem 0.5rem;
     }
   }
 

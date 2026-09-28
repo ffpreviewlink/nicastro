@@ -1,5 +1,4 @@
 ---
-import Fill from '../../components/Fill.astro';
 import { formatPrice, getService } from '../../data/services';
 import ServiceLayout from '../../layouts/ServiceLayout.astro';
 
@@ -26,7 +25,15 @@ const price = formatPrice(getService('potenziamento-visivo-sportivo'));
         <div>
           <h3>Correzione</h3>
           <p>Si parte dalla correzione: prima di potenziare, si lavora su ciò che va corretto.</p>
-          <p><Fill value="[INSERIRE COSA SI INTENDE PER CORREZIONE E COME SI SVOLGE]" /></p>
+          <p>
+            Qui “correzione” non significa correggere la vista con occhiali o lenti: si lavora sulle abilità
+            visive dell’atleta con esercizi specifici, per portarle nella norma prima di potenziarle. Alcuni
+            esempi: esercizi su tablet, in cui l’atleta individua e preme il più rapidamente possibile gli
+            stimoli che compaiono sullo schermo; esercizi di visione periferica, in cui l’atleta mantiene lo
+            sguardo fisso davanti a sé e riconosce correttamente stimoli — per esempio colori, numeri o gesti
+            delle mani — presentati ai margini del campo visivo. Gli esercizi vengono adattati di volta in
+            volta alle esigenze dell’atleta e alla disciplina sportiva praticata.
+          </p>
         </div>
       </li>
       <li>

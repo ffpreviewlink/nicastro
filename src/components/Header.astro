@@ -93,6 +93,14 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
     z-index: 100;
     background: var(--color-bg);
     border-bottom: 1px solid var(--color-border);
+    transition: box-shadow 0.2s var(--ease), border-color 0.2s var(--ease);
+  }
+
+  /* Piccola elevazione una volta scorsa la pagina: sostituisce il filo sottile
+     con un'ombra discreta, invece di restare piatto per tutta la navigazione. */
+  .site-header[data-scrolled] {
+    border-bottom-color: transparent;
+    box-shadow: 0 10px 24px -18px rgb(30 42 39 / 0.4);
   }
 
   .site-header__bar {
@@ -483,5 +491,23 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
       setNav(false);
       setSub(false);
     });
+
+    // Ombra discreta solo una volta scorsa la pagina: niente elevazione in cima.
+    let ticking = false;
+    const updateScrolled = () => {
+      header.toggleAttribute('data-scrolled', window.scrollY > 4);
+      ticking = false;
+    };
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(updateScrolled);
+        }
+      },
+      { passive: true },
+    );
+    updateScrolled();
   }
 </script>

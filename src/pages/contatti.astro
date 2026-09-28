@@ -29,7 +29,7 @@ const origin = Astro.site!.origin;
       <div class="contact__channels">
         <div class="contact__whatsapp">
           <h2>WhatsApp</h2>
-          <p>Scrivimi due righe: ti rispondo e concordiamo come procedere.</p>
+          <p>Il canale più diretto per prenotare o avere informazioni: rispondo il prima possibile.</p>
           <WhatsAppButton size="lg" label="Contatta su WhatsApp" />
           {isWhatsappConfigured && <p class="small muted">Numero WhatsApp: {formatWhatsappNumber()}</p>}
         </div>
@@ -95,7 +95,7 @@ const origin = Astro.site!.origin;
       </div>
 
       <div class="contact__form">
-        <h2>Preferisci scrivere una email?</h2>
+        <h2>Contattami via email</h2>
         <p class="muted">Compila il modulo: bastano nome, un recapito e il messaggio.</p>
         <ContactForm />
       </div>
