@@ -1,0 +1,52 @@
+name: Anteprima GitHub Pages
+
+# Solo su avvio manuale: il deploy reale del sito è su Aruba (vedi README),
+# questa pipeline serve solo a mostrare lo stile su un URL pubblico temporaneo.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - run: npm install
+
+      - name: Build (Astro)
+        run: npm run build
+        env:
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+
+      - name: Adatta l'output al sotto-percorso /${{ github.event.repository.name }}
+        run: node .github/scripts/prepare-gh-pages.mjs
+        env:
+          SITE_URL: https://${{ github.repository_owner }}.github.io
+          BASE_PATH: /${{ github.event.repository.name }}
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
