@@ -1,12 +1,13 @@
 ---
 /**
- * Struttura comune delle tre pagine servizio: testata con sintesi (per chi,
+ * Struttura comune delle pagine servizio: testata con sintesi (per chi,
  * costo, durata), corpo con riepilogo fisso su desktop, altri servizi e CTA finale.
  * Ogni pagina servizio fornisce solo le sezioni di contenuto (slot).
  */
 import BaseLayout from './BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
 import Fill from '../components/Fill.astro';
+import PricePanel from '../components/PricePanel.astro';
 import SiteImage from '../components/SiteImage.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
 import { formatPrice, getService, services } from '../data/services';
@@ -70,7 +71,15 @@ const others = services.filter((s) => s.slug !== service.slug);
           <WhatsAppButton message={service.whatsappMessage} label="Contatta su WhatsApp" size="lg" />
         </div>
       </div>
-      <SiteImage name={service.image} ratio="3 / 2" eager priority class="service-hero__image" />
+      {
+        service.image ? (
+          <SiteImage name={service.image} ratio="3 / 2" eager priority class="service-hero__image" />
+        ) : (
+          <div class="service-hero__visual">
+            <PricePanel amount={service.price!.amount} label={service.name} />
+          </div>
+        )
+      }
     </div>
   </header>
 
@@ -117,8 +126,8 @@ const others = services.filter((s) => s.slug !== service.slug);
   </section>
 
   <CtaBand
-    title="Vuoi capire se questo percorso può essere adatto?"
-    text="Scrivimi su WhatsApp descrivendo la situazione: valuterò se questo percorso è adatto."
+    title={service.cta?.title ?? 'Vuoi capire se questo percorso può essere adatto?'}
+    text={service.cta?.text ?? 'Scrivimi su WhatsApp descrivendo la situazione: valuterò se questo percorso è adatto.'}
     message={service.whatsappMessage}
     emailSubject={`Informazioni: ${service.name}`}
   />
@@ -290,6 +299,21 @@ const others = services.filter((s) => s.slug !== service.slug);
     .others__list {
       grid-template-columns: repeat(2, minmax(0, 1fr));
     }
+
+    /* Numero dispari di voci: l'ultima occupa tutta la riga invece di lasciare un vuoto */
+    .others__list > :last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .others__list {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .others__list > :last-child:nth-child(odd) {
+      grid-column: auto;
+    }
   }
 
   /* Tablet: testata a due colonne (testo + immagine) invece dell'immagine a tutta larghezza sotto il testo */
@@ -298,6 +322,23 @@ const others = services.filter((s) => s.slug !== service.slug);
       grid-template-columns: 1.15fr 1fr;
       align-items: center;
       gap: 2.5rem;
+    }
+  }
+
+  /* Testata senza foto: il pannello prezzo sta in verticale accanto al testo, da tablet */
+  @media (min-width: 48rem) {
+    .service-hero__visual :global(.price-panel) {
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 2rem;
+      min-height: 15rem;
+      padding: 2rem;
+      border-radius: var(--radius-l);
+    }
+
+    .service-hero__visual :global(.price-panel__amount) {
+      font-size: clamp(3.25rem, 2.5rem + 2.5vw, 4.25rem);
     }
   }
 

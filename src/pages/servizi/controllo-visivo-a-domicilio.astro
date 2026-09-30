@@ -1,0 +1,62 @@
+---
+import { formatPrice, getService, homeVisit } from '../../data/services';
+import ServiceLayout from '../../layouts/ServiceLayout.astro';
+
+const price = formatPrice(getService(homeVisit.slug));
+---
+
+<ServiceLayout slug={homeVisit.slug}>
+  <section aria-labelledby="cose">
+    <h2 id="cose">Che cos’è il controllo visivo a domicilio</h2>
+    <p>
+      È la possibilità di ricevere il controllo visivo direttamente a casa tua, senza doverti spostare. Mi reco io al
+      tuo domicilio, effettuo il controllo visivo e valuto le necessità visive della persona.
+    </p>
+    <p>
+      Il servizio nasce soprattutto per chi ha difficoltà a spostarsi da casa, o per chi ha bisogno di una soluzione
+      più comoda e personalizzata.
+    </p>
+  </section>
+
+  <section aria-labelledby="per-chi">
+    <h2 id="per-chi">Pensato per chi ha difficoltà a spostarsi</h2>
+    <p>Il controllo a domicilio può essere particolarmente utile per:</p>
+    <ul class="checklist">
+      {homeVisit.audiences.map((audience) => <li>{audience}</li>)}
+    </ul>
+  </section>
+
+  <section aria-labelledby="come-funziona">
+    <h2 id="come-funziona">Come funziona</h2>
+    <ol class="steps">
+      {
+        homeVisit.steps.map((step) => (
+          <li>
+            <div>
+              <h3>{step.title}</h3>
+              <p>{step.text}</p>
+            </div>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section aria-labelledby="occhiali">
+    <h2 id="occhiali">E se servono gli occhiali</h2>
+    <p>
+      Sulla base dell’esito della valutazione, può essere realizzato l’occhiale più adatto alle tue esigenze visive.
+    </p>
+  </section>
+
+  <section aria-labelledby="costo">
+    <h2 id="costo">Costo</h2>
+    <p>
+      Il controllo visivo a domicilio costa <strong>{price.main}</strong>.
+    </p>
+    <p>
+      Per verificare la disponibilità del servizio e concordare un appuntamento, scrivimi su WhatsApp o contattami
+      dalla pagina <a href="/contatti/">Contatti</a>.
+    </p>
+  </section>
+</ServiceLayout>

@@ -42,7 +42,10 @@ export function serviceSchema(service: Service, origin: string) {
     name: service.name,
     description: service.seo.description,
     url: `${origin}${service.path}`,
-    areaServed: site.regions.map((name) => ({ '@type': 'AdministrativeArea', name })),
+    // Le prestazioni a domicilio non dichiarano la zona coperta: niente areaServed finché il cliente non la conferma
+    ...(!service.atHome && {
+      areaServed: site.regions.map((name) => ({ '@type': 'AdministrativeArea', name })),
+    }),
     ...(hasValue(site.businessName) && {
       provider: { '@type': 'ProfessionalService', '@id': `${origin}/#professional`, name: site.businessName },
     }),

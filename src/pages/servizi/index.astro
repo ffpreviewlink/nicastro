@@ -1,29 +1,116 @@
 ---
 import CtaBand from '../../components/CtaBand.astro';
+import HomeVisit from '../../components/HomeVisit.astro';
 import PageIntro from '../../components/PageIntro.astro';
 import ServiceCard from '../../components/ServiceCard.astro';
-import { services } from '../../data/services';
+import { getService, homeVisit, services } from '../../data/services';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { professionalSchema, serviceSchema } from '../../utils/schema';
+
+const origin = Astro.site!.origin;
+const homeService = getService(homeVisit.slug);
+/* Il controllo a domicilio ha la sua sezione in evidenza più sotto */
+const mainServices = services.filter((s) => !s.atHome);
 ---
 
 <BaseLayout
-  title="Servizi: analisi, rieducazione e potenziamento visivo"
-  description="Analisi visiva optometrica, rieducazione visiva (visual training) e potenziamento visivo sportivo: cosa sono, a chi sono rivolti, costi e come funzionano."
+  title="Servizi: analisi visiva, rieducazione e controllo visivo a domicilio"
+  description="Analisi visiva, rieducazione visiva, potenziamento sportivo e controllo visivo a domicilio (50 €) per chi ha difficoltà a spostarsi. Costi e come funzionano."
+  jsonLd={[serviceSchema(homeService, origin), professionalSchema(origin)]}
 >
   <PageIntro eyebrow="Servizi" title="Analisi, rieducazione e potenziamento">
     Di solito si parte dall’analisi visiva; se ne emerge la necessità, si prosegue con un percorso di rieducazione
-    visiva. Il potenziamento sportivo è pensato per chi pratica sport.
+    visiva. Il potenziamento sportivo è pensato per chi pratica sport. Per chi fa fatica a spostarsi, il controllo
+    visivo si può fare anche a casa.
+    <a slot="actions" class="btn btn--secondary" href={`#${homeVisit.anchor}`}>Controllo visivo a domicilio · {homeService.price!.amount} €</a>
   </PageIntro>
 
-  <section class="section" aria-label="I tre servizi">
+  <section class="section" aria-label="Servizi principali">
     <div class="container card-grid">
-      {services.map((service, i) => <ServiceCard service={service} index={i + 1} headingLevel="h2" />)}
+      {mainServices.map((service, i) => <ServiceCard service={service} index={i + 1} headingLevel="h2" />)}
+    </div>
+  </section>
+
+  <HomeVisit />
+
+  <section class="section" aria-labelledby="per-chi">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 1.3fr)">
+      <div class="section-head side-head">
+        <p class="eyebrow">A chi è rivolto</p>
+        <h2 id="per-chi">Pensato per chi ha difficoltà a spostarsi</h2>
+        <p class="lead">Il controllo a domicilio può essere particolarmente utile per:</p>
+      </div>
+      <ul class="who-list" role="list">
+        {homeVisit.audiences.map((audience) => <li>{audience}</li>)}
+      </ul>
+    </div>
+  </section>
+
+  <section class="section section--sand" aria-labelledby="come-funziona">
+    <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 1.3fr)">
+      <div class="section-head side-head">
+        <p class="eyebrow">Come funziona</p>
+        <h2 id="come-funziona">Come funziona il controllo a domicilio</h2>
+      </div>
+      <ol class="steps how-steps" role="list">
+        {
+          homeVisit.steps.map((step) => (
+            <li>
+              <div>
+                <h3>{step.title}</h3>
+                <p>{step.text}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
     </div>
   </section>
 
   <CtaBand
-    title="Non sai quale servizio scegliere?"
-    text="Scrivimi su WhatsApp descrivendo la situazione: valuterò da quale servizio è meglio partire."
+    title={homeService.cta!.title}
+    text={homeService.cta!.text}
+    message={homeService.whatsappMessage}
+    emailSubject={`Informazioni: ${homeService.name}`}
   />
 </BaseLayout>
 
+<style>
+  .side-head {
+    margin-bottom: 0;
+  }
+
+  /* Elenco a righe, come «Perché affidarsi» e la rete di professionisti in home */
+  .who-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    border-top: 2px solid var(--color-text);
+  }
+
+  .who-list li {
+    padding-block: 1.1rem;
+    border-bottom: 1px solid var(--color-border);
+    font-family: var(--font-heading);
+    font-size: 1.125rem;
+    font-weight: 600;
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+  }
+
+  /* Numerazione «01» al posto di «1» nei cerchi dei passaggi */
+  .how-steps > li::before {
+    content: counter(step, decimal-leading-zero);
+  }
+
+  .how-steps {
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 64rem) {
+    .side-head {
+      position: sticky;
+      top: calc(var(--header-h) + 2rem);
+    }
+  }
+</style>

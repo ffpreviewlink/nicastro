@@ -452,6 +452,11 @@ a:hover {
     .card-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
     }
+
+    /* Una scheda oltre le tre (4ª, 7ª…) occupa tutta la riga: la scheda passa da sola al layout orizzontale */
+    .card-grid > :last-child:nth-child(3n + 1) {
+        grid-column: 1 / -1;
+    }
 }
 
 

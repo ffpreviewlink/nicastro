@@ -1,7 +1,7 @@
 import type { ImageKey } from './images';
 
 /**
- * I tre servizi. Nome, prezzo, durata, testi di sintesi e messaggio WhatsApp
+ * I servizi. Nome, prezzo, durata, testi di sintesi e messaggio WhatsApp
  * si modificano solo qui: home, elenco servizi, pagine di dettaglio, menu,
  * footer e dati strutturati leggono da questo file.
  */
@@ -19,10 +19,16 @@ export interface Service {
   priceLabel?: string;
   /** Mostrata solo se presente. Un segnaposto [ ... ] compare evidenziato finché non viene sostituito. */
   duration?: string;
-  image: ImageKey;
+  /** Senza immagine, la testata della pagina mostra il pannello con il prezzo. */
+  image?: ImageKey;
   /** Etichetta discreta sulla card. */
   note?: string;
+  /** true = prestazione a domicilio: niente area servita nei dati strutturati (la zona non è dichiarata),
+   *  fuori dallo slider delle specializzazioni e dalla griglia di /servizi/ (ha una sezione dedicata). */
+  atHome?: boolean;
   whatsappMessage: string;
+  /** Titolo e testo della fascia finale della pagina di dettaglio (default: quelli generici). */
+  cta?: { title: string; text: string };
   seo: { title: string; description: string };
 }
 
@@ -85,6 +91,28 @@ export const services: Service[] = [
         'Potenziamento visivo per sportivi e atleti, amatoriali o agonisti: un percorso in due fasi, prima la correzione e poi il potenziamento vero e proprio.',
     },
   },
+  {
+    slug: 'controllo-visivo-a-domicilio',
+    path: '/servizi/controllo-visivo-a-domicilio/',
+    name: 'Controllo visivo a domicilio',
+    shortName: 'Controllo a domicilio',
+    summary:
+      'Il controllo visivo direttamente a casa tua, pensato per chi ha difficoltà a spostarsi o necessita di un servizio più comodo e personalizzato.',
+    audience: 'Chi ha difficoltà a spostarsi',
+    price: { amount: 50, unit: 'a domicilio' },
+    note: 'A domicilio',
+    atHome: true,
+    whatsappMessage: 'Buongiorno, vorrei avere informazioni sul controllo visivo a domicilio.',
+    cta: {
+      title: 'Hai bisogno di un controllo a domicilio?',
+      text: 'Scrivimi per verificare la disponibilità del servizio e concordare un appuntamento.',
+    },
+    seo: {
+      title: 'Controllo visivo a domicilio',
+      description:
+        'Controllo visivo a domicilio per chi ha difficoltà a spostarsi: mi reco a casa tua, valuto le necessità visive e, se serve, realizzo gli occhiali più adatti. 50 €.',
+    },
+  },
 ];
 
 export const getService = (slug: string): Service => {
@@ -101,3 +129,37 @@ export const formatPrice = (service: Service): { main: string; detail?: string }
         detail: service.price.unit,
       }
     : { main: service.priceLabel ?? 'Prezzo su valutazione' };
+
+/**
+ * Contenuti del controllo visivo a domicilio condivisi tra la sezione in evidenza
+ * di /servizi/ e la pagina di dettaglio. Nome, prezzo, sintesi e messaggio WhatsApp
+ * vengono dal servizio `controllo-visivo-a-domicilio` qui sopra.
+ */
+export const homeVisit = {
+  slug: 'controllo-visivo-a-domicilio',
+  /** Ancora della sezione in /servizi/. */
+  anchor: 'domicilio',
+  /** Micro-descrizione sotto il prezzo. */
+  priceLabel: 'Controllo visivo a domicilio',
+  points: [
+    'Mi reco direttamente al tuo domicilio',
+    'Effettuo il controllo visivo',
+    'Valuto le necessità visive della persona',
+    'In base alla valutazione, può essere realizzato l’occhiale più adatto',
+  ],
+  audiences: [
+    'Persone anziane',
+    'Persone con difficoltà motorie',
+    'Persone temporaneamente impossibilitate a raggiungere lo studio',
+    'Persone che necessitano di una valutazione direttamente al proprio domicilio',
+  ],
+  steps: [
+    { title: 'Richiedi il servizio', text: 'Contatti lo studio per concordare il controllo a domicilio.' },
+    { title: 'Vengo io da te', text: 'Il controllo viene effettuato direttamente presso il tuo domicilio.' },
+    { title: 'Valutazione visiva', text: 'Viene effettuata la valutazione delle tue esigenze visive.' },
+    {
+      title: 'Soluzione personalizzata',
+      text: 'In base alla valutazione, è possibile procedere con la realizzazione degli occhiali più adatti.',
+    },
+  ],
+} as const;

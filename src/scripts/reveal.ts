@@ -24,10 +24,12 @@ const TARGETS = [
   '.contact__channels',
   '.contact__form',
   '.service-body__main > section',
+  '.home-visit',
   // elenchi: ogni voce entra per conto suo, con lo sfasamento minimo
   '.card-grid > *',
   '.others__list > *',
   '.trust > *',
+  '.who-list > *',
   '.timeline > *',
   '.steps > *',
 ].join(',');

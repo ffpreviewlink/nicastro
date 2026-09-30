@@ -2,7 +2,7 @@
 /**
  * Header con navigazione principale.
  * - Mobile: barra con nome dello studio + pulsante Menu; il pannello si apre sotto la barra.
- *   I tre servizi sono sempre visibili sotto "Servizi" (un tocco in meno).
+ *   I servizi sono sempre visibili sotto "Servizi" (un tocco in meno).
  * - Desktop (≥ 76rem): voci in linea; "Servizi" è un link alla pagina Servizi
  *   più un pulsante che apre il sottomenu (Esc lo chiude, focus rispettato).
  * - Senza JavaScript il menu resta interamente visibile e navigabile.
@@ -58,7 +58,7 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
                   aria-controls="menu-servizi"
                 >
                   <Icon name="chevron" />
-                  <span class="visually-hidden">Mostra i tre servizi</span>
+                  <span class="visually-hidden">Mostra i servizi</span>
                 </button>
                 <ul class="sub-menu" id="menu-servizi" role="list">
                   {item.children.map((child) => (

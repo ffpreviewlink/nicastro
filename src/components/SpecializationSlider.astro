@@ -2,7 +2,7 @@
 /**
  * Slider automatico delle specializzazioni.
  *
- * Contenuto: i tre servizi reali (src/data/services.ts). Non esiste, nel
+ * Contenuto: i tre servizi di specializzazione reali (src/data/services.ts). Non esiste, nel
  * progetto, un elenco di "specializzazioni" distinto e già compilato
  * (src/data/credentials.ts aveva solo segnaposto "[INSERIRE SPECIALIZZAZIONE]",
  * mai forniti dal cliente): i servizi sono l'unico contenuto reale, verificato
@@ -15,7 +15,10 @@
  * disattivato del tutto (non solo rallentato). Nessuna libreria.
  */
 import Icon from './Icon.astro';
-import { services } from '../data/services';
+import { services as allServices } from '../data/services';
+
+/* Il controllo a domicilio è una modalità, non una specializzazione */
+const services = allServices.filter((s) => !s.atHome);
 ---
 
 <div class="spec-slider" data-spec-slider role="region" aria-roledescription="carousel" aria-label="Specializzazioni">

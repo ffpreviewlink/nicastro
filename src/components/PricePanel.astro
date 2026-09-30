@@ -1,0 +1,67 @@
+---
+/**
+ * Pannello con icona e prezzo in evidenza, per i servizi senza foto
+ * (controllo visivo a domicilio): sezione in /servizi/ e testata della pagina di dettaglio.
+ * Di base è compatto e orizzontale (telefono); chi lo usa lo dispone in verticale
+ * dove c'è spazio, con `.price-panel` via :global.
+ */
+import Icon from './Icon.astro';
+
+interface Props {
+  amount: number;
+  label: string;
+}
+
+const { amount, label } = Astro.props;
+---
+
+<div class="price-panel">
+  <span class="price-panel__icon"><Icon name="home" /></span>
+  <div>
+    <p class="price-panel__amount">{amount} €</p>
+    <p class="price-panel__label">{label}</p>
+  </div>
+</div>
+
+<style>
+  .price-panel {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: var(--radius-m);
+    background: var(--color-primary-dark);
+    color: var(--color-on-dark);
+  }
+
+  .price-panel__icon {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 50%;
+    background: rgb(251 249 244 / 0.1);
+    color: var(--color-primary-light);
+  }
+
+  .price-panel__icon :global(svg) {
+    width: 1.65rem;
+    height: 1.65rem;
+  }
+
+  .price-panel__amount {
+    font-family: var(--font-heading);
+    font-size: clamp(2.5rem, 2rem + 2.5vw, 3.5rem);
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .price-panel__label {
+    margin-top: 0.4rem;
+    font-size: var(--text-small);
+    line-height: 1.4;
+    color: var(--color-on-dark-muted);
+  }
+</style>

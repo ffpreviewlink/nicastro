@@ -4,7 +4,19 @@
  * espresso anche dal testo accanto, quindi aria-hidden.
  */
 interface Props {
-  name: 'whatsapp' | 'facebook' | 'mail' | 'phone' | 'arrow' | 'chevron' | 'menu' | 'close' | 'star' | 'check' | 'pin';
+  name:
+    | 'whatsapp'
+    | 'facebook'
+    | 'mail'
+    | 'phone'
+    | 'arrow'
+    | 'chevron'
+    | 'menu'
+    | 'close'
+    | 'star'
+    | 'check'
+    | 'pin'
+    | 'home';
   class?: string;
 }
 
@@ -79,6 +91,15 @@ const { name, class: className } = Astro.props;
   name === 'check' && (
     <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
       <path d="m5 12.5 4.5 4.5L19 7.5" />
+    </svg>
+  )
+}
+{
+  name === 'home' && (
+    <svg class={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+      <path d="M3.5 11 12 4l8.5 7" />
+      <path d="M5.5 9.5V20h13V9.5" />
+      <path d="M10 20v-5.5h4V20" />
     </svg>
   )
 }

@@ -1,0 +1,144 @@
+---
+/**
+ * Sezione in evidenza del controllo visivo a domicilio (pagina Servizi).
+ * Nome, prezzo, sintesi e messaggio WhatsApp vengono dal servizio
+ * `controllo-visivo-a-domicilio`, punti ed etichette da `homeVisit` (src/data/services.ts).
+ *
+ * L'ordine nel markup è quello di lettura su telefono: titolo → descrizione →
+ * prezzo → punti → CTA. Da ~46rem di larghezza della scheda il prezzo passa in
+ * una colonna a destra, senza cambiare l'ordine del contenuto.
+ * Il visual è un pannello con icona e prezzo, non una foto: nessuna immagine
+ * adatta era disponibile (vedi src/data/images.ts se ne verrà aggiunta una).
+ */
+import Icon from './Icon.astro';
+import PricePanel from './PricePanel.astro';
+import WhatsAppButton from './WhatsAppButton.astro';
+import { getService, homeVisit } from '../data/services';
+
+const service = getService(homeVisit.slug);
+---
+
+<section class="section section--sand" id={homeVisit.anchor} aria-labelledby="domicilio-title">
+  <div class="container">
+    <div class="home-visit">
+      <div class="home-visit__card">
+        <div class="home-visit__head">
+          <p class="home-visit__badge">{service.note}</p>
+          <h2 id="domicilio-title">{service.name}</h2>
+          <p class="lead">{service.summary}</p>
+          <p>
+            <a class="link-arrow" href={service.path}>
+              Scopri come funziona <Icon name="arrow" />
+            </a>
+          </p>
+        </div>
+
+        <PricePanel amount={service.price!.amount} label={homeVisit.priceLabel} />
+
+        <ul class="checklist home-visit__points" role="list">
+          {homeVisit.points.map((point) => <li>{point}</li>)}
+        </ul>
+
+        <div class="cta-row home-visit__cta" data-cta>
+          <a class="btn btn--primary btn--lg" href="/contatti/">Richiedi informazioni</a>
+          <WhatsAppButton
+            variant="secondary"
+            size="lg"
+            message={service.whatsappMessage}
+            label="Scrivimi su WhatsApp"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* La scheda si adatta alla propria larghezza (come ServiceCard), non a quella dello schermo */
+  .home-visit {
+    container-type: inline-size;
+  }
+
+  .home-visit__card {
+    display: grid;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid var(--color-primary);
+    border-radius: var(--radius-l);
+    background: var(--color-surface);
+  }
+
+  .home-visit__head > * + * {
+    margin-top: 1rem;
+  }
+
+  /* Stessa etichetta discreta usata sulle schede servizio */
+  .home-visit__badge {
+    display: inline-block;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    background: var(--color-primary-dark);
+    color: var(--color-on-dark);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .home-visit__points {
+    align-content: start;
+  }
+
+  @media (max-width: 30rem) {
+    .home-visit__cta {
+      flex-direction: column;
+      align-items: stretch;
+    }
+  }
+
+  @container (min-width: 30rem) {
+    .home-visit__card {
+      padding: 2rem;
+    }
+  }
+
+  @container (min-width: 46rem) {
+    .home-visit__card {
+      grid-template-columns: minmax(0, 1fr) 17rem;
+      grid-template-areas:
+        'head price'
+        'points price'
+        'cta price';
+      grid-template-rows: auto auto 1fr;
+      column-gap: 3rem;
+      row-gap: 1.75rem;
+      padding: 2.5rem;
+    }
+
+    .home-visit__head {
+      grid-area: head;
+    }
+
+    .home-visit__points {
+      grid-area: points;
+    }
+
+    .home-visit__cta {
+      grid-area: cta;
+      align-self: end;
+    }
+
+    /* Colonna di destra: prezzo in verticale, a tutta altezza */
+    .home-visit__card > :global(.price-panel) {
+      grid-area: price;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 2rem;
+      padding: 2rem;
+    }
+
+    .home-visit__card :global(.price-panel__amount) {
+      font-size: clamp(3.25rem, 2.5rem + 2.5vw, 4.25rem);
+    }
+  }
+</style>
