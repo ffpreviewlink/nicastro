@@ -91,6 +91,7 @@ const pages = navigation.filter((item) => item.href !== '/servizi/');
     <p class="small">
       © {year} <Fill value={site.businessName} /> · {formatAddress()} · P.IVA <Fill value={site.vatId} />
     </p>
+    <p class="footer__credit small">Website by <span>Federico Fuffa</span></p>
   </div>
 </footer>
 
@@ -183,6 +184,33 @@ const pages = navigation.filter((item) => item.href !== '/servizi/');
 
   .footer__legal p {
     max-width: 52rem;
+  }
+
+  /* Firma discreta, separata dai dati legali */
+  .footer__credit {
+    padding-top: 0.6rem;
+    border-top: 1px solid var(--color-line-on-dark);
+    font-size: var(--text-label);
+    letter-spacing: 0.02em;
+  }
+
+  .footer__credit span {
+    color: var(--color-on-dark);
+    font-weight: 600;
+  }
+
+  @media (min-width: 48rem) {
+    .footer__legal {
+      grid-template-columns: 1fr auto;
+      align-items: start;
+      column-gap: 2rem;
+    }
+
+    .footer__credit {
+      padding-top: 0;
+      border-top: 0;
+      text-align: right;
+    }
   }
 
   /* Da telefono grande: navigazione su due colonne, marchio e contatti a tutta larghezza */

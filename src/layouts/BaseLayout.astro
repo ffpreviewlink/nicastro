@@ -55,6 +55,8 @@ const structuredData = jsonLd.filter(Boolean);
     <link rel="canonical" href={canonical} />
     {noindex && <meta name="robots" content="noindex, follow" />}
     <meta name="theme-color" content="#FBF9F4" />
+    <!-- Evita che i browser mobile trasformino la P.IVA (11 cifre) in un link di chiamata -->
+    <meta name="format-detection" content="telephone=no" />
 
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

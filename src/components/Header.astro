@@ -153,14 +153,19 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
     align-items: center;
     gap: 0.5rem;
     min-height: 2.75rem;
-    padding: 0.25rem 0.9rem;
-    border: 1.5px solid var(--color-border-strong);
-    border-radius: 999px;
+    padding: 0.25rem 0.5rem;
+    margin-right: -0.5rem;
+    border: 0;
+    border-radius: var(--radius-s);
     background: transparent;
     font-family: var(--font-heading);
     font-size: 0.9375rem;
     font-weight: 600;
     color: var(--color-text);
+  }
+
+  .nav-toggle:hover {
+    color: var(--color-primary);
   }
 
   :global(html.js) .nav-toggle {
@@ -188,8 +193,12 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
     padding-bottom: 1.25rem;
   }
 
+  /* Chiuso: resta nel DOM ma invisibile e non raggiungibile (visibility), così può animarsi */
   :global(html.js) .site-nav {
-    display: none;
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
     position: absolute;
     top: 100%;
     left: 0;
@@ -203,7 +212,10 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
   }
 
   :global(html.js) .site-nav[data-open] {
-    display: block;
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    pointer-events: auto;
   }
 
   .site-nav__list,
@@ -286,6 +298,11 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
       border: 0;
       box-shadow: none;
       background: transparent;
+      visibility: visible;
+      opacity: 1;
+      transform: none;
+      pointer-events: auto;
+      transition: none;
     }
 
     .site-nav__list {
@@ -386,7 +403,7 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
     }
   }
 
-  /* Sottomenu e pannello mobile: comparsa in 160 ms (opacity + 4px) */
+  /* Sottomenu: comparsa in 160 ms (opacity + 4px) */
   @keyframes menu-in {
     from {
       opacity: 0;
@@ -394,10 +411,22 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
     }
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    :global(html.js) .site-nav[data-open] {
-      animation: menu-in 0.16s var(--ease);
+  /* Pannello mobile: apertura e chiusura animate (opacity + scorrimento).
+     visibility ritarda la scomparsa fino a fine transizione, così anche la chiusura si vede. */
+  @media (prefers-reduced-motion: no-preference) and (max-width: 75.999rem) {
+    :global(html.js) .site-nav {
+      transition:
+        opacity 0.22s var(--ease),
+        transform 0.22s var(--ease),
+        visibility 0s linear 0.22s;
     }
+
+    :global(html.js) .site-nav[data-open] {
+      transition-delay: 0s;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
 
     .has-sub[data-open] .sub-menu {
       animation: menu-in 0.16s var(--ease);
@@ -427,6 +456,7 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
       justify-content: center;
       width: var(--touch);
       padding: 0;
+      margin-right: 0;
     }
 
     .nav-toggle__label {
