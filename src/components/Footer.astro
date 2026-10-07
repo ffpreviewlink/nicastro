@@ -73,16 +73,6 @@ const pages = navigation.filter((item) => item.href !== '/servizi/');
             </li>
           )
         }
-        {
-          hasValue(site.social.facebook) && (
-            <li>
-              <Icon name="facebook" />
-              <a href={site.social.facebook} target="_blank" rel="noopener noreferrer">
-                Facebook<span class="visually-hidden"> (si apre in una nuova scheda)</span>
-              </a>
-            </li>
-          )
-        }
       </ul>
     </div>
   </div>

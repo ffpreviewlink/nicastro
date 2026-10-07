@@ -35,7 +35,7 @@ const origin = Astro.site!.origin;
         </div>
 
         <div>
-          <h2 class="contact__h">Email e social</h2>
+          <h2 class="contact__h">Email</h2>
           <ul class="contact__list" role="list">
             <li>
               <Icon name="mail" />
@@ -52,16 +52,6 @@ const origin = Astro.site!.origin;
                 <li>
                   <Icon name="phone" />
                   <a href={`tel:${site.phone.replace(/[^\d+]/g, '')}`}>{site.phone}</a>
-                </li>
-              )
-            }
-            {
-              hasValue(site.social.facebook) && (
-                <li>
-                  <Icon name="facebook" />
-                  <a href={site.social.facebook} target="_blank" rel="noopener noreferrer">
-                    Facebook<span class="visually-hidden"> (si apre in una nuova scheda)</span>
-                  </a>
                 </li>
               )
             }

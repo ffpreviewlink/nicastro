@@ -15,7 +15,7 @@ Ogni dato ha un solo posto: cambiandolo lì, si aggiorna in tutto il sito.
 
 | Cosa | File |
 | :-- | :-- |
-| Nome, nome dell'attività, email, telefono, P.IVA, **numero WhatsApp**, indirizzo, Facebook, sedi in cui riceve, Place ID Google, endpoint del modulo | [src/data/site.ts](src/data/site.ts) |
+| Nome, nome dell'attività, email, telefono, P.IVA, **numero WhatsApp**, indirizzo, sedi in cui riceve, Place ID Google, endpoint del modulo | [src/data/site.ts](src/data/site.ts) |
 | Servizi: nome, prezzo, durata, testi di sintesi, messaggio WhatsApp | [src/data/services.ts](src/data/services.ts) |
 | Esperienze, formazione, specializzazioni, punti di autorevolezza | [src/data/credentials.ts](src/data/credentials.ts) |
 | Le tre slide del hero (bambini, adulti, sportivi) | [src/data/audiences.ts](src/data/audiences.ts) |

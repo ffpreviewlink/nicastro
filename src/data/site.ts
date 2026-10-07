@@ -45,10 +45,6 @@ export const site = {
 
   address,
 
-  social: {
-    facebook: 'https://www.facebook.com/profile.php?id=61578618864824',
-  },
-
   /**
    * Studi in cui riceve attualmente. Nessuna sede confermata al momento: elenco
    * vuoto finché il cliente non ne conferma una. Aggiungere una voce qui appena
