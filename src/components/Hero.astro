@@ -47,7 +47,7 @@ import { site } from '../data/site';
                 <h2 class="slide__title" id={`slide-title-${audience.id}`}>
                   {audience.title}
                 </h2>
-                <p class="slide__desc">{audience.text}</p>
+                {[audience.text].flat().map((paragraph) => <p class="slide__desc">{paragraph}</p>)}
                 <div class="cta-row">
                   <a class="btn btn--primary" href={audience.cta.href}>
                     {audience.cta.label}
