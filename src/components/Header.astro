@@ -119,6 +119,7 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
     flex: 1 1 0;
     align-items: center;
     min-width: 0;
+    min-height: var(--touch);
     padding-block: 0.5rem;
     color: var(--color-text);
     text-decoration: none;
@@ -142,7 +143,7 @@ const isSection = (href: string) => href !== '/' && path.startsWith(href);
   }
 
   .brand__role {
-    font-size: 0.8125rem;
+    font-size: var(--text-label);
     color: var(--color-text-muted);
   }
 

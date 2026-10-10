@@ -1,0 +1,163 @@
+@[content] width=device-width, initial-scale=1, viewport-fit=cover
+Rieducazione visiva (Visual Training) | Studio Optometrico Nicastro
+@[content] Il visual training spiegato ai genitori: come funziona il percorso di rieducazione visiva, durata indicativa (3–8 mesi) e costo, 60 € a seduta.
+@[href] https://www.example.com/servizi/rieducazione-visiva/
+@[content] #FBF9F4
+@[content] telephone=no
+@[href] /favicon.ico
+@[href] /favicon.svg
+@[href] /apple-touch-icon.png
+@[content] website
+@[content] Studio Optometrico Nicastro
+@[content] it_IT
+@[content] Rieducazione visiva (Visual Training) | Studio Optometrico Nicastro
+@[content] Il visual training spiegato ai genitori: come funziona il percorso di rieducazione visiva, durata indicativa (3–8 mesi) e costo, 60 € a seduta.
+@[content] https://www.example.com/servizi/rieducazione-visiva/
+@[content] https://www.example.com/images/og-default.jpg
+@[content] summary_large_image
+@[href] /_astro/fonts/e868cdf4720e9ea5.woff2
+@[href] /_astro/fonts/52056217662ab262.woff2
+JSONLD {"@context":"https://schema.org","@type":"Service","name":"Rieducazione visiva (Visual Training)","description":"Il visual training spiegato ai genitori: come funziona il percorso di rieducazione visiva, durata indicativa (3–8 mesi) e costo, 60 € a seduta.","url":"https://www.example.com/servizi/rieducazione-visiva/","areaServed":[{"@type":"AdministrativeArea","name":"Marche"},{"@type":"AdministrativeArea","name":"Umbria"}],"provider":{"@type":"ProfessionalService","@id":"https://www.example.com/#professional","name":"Studio Optometrico Nicastro"},"offers":{"@type":"Offer","price":60,"priceCurrency":"EUR"}}
+JSONLD {"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://www.example.com/#professional","name":"Studio Optometrico Nicastro","description":"Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi, in Marche e Umbria.","founder":{"@type":"Person","name":"Nicolais Nicastro"},"url":"https://www.example.com/","image":"https://www.example.com/images/og-default.jpg","areaServed":[{"@type":"AdministrativeArea","name":"Marche"},{"@type":"AdministrativeArea","name":"Umbria"}],"email":"studio.nicastronico@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Via Vittorio Bachelet, 15","postalCode":"62024","addressLocality":"Matelica","addressRegion":"MC","addressCountry":"IT"},"sameAs":["https://www.google.com/maps/place/?q=place_id:ChIJAxnfu4PFLRMRqZ-Zw4r50fI"]}
+@[href] /_astro/BaseLayout.*.css
+@[href] /_astro/ServiceLayout.*.css
+@[href] #contenuto
+Vai al contenuto
+@[href] /
+Studio Optometrico Nicastro
+Optometrista, Rieducatore visivo
+Menu
+@[aria-label] Principale
+@[href] /
+Home
+@[href] /servizi/
+Servizi
+Mostra i servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+@[href] /chi-sono/
+Chi sono
+@[href] /professionisti/
+Per i professionisti
+@[href] /recensioni/
+Recensioni
+@[href] /contatti/
+Contatti
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+WhatsApp
+(si apre in una nuova scheda)
+@[aria-label] Percorso di navigazione
+@[href] /
+Home
+@[href] /servizi/
+Servizi
+Rieducazione visiva
+Rieducazione visiva (Visual Training)
+Un percorso di sedute per lavorare sulle abilità visive che risultano non adeguate rispetto a quanto atteso per l’età.
+Per chi
+Soprattutto bambini
+Costo
+60 €
+a seduta
+Durata
+Indicativamente da 3 a 8 mesi
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sul%20percorso%20di%20rieducazione%20visiva%20(visual%20training).
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[alt] Una seduta di rieducazione visiva
+Che cos’è il visual training
+La rieducazione visiva, o visual training, è un percorso fatto di sedute in cui si lavora sulle abilità visive.
+Le abilità visive sono le capacità che permettono agli occhi e al cervello di lavorare bene insieme. A volte alcune di queste abilità risultano non adeguate rispetto a quanto ci si aspetta per l’età: il percorso serve a lavorare proprio su quelle.
+Non è una terapia medica e non garantisce un risultato: ogni persona ha i suoi tempi, per questo la durata è indicativa.
+Perché può essere proposto
+Il visual training viene proposto quando alcune abilità visive risultano non adeguate rispetto a quanto atteso per l’età. Di solito lo si scopre con un’
+@[href] /servizi/analisi-visiva-optometrica/
+analisi visiva optometrica
+.
+È il trattamento che propongo più spesso.
+Come funziona il percorso
+Si parte dalle abilità da rafforzare
+Il percorso si costruisce sulle abilità visive che risultano non adeguate.
+Si lavora per sedute
+Ogni seduta costa 60 € e dura 50 minuti.
+Le sedute si svolgono una volta a settimana o, quando non è possibile per motivi organizzativi, al massimo una volta ogni due settimane.
+A casa vengono assegnati alcuni esercizi: preparano gli occhi alla seduta successiva, velocizzando il percorso e migliorandone il risultato.
+Si prosegue nel tempo
+Il percorso dura indicativamente da 3 a 8 mesi, con tempi che variano da persona a persona.
+Cosa significa lavorare sulle abilità visive
+Significa concentrarsi, seduta dopo seduta, sulle singole abilità visive che risultano non adeguate rispetto a quanto atteso per l’età. Il percorso mira a lavorare su queste abilità.
+Per esempio, per migliorare l’ampiezza dell’accomodazione si guardano delle lettere stampate incollate su una penna, con un occhio coperto da una benda: si avvicina il target finché non diventa sfocato e si ripete il movimento alcune volte, per aumentare la capacità di vedere nitido da vicino.
+Costo e durata
+Ogni seduta costa
+60 €
+. Durata del percorso: indicativamente da 3 a 8 mesi.
+@[aria-label] Riepilogo e contatto
+Rieducazione visiva
+60 €
+a seduta
+Durata
+Indicativamente da 3 a 8 mesi
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sul%20percorso%20di%20rieducazione%20visiva%20(visual%20training).
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com?subject=Informazioni%3A%20Rieducazione%20visiva%20(Visual%20Training)
+Oppure scrivi via email
+Gli altri servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+Una valutazione delle abilità visive, per capire come gli occhi lavorano nelle attività di ogni giorno.
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+Per chi pratica sport, a livello amatoriale o agonistico: prima la correzione, poi il potenziamento vero e proprio.
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+Il controllo visivo direttamente a casa tua, pensato per chi ha difficoltà a spostarsi o necessita di un servizio più comodo e personalizzato.
+Vuoi capire se questo percorso può essere adatto?
+Scrivimi su WhatsApp descrivendo la situazione: valuterò se questo percorso è adatto.
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sul%20percorso%20di%20rieducazione%20visiva%20(visual%20training).
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com?subject=Informazioni%3A%20Rieducazione%20visiva%20(Visual%20Training)
+Scrivi via email
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+WhatsApp
+: scrivimi un messaggio
+(si apre in una nuova scheda)
+Studio Optometrico Nicastro
+Optometrista, Rieducatore visivo
+Per sapere come fissare un appuntamento, scrivimi su WhatsApp.
+Servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+Il sito
+@[href] /
+Home
+@[href] /chi-sono/
+Chi sono
+@[href] /professionisti/
+Per i professionisti
+@[href] /recensioni/
+Recensioni
+@[href] /contatti/
+Contatti
+Contatti
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+Scrivimi su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com
+studio.nicastronico@gmail.com
+© 2026 Studio Optometrico Nicastro · Via Vittorio Bachelet, 15, 62024 Matelica (MC) · P.IVA 02156950434
+Website by
+Federico Fuffa

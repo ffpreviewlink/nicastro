@@ -1,0 +1,174 @@
+@[content] width=device-width, initial-scale=1, viewport-fit=cover
+Chi sono: percorso, esperienze e formazione | Studio Optometrico Nicastro
+@[content] Optometrista, Rieducatore visivo: il mio percorso professionale, le esperienze in contesti diversi, la formazione e il modo in cui lavoro oggi.
+@[href] https://www.example.com/chi-sono/
+@[content] #FBF9F4
+@[content] telephone=no
+@[href] /favicon.ico
+@[href] /favicon.svg
+@[href] /apple-touch-icon.png
+@[content] website
+@[content] Studio Optometrico Nicastro
+@[content] it_IT
+@[content] Chi sono: percorso, esperienze e formazione | Studio Optometrico Nicastro
+@[content] Optometrista, Rieducatore visivo: il mio percorso professionale, le esperienze in contesti diversi, la formazione e il modo in cui lavoro oggi.
+@[content] https://www.example.com/chi-sono/
+@[content] https://www.example.com/images/og-default.jpg
+@[content] summary_large_image
+@[href] /_astro/fonts/e868cdf4720e9ea5.woff2
+@[href] /_astro/fonts/52056217662ab262.woff2
+JSONLD {"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://www.example.com/#professional","name":"Studio Optometrico Nicastro","description":"Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi, in Marche e Umbria.","founder":{"@type":"Person","name":"Nicolais Nicastro"},"url":"https://www.example.com/","image":"https://www.example.com/images/og-default.jpg","areaServed":[{"@type":"AdministrativeArea","name":"Marche"},{"@type":"AdministrativeArea","name":"Umbria"}],"email":"studio.nicastronico@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Via Vittorio Bachelet, 15","postalCode":"62024","addressLocality":"Matelica","addressRegion":"MC","addressCountry":"IT"},"sameAs":["https://www.google.com/maps/place/?q=place_id:ChIJAxnfu4PFLRMRqZ-Zw4r50fI"]}
+@[href] /_astro/BaseLayout.*.css
+@[href] /_astro/chi-sono.*.css
+@[href] #contenuto
+Vai al contenuto
+@[href] /
+Studio Optometrico Nicastro
+Optometrista, Rieducatore visivo
+Menu
+@[aria-label] Principale
+@[href] /
+Home
+@[href] /servizi/
+Servizi
+Mostra i servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+@[href] /chi-sono/
+Chi sono
+@[href] /professionisti/
+Per i professionisti
+@[href] /recensioni/
+Recensioni
+@[href] /contatti/
+Contatti
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+WhatsApp
+(si apre in una nuova scheda)
+Chi sono
+Mi occupo di come la vista viene utilizzata ogni giorno
+Sono Nicolais Nicastro, optometrista e rieducatore visivo.
+Dopo aver iniziato il mio percorso professionale nel settore dell’ottica, ho sentito il bisogno di approfondire ciò che va oltre la semplice nitidezza visiva. La formazione in optometria mi ha permesso di comprendere quanto il sistema visivo sia complesso e quante abilità contribuiscano al suo corretto funzionamento.
+Da qui nasce il mio lavoro: valutare queste abilità e aiutare bambini, adulti e sportivi a utilizzarle in modo più efficiente, attraverso percorsi personalizzati di rieducazione e potenziamento visivo.
+Ho scelto di portare questa esperienza nella mia città, Matelica, collaborando anche con altri professionisti per offrire un approccio attento alle esigenze di ogni persona.
+@[alt] Ritratto di Nicolais Nicastro
+Percorso
+Esperienze
+Le tappe principali del mio percorso professionale, in contesti diversi.
+2019 – 2024
+Ottico-optometrista
+Fano, Perugia, Imola, Bolzano, Trento
+Ho svolto la professione di ottico-optometrista in diversi centri italiani.
+2023
+Insegnante di Ottica
+Istituto Don E. Pocognoni, Matelica
+Sono stato chiamato come insegnante di Ottica.
+Dal 2025
+Studio dedicato all’analisi e alla rieducazione visiva
+Marche
+Ho aperto lo Studio Optometrico Nicastro: sono stato l’unico, nelle Marche, ad avere uno studio dedicato esclusivamente a questa attività.
+Oggi
+Verso nuove sedi
+Il mio modo di lavorare si sta evolvendo: le sedi in cui ricevo sono in aggiornamento. Scrivimi su WhatsApp per sapere come fissare un appuntamento.
+Studi
+Formazione
+2019
+@[alt] Istituto Don E. Pocognoni, Matelica
+Ottico – Arte ausiliaria delle professioni sanitarie
+Istituto Don E. Pocognoni, Matelica
+2024
+@[alt] IRSOO, Vinci (FI)
+Optometria
+IRSOO, Vinci (FI)
+2024
+@[alt] OptoTube Academy
+Rieducazione visiva
+OptoTube Academy
+2025
+@[alt] OptoTube Academy
+Visione e Postura
+OptoTube Academy
+Competenze
+Specializzazioni
+@[aria-label] Specializzazioni
+@[aria-label] Specializzazione 1 di 3
+01
+/ 03
+Analisi visiva optometrica
+Una valutazione delle abilità visive, per capire come gli occhi lavorano nelle attività di ogni giorno.
+@[href] /servizi/analisi-visiva-optometrica/
+Scopri il servizio
+@[aria-label] Specializzazione 2 di 3
+02
+/ 03
+Rieducazione visiva (Visual Training)
+Un percorso di sedute per lavorare sulle abilità visive che risultano non adeguate rispetto a quanto atteso per l’età.
+@[href] /servizi/rieducazione-visiva/
+Scopri il servizio
+@[aria-label] Specializzazione 3 di 3
+03
+/ 03
+Potenziamento visivo sportivo
+Per chi pratica sport, a livello amatoriale o agonistico: prima la correzione, poi il potenziamento vero e proprio.
+@[href] /servizi/potenziamento-visivo-sportivo/
+Scopri il servizio
+@[aria-label] Specializzazione precedente
+@[aria-label] Specializzazione successiva
+Approccio
+Il mio modo di lavorare
+Lavoro spesso a fianco di altri professionisti che seguono le stesse persone: logopedisti, psicologi, neuropsicomotricisti. Una parte importante delle famiglie arriva proprio su loro indicazione.
+Il mio modo di lavorare è molto empatico. Non indosso il camice: agli occhi di un bambino, ma anche di chiunque entri in studio, elimina quella sensazione da «dottore» che spesso genera ansia. La persona che ho davanti è al centro di tutto.
+Prima dell’appuntamento mando a casa un questionario, utile per capire a tutto tondo le difficoltà che si stanno vivendo. In studio faccio molte domande, per evitare che qualcosa venga tralasciato, come capita spesso nelle visite svolte di fretta in ospedale o in altri studi.
+Oggi
+Dove e come lavoro adesso
+Nelle Marche sono stato l’unico ad avere uno studio dedicato esclusivamente all’analisi e alla rieducazione visiva. Oggi il mio modo di lavorare si sta evolvendo: ricevo in tutta la regione Marche e in Umbria.
+Per sapere come fissare un appuntamento, scrivimi su WhatsApp.
+Vuoi capire se questo percorso può essere adatto?
+Scrivimi su WhatsApp descrivendo la situazione: valuterò se questo percorso è adatto.
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com
+Scrivi via email
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+WhatsApp
+: scrivimi un messaggio
+(si apre in una nuova scheda)
+Studio Optometrico Nicastro
+Optometrista, Rieducatore visivo
+Per sapere come fissare un appuntamento, scrivimi su WhatsApp.
+Servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+Il sito
+@[href] /
+Home
+@[href] /chi-sono/
+Chi sono
+@[href] /professionisti/
+Per i professionisti
+@[href] /recensioni/
+Recensioni
+@[href] /contatti/
+Contatti
+Contatti
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+Scrivimi su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com
+studio.nicastronico@gmail.com
+© 2026 Studio Optometrico Nicastro · Via Vittorio Bachelet, 15, 62024 Matelica (MC) · P.IVA 02156950434
+Website by
+Federico Fuffa

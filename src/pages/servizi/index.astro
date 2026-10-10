@@ -9,7 +9,7 @@ import { professionalSchema, serviceSchema } from '../../utils/schema';
 
 const origin = Astro.site!.origin;
 const homeService = getService(homeVisit.slug);
-/* Il controllo a domicilio ha la sua sezione in evidenza più sotto */
+/* Il controllo a domicilio è la quarta scheda della stessa griglia (HomeVisit) */
 const mainServices = services.filter((s) => !s.atHome);
 ---
 
@@ -26,12 +26,11 @@ const mainServices = services.filter((s) => !s.atHome);
   </PageIntro>
 
   <section class="section" aria-label="Servizi principali">
-    <div class="container card-grid">
+    <div class="container service-board">
       {mainServices.map((service, i) => <ServiceCard service={service} index={i + 1} headingLevel="h2" />)}
+      <HomeVisit />
     </div>
   </section>
-
-  <HomeVisit />
 
   <section class="section" aria-labelledby="per-chi">
     <div class="container split" style="--split: minmax(0, 1fr) minmax(0, 1.3fr)">
@@ -76,6 +75,172 @@ const mainServices = services.filter((s) => !s.atHome);
 </BaseLayout>
 
 <style>
+  /* --- Le quattro schede dei servizi: stessa struttura e stesso peso ---------------------------
+     Composizione editoriale, diversa da quella della home: numero e badge su una riga con filetto,
+     titolo, descrizione, informazioni pratiche a righe con filetti, link di approfondimento in fondo.
+     Le prime tre schede sono ServiceCard, la quarta è HomeVisit: condividono le classi `service-card*`
+     e la stessa struttura, quindi le regole stanno qui e valgono per tutte e quattro. */
+  .service-board {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  /* Due colonne da laptop: sotto, la quarta scheda (più ricca) renderebbe la terza troppo vuota */
+  @media (min-width: 64rem) {
+    .service-board {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  /* La scheda non passa mai al layout orizzontale di ServiceCard: resta una colonna di contenuti */
+  .service-board :global(.service-cell) {
+    container-type: normal;
+    display: grid;
+    scroll-margin-top: calc(var(--header-h) + 1rem);
+  }
+
+  .service-board :global(.service-card) {
+    --card-pad: clamp(1.25rem, 0.9rem + 1.2vw, 2rem);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: var(--card-pad);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-l);
+    background: var(--color-surface);
+  }
+
+  /* Il badge non tinge la scheda: bordo e sfondo sono uguali per tutte e quattro */
+  .service-board :global(.service-card--note:not(:hover):not(:focus-within)) {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+  }
+
+  .service-board :global(.service-card:hover),
+  .service-board :global(.service-card:focus-within) {
+    border-color: var(--color-primary);
+    box-shadow: 0 18px 32px -20px rgb(15 110 86 / 0.55);
+  }
+
+  @media (hover: hover) {
+    .service-board :global(.service-card:hover) {
+      transform: translateY(-3px);
+    }
+  }
+
+  .service-board :global(.service-card) {
+    transition: border-color 0.18s var(--ease), box-shadow 0.18s var(--ease), transform 0.18s var(--ease);
+  }
+
+  /* Riga di testa: numero a sinistra, badge a destra, filetto sotto */
+  .service-board :global(.service-card__index) {
+    order: 1;
+    margin: 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-border);
+    font-family: var(--font-heading);
+    font-size: 2rem;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: -0.02em;
+    color: var(--color-accent);
+  }
+
+  .service-board :global(.service-card--visit .service-card__index::before) {
+    content: '04';
+  }
+
+  .service-board :global(.service-card__note) {
+    order: 2;
+    position: absolute;
+    top: calc(var(--card-pad) + 0.1rem);
+    right: var(--card-pad);
+    margin: 0;
+    padding: 0.2rem 0.7rem;
+    border-radius: 999px;
+    background: var(--color-primary-dark);
+    color: var(--color-on-dark);
+    font-size: var(--text-label);
+    font-weight: 600;
+    line-height: 1.4;
+  }
+
+  .service-board :global(.service-card__title) {
+    order: 3;
+    margin-top: 1.25rem;
+    font-size: clamp(1.375rem, 1.2rem + 0.6vw, 1.625rem);
+    line-height: 1.25;
+  }
+
+  .service-board :global(.service-card__summary) {
+    order: 4;
+    margin: 0.75rem 0 1.5rem;
+    color: var(--color-text-muted);
+  }
+
+  /* Informazioni pratiche: a righe con filetto, etichetta + valore */
+  .service-board :global(.service-card__facts) {
+    order: 5;
+    display: grid;
+    gap: 0;
+    margin: 0 0 1.25rem;
+    padding: 0;
+    border-top: 0;
+    font-size: var(--text-small);
+  }
+
+  .service-board :global(.service-card__facts > div) {
+    display: grid;
+    grid-template-columns: 5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    padding-block: 0.7rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .service-board :global(.service-card__facts dt) {
+    color: var(--color-text-muted);
+  }
+
+  .service-board :global(.service-card__facts dd) {
+    margin: 0;
+    font-weight: 500;
+  }
+
+  .service-board :global(.service-card__facts strong) {
+    font-family: var(--font-heading);
+    font-weight: 600;
+  }
+
+  /* Link di approfondimento: sempre in fondo, sotto un filetto */
+  .service-board :global(.service-card__more) {
+    order: 8;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: auto 0 0;
+    padding-top: 1rem;
+    /* Stessa altezza della riga con il link (area touch), anche dove il link è la scheda intera */
+    min-height: calc(var(--touch) + 1rem);
+    border-top: 1px solid var(--color-border);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    color: var(--color-primary);
+  }
+
+  .service-board :global(.service-card__more a) {
+    color: inherit;
+  }
+
+  /* Telefoni stretti: il badge non sta più accanto al numero, va sotto di esso */
+  @media (max-width: 22.5rem) {
+    .service-board :global(.service-card__note) {
+      position: static;
+      align-self: flex-start;
+      margin-top: 0.75rem;
+    }
+  }
+
+  /* --- Sezioni sotto le schede --- */
   .side-head {
     margin-bottom: 0;
   }

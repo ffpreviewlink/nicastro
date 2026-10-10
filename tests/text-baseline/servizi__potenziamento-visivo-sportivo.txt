@@ -1,0 +1,143 @@
+@[content] width=device-width, initial-scale=1, viewport-fit=cover
+Potenziamento visivo sportivo | Studio Optometrico Nicastro
+@[content] Potenziamento visivo per sportivi e atleti, amatoriali o agonisti: un percorso in due fasi, prima la correzione e poi il potenziamento vero e proprio.
+@[href] https://www.example.com/servizi/potenziamento-visivo-sportivo/
+@[content] #FBF9F4
+@[content] telephone=no
+@[href] /favicon.ico
+@[href] /favicon.svg
+@[href] /apple-touch-icon.png
+@[content] website
+@[content] Studio Optometrico Nicastro
+@[content] it_IT
+@[content] Potenziamento visivo sportivo | Studio Optometrico Nicastro
+@[content] Potenziamento visivo per sportivi e atleti, amatoriali o agonisti: un percorso in due fasi, prima la correzione e poi il potenziamento vero e proprio.
+@[content] https://www.example.com/servizi/potenziamento-visivo-sportivo/
+@[content] https://www.example.com/images/og-default.jpg
+@[content] summary_large_image
+@[href] /_astro/fonts/e868cdf4720e9ea5.woff2
+@[href] /_astro/fonts/52056217662ab262.woff2
+JSONLD {"@context":"https://schema.org","@type":"Service","name":"Potenziamento visivo sportivo","description":"Potenziamento visivo per sportivi e atleti, amatoriali o agonisti: un percorso in due fasi, prima la correzione e poi il potenziamento vero e proprio.","url":"https://www.example.com/servizi/potenziamento-visivo-sportivo/","areaServed":[{"@type":"AdministrativeArea","name":"Marche"},{"@type":"AdministrativeArea","name":"Umbria"}],"provider":{"@type":"ProfessionalService","@id":"https://www.example.com/#professional","name":"Studio Optometrico Nicastro"}}
+JSONLD {"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://www.example.com/#professional","name":"Studio Optometrico Nicastro","description":"Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi, in Marche e Umbria.","founder":{"@type":"Person","name":"Nicolais Nicastro"},"url":"https://www.example.com/","image":"https://www.example.com/images/og-default.jpg","areaServed":[{"@type":"AdministrativeArea","name":"Marche"},{"@type":"AdministrativeArea","name":"Umbria"}],"email":"studio.nicastronico@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Via Vittorio Bachelet, 15","postalCode":"62024","addressLocality":"Matelica","addressRegion":"MC","addressCountry":"IT"},"sameAs":["https://www.google.com/maps/place/?q=place_id:ChIJAxnfu4PFLRMRqZ-Zw4r50fI"]}
+@[href] /_astro/BaseLayout.*.css
+@[href] /_astro/ServiceLayout.*.css
+@[href] #contenuto
+Vai al contenuto
+@[href] /
+Studio Optometrico Nicastro
+Optometrista, Rieducatore visivo
+Menu
+@[aria-label] Principale
+@[href] /
+Home
+@[href] /servizi/
+Servizi
+Mostra i servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+@[href] /chi-sono/
+Chi sono
+@[href] /professionisti/
+Per i professionisti
+@[href] /recensioni/
+Recensioni
+@[href] /contatti/
+Contatti
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+WhatsApp
+(si apre in una nuova scheda)
+@[aria-label] Percorso di navigazione
+@[href] /
+Home
+@[href] /servizi/
+Servizi
+Potenziamento sportivo
+Potenziamento visivo sportivo
+Per chi pratica sport, a livello amatoriale o agonistico: prima la correzione, poi il potenziamento vero e proprio.
+Per chi
+Sportivi e atleti, amatoriali o agonisti
+Costo
+Prezzo su valutazione
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sul%20potenziamento%20visivo%20sportivo.
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[alt] Un esercizio di potenziamento visivo sportivo
+A chi è rivolto
+Il potenziamento visivo sportivo è rivolto a chi pratica sport: sportivi e atleti, a livello amatoriale o agonistico.
+Un percorso in due fasi
+Non è una generica proposta di allenamento visivo. Il percorso ha due fasi, in quest’ordine: il potenziamento arriva dopo la correzione, non al suo posto.
+Correzione
+Si parte dalla correzione: prima di potenziare, si lavora su ciò che va corretto.
+Qui “correzione” non significa correggere la vista con occhiali o lenti: si lavora sulle abilità visive dell’atleta con esercizi specifici, per portarle nella norma prima di potenziarle. Alcuni esempi: esercizi su tablet, in cui l’atleta individua e preme il più rapidamente possibile gli stimoli che compaiono sullo schermo; esercizi di visione periferica, in cui l’atleta mantiene lo sguardo fisso davanti a sé e riconosce correttamente stimoli — per esempio colori, numeri o gesti delle mani — presentati ai margini del campo visivo. Gli esercizi vengono adattati di volta in volta alle esigenze dell’atleta e alla disciplina sportiva praticata.
+Potenziamento
+Solo dopo si passa al potenziamento vero e proprio.
+Una volta valutate le abilità visive dell’atleta e verificato che sono in norma, si lavora per migliorarle ulteriormente, portandole oltre la norma: l’obiettivo è che risultino migliori di quelle degli avversari, per ottenere una risposta più rapida. Per esempio, aumentare la percezione della visione periferica permette a un difensore di calcio di accorgersi meglio di dove si trovano gli avversari, anche quelli che si muovono alle sue spalle: un vantaggio che, ad alti livelli, può fare la differenza.
+Costo
+Prezzo su valutazione. Scrivimi su WhatsApp per avere maggiori informazioni.
+@[aria-label] Riepilogo e contatto
+Potenziamento sportivo
+Prezzo su valutazione
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sul%20potenziamento%20visivo%20sportivo.
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com?subject=Informazioni%3A%20Potenziamento%20visivo%20sportivo
+Oppure scrivi via email
+Gli altri servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+Una valutazione delle abilità visive, per capire come gli occhi lavorano nelle attività di ogni giorno.
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+Un percorso di sedute per lavorare sulle abilità visive che risultano non adeguate rispetto a quanto atteso per l’età.
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+Il controllo visivo direttamente a casa tua, pensato per chi ha difficoltà a spostarsi o necessita di un servizio più comodo e personalizzato.
+Vuoi capire se questo percorso può essere adatto?
+Scrivimi su WhatsApp descrivendo la situazione: valuterò se questo percorso è adatto.
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sul%20potenziamento%20visivo%20sportivo.
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com?subject=Informazioni%3A%20Potenziamento%20visivo%20sportivo
+Scrivi via email
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+WhatsApp
+: scrivimi un messaggio
+(si apre in una nuova scheda)
+Studio Optometrico Nicastro
+Optometrista, Rieducatore visivo
+Per sapere come fissare un appuntamento, scrivimi su WhatsApp.
+Servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+Il sito
+@[href] /
+Home
+@[href] /chi-sono/
+Chi sono
+@[href] /professionisti/
+Per i professionisti
+@[href] /recensioni/
+Recensioni
+@[href] /contatti/
+Contatti
+Contatti
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+Scrivimi su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com
+studio.nicastronico@gmail.com
+© 2026 Studio Optometrico Nicastro · Via Vittorio Bachelet, 15, 62024 Matelica (MC) · P.IVA 02156950434
+Website by
+Federico Fuffa

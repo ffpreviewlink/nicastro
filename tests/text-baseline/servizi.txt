@@ -1,0 +1,169 @@
+@[content] width=device-width, initial-scale=1, viewport-fit=cover
+Servizi: analisi visiva, rieducazione e controllo visivo a domicilio | Studio Optometrico Nicastro
+@[content] Analisi visiva, rieducazione visiva, potenziamento sportivo e controllo visivo a domicilio (50 €) per chi ha difficoltà a spostarsi. Costi e come funzionano.
+@[href] https://www.example.com/servizi/
+@[content] #FBF9F4
+@[content] telephone=no
+@[href] /favicon.ico
+@[href] /favicon.svg
+@[href] /apple-touch-icon.png
+@[content] website
+@[content] Studio Optometrico Nicastro
+@[content] it_IT
+@[content] Servizi: analisi visiva, rieducazione e controllo visivo a domicilio | Studio Optometrico Nicastro
+@[content] Analisi visiva, rieducazione visiva, potenziamento sportivo e controllo visivo a domicilio (50 €) per chi ha difficoltà a spostarsi. Costi e come funzionano.
+@[content] https://www.example.com/servizi/
+@[content] https://www.example.com/images/og-default.jpg
+@[content] summary_large_image
+@[href] /_astro/fonts/e868cdf4720e9ea5.woff2
+@[href] /_astro/fonts/52056217662ab262.woff2
+JSONLD {"@context":"https://schema.org","@type":"Service","name":"Controllo visivo a domicilio","description":"Controllo visivo a domicilio per chi ha difficoltà a spostarsi: mi reco a casa tua, valuto le necessità visive e, se serve, realizzo gli occhiali più adatti. 50 €.","url":"https://www.example.com/servizi/controllo-visivo-a-domicilio/","provider":{"@type":"ProfessionalService","@id":"https://www.example.com/#professional","name":"Studio Optometrico Nicastro"},"offers":{"@type":"Offer","price":50,"priceCurrency":"EUR"}}
+JSONLD {"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://www.example.com/#professional","name":"Studio Optometrico Nicastro","description":"Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi, in Marche e Umbria.","founder":{"@type":"Person","name":"Nicolais Nicastro"},"url":"https://www.example.com/","image":"https://www.example.com/images/og-default.jpg","areaServed":[{"@type":"AdministrativeArea","name":"Marche"},{"@type":"AdministrativeArea","name":"Umbria"}],"email":"studio.nicastronico@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Via Vittorio Bachelet, 15","postalCode":"62024","addressLocality":"Matelica","addressRegion":"MC","addressCountry":"IT"},"sameAs":["https://www.google.com/maps/place/?q=place_id:ChIJAxnfu4PFLRMRqZ-Zw4r50fI"]}
+@[href] /_astro/BaseLayout.*.css
+@[href] #contenuto
+Vai al contenuto
+@[href] /
+Studio Optometrico Nicastro
+Optometrista, Rieducatore visivo
+Menu
+@[aria-label] Principale
+@[href] /
+Home
+@[href] /servizi/
+Servizi
+Mostra i servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+@[href] /chi-sono/
+Chi sono
+@[href] /professionisti/
+Per i professionisti
+@[href] /recensioni/
+Recensioni
+@[href] /contatti/
+Contatti
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+WhatsApp
+(si apre in una nuova scheda)
+Servizi
+Analisi, rieducazione e potenziamento
+Di solito si parte dall’analisi visiva; se ne emerge la necessità, si prosegue con un percorso di rieducazione visiva. Il potenziamento sportivo è pensato per chi pratica sport. Per chi fa fatica a spostarsi, il controllo visivo si può fare anche a casa.
+@[href] #domicilio
+Controllo visivo a domicilio · 50 €
+@[aria-label] Servizi principali
+01
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+Una valutazione delle abilità visive, per capire come gli occhi lavorano nelle attività di ogni giorno.
+Per chi
+Bambini, adulti e sportivi
+Costo
+75 €
+una tantum
+Durata
+1 ora
+Scopri il servizio
+02
+Il percorso più frequente
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+Un percorso di sedute per lavorare sulle abilità visive che risultano non adeguate rispetto a quanto atteso per l’età.
+Per chi
+Soprattutto bambini
+Costo
+60 €
+a seduta
+Durata
+Indicativamente da 3 a 8 mesi
+Scopri il servizio
+03
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+Per chi pratica sport, a livello amatoriale o agonistico: prima la correzione, poi il potenziamento vero e proprio.
+Per chi
+Sportivi e atleti, amatoriali o agonisti
+Costo
+Prezzo su valutazione
+Scopri il servizio
+A domicilio
+Controllo visivo a domicilio
+Il controllo visivo direttamente a casa tua, pensato per chi ha difficoltà a spostarsi o necessita di un servizio più comodo e personalizzato.
+@[href] /servizi/controllo-visivo-a-domicilio/
+Scopri come funziona
+50 €
+Controllo visivo a domicilio
+Mi reco direttamente al tuo domicilio
+Effettuo il controllo visivo
+Valuto le necessità visive della persona
+In base alla valutazione, può essere realizzato l’occhiale più adatto
+@[href] /contatti/
+Richiedi informazioni
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sul%20controllo%20visivo%20a%20domicilio.
+Scrivimi su WhatsApp
+(si apre in una nuova scheda)
+A chi è rivolto
+Pensato per chi ha difficoltà a spostarsi
+Il controllo a domicilio può essere particolarmente utile per:
+Persone anziane
+Persone con difficoltà motorie
+Persone temporaneamente impossibilitate a raggiungere lo studio
+Persone che necessitano di una valutazione direttamente al proprio domicilio
+Come funziona
+Come funziona il controllo a domicilio
+Richiedi il servizio
+Contatti lo studio per concordare il controllo a domicilio.
+Vengo io da te
+Il controllo viene effettuato direttamente presso il tuo domicilio.
+Valutazione visiva
+Viene effettuata la valutazione delle tue esigenze visive.
+Soluzione personalizzata
+In base alla valutazione, è possibile procedere con la realizzazione degli occhiali più adatti.
+Hai bisogno di un controllo a domicilio?
+Scrivimi per verificare la disponibilità del servizio e concordare un appuntamento.
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sul%20controllo%20visivo%20a%20domicilio.
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com?subject=Informazioni%3A%20Controllo%20visivo%20a%20domicilio
+Scrivi via email
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+WhatsApp
+: scrivimi un messaggio
+(si apre in una nuova scheda)
+Studio Optometrico Nicastro
+Optometrista, Rieducatore visivo
+Per sapere come fissare un appuntamento, scrivimi su WhatsApp.
+Servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+Il sito
+@[href] /
+Home
+@[href] /chi-sono/
+Chi sono
+@[href] /professionisti/
+Per i professionisti
+@[href] /recensioni/
+Recensioni
+@[href] /contatti/
+Contatti
+Contatti
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+Scrivimi su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com
+studio.nicastronico@gmail.com
+© 2026 Studio Optometrico Nicastro · Via Vittorio Bachelet, 15, 62024 Matelica (MC) · P.IVA 02156950434
+Website by
+Federico Fuffa

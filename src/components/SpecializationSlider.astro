@@ -21,11 +21,11 @@ import { services as allServices } from '../data/services';
 const services = allServices.filter((s) => !s.atHome);
 ---
 
-<div class="spec-slider" data-spec-slider role="region" aria-roledescription="carousel" aria-label="Specializzazioni">
+<div class="spec-slider" data-spec-slider role="group" aria-roledescription="carousel" aria-label="Specializzazioni">
   <div class="spec-slider__viewport" data-viewport tabindex="-1">
     {
       services.map((service, i) => (
-        <article
+        <div
           class="spec-slide"
           data-slide
           role="group"
@@ -41,7 +41,7 @@ const services = allServices.filter((s) => !s.atHome);
             Scopri il servizio
             <Icon name="arrow" />
           </a>
-        </article>
+        </div>
       ))
     }
   </div>
@@ -280,8 +280,8 @@ const services = allServices.filter((s) => !s.atHome);
     flex: none;
     align-items: center;
     justify-content: center;
-    width: 2.25rem;
-    height: 2.25rem;
+    width: var(--touch);
+    height: var(--touch);
     border: 1.5px solid var(--color-border-strong);
     border-radius: 999px;
     background: transparent;

@@ -49,7 +49,7 @@ const origin = Astro.site!.origin;
         <h2 id="servizi">I servizi, per situazioni diverse</h2>
         <p class="lead">Dalla valutazione delle abilità visive al percorso vero e proprio, fino al controllo a casa tua per chi fa fatica a spostarsi.</p>
       </div>
-      <div class="card-grid">
+      <div class="service-quad">
         {services.map((service, i) => <ServiceCard service={service} index={i + 1} />)}
       </div>
     </div>
@@ -124,6 +124,67 @@ const origin = Astro.site!.origin;
 </BaseLayout>
 
 <style>
+  /* Le quattro schede dei servizi hanno lo stesso peso: una colonna su telefono, 2×2 da tablet in su.
+     Dal tablet le righe interne delle schede (numero, titolo, descrizione, dettagli, link) sono condivise
+     tra le schede della stessa riga (subgrid), così divisori e link restano allineati
+     qualunque sia la lunghezza della descrizione. */
+  .service-quad {
+    display: grid;
+    gap: 1.25rem;
+  }
+
+  /* Il badge ("Il percorso più frequente", "A domicilio") resta, ma non colora la scheda:
+     bordo e sfondo sono quelli di tutte le altre */
+  .service-quad :global(.service-card--note:not(:hover):not(:focus-within)) {
+    background: var(--color-surface);
+    border-color: var(--color-border);
+  }
+
+  /* Schede molto strette (telefoni a 320 px): il badge non sta più accanto al numero, va sotto di esso */
+  @container (max-width: 19rem) {
+    .service-quad :global(.service-card__note) {
+      position: static;
+      align-self: flex-start;
+      margin-top: 0.75rem;
+    }
+  }
+
+  @media (min-width: 48rem) {
+    .service-quad {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 1.25rem;
+      row-gap: 0;
+    }
+
+    .service-quad > :global(.service-cell) {
+      display: grid;
+      grid-row: span 5;
+      grid-template-rows: subgrid;
+      /* Due colonne: la scheda resta sempre in verticale */
+      container-type: normal;
+    }
+
+    .service-quad > :global(.service-cell:nth-child(n + 3)) {
+      margin-top: 1.25rem;
+    }
+
+    .service-quad :global(.service-card) {
+      display: grid;
+      grid-row: 1 / -1;
+      grid-template-rows: subgrid;
+      row-gap: 0;
+    }
+
+    .service-quad :global(.service-card__facts) {
+      align-content: start;
+    }
+
+    .service-quad :global(.service-card__more) {
+      justify-self: start;
+      align-self: end;
+    }
+  }
+
   .about__text > * + * {
     margin-top: 1.1rem;
   }

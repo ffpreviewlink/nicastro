@@ -1,0 +1,168 @@
+@[content] width=device-width, initial-scale=1, viewport-fit=cover
+Analisi visiva optometrica | Studio Optometrico Nicastro
+@[content] Che cos’è l’analisi visiva optometrica, cosa viene valutato e come funziona. Valutazione delle abilità visive per bambini, adulti e sportivi. 75 € una tantum.
+@[href] https://www.example.com/servizi/analisi-visiva-optometrica/
+@[content] #FBF9F4
+@[content] telephone=no
+@[href] /favicon.ico
+@[href] /favicon.svg
+@[href] /apple-touch-icon.png
+@[content] website
+@[content] Studio Optometrico Nicastro
+@[content] it_IT
+@[content] Analisi visiva optometrica | Studio Optometrico Nicastro
+@[content] Che cos’è l’analisi visiva optometrica, cosa viene valutato e come funziona. Valutazione delle abilità visive per bambini, adulti e sportivi. 75 € una tantum.
+@[content] https://www.example.com/servizi/analisi-visiva-optometrica/
+@[content] https://www.example.com/images/og-default.jpg
+@[content] summary_large_image
+@[href] /_astro/fonts/e868cdf4720e9ea5.woff2
+@[href] /_astro/fonts/52056217662ab262.woff2
+JSONLD {"@context":"https://schema.org","@type":"Service","name":"Analisi visiva optometrica","description":"Che cos’è l’analisi visiva optometrica, cosa viene valutato e come funziona. Valutazione delle abilità visive per bambini, adulti e sportivi. 75 € una tantum.","url":"https://www.example.com/servizi/analisi-visiva-optometrica/","areaServed":[{"@type":"AdministrativeArea","name":"Marche"},{"@type":"AdministrativeArea","name":"Umbria"}],"provider":{"@type":"ProfessionalService","@id":"https://www.example.com/#professional","name":"Studio Optometrico Nicastro"},"offers":{"@type":"Offer","price":75,"priceCurrency":"EUR"}}
+JSONLD {"@context":"https://schema.org","@type":"ProfessionalService","@id":"https://www.example.com/#professional","name":"Studio Optometrico Nicastro","description":"Analisi visiva, rieducazione visiva (visual training) e potenziamento visivo sportivo per bambini, adulti e sportivi, in Marche e Umbria.","founder":{"@type":"Person","name":"Nicolais Nicastro"},"url":"https://www.example.com/","image":"https://www.example.com/images/og-default.jpg","areaServed":[{"@type":"AdministrativeArea","name":"Marche"},{"@type":"AdministrativeArea","name":"Umbria"}],"email":"studio.nicastronico@gmail.com","address":{"@type":"PostalAddress","streetAddress":"Via Vittorio Bachelet, 15","postalCode":"62024","addressLocality":"Matelica","addressRegion":"MC","addressCountry":"IT"},"sameAs":["https://www.google.com/maps/place/?q=place_id:ChIJAxnfu4PFLRMRqZ-Zw4r50fI"]}
+@[href] /_astro/BaseLayout.*.css
+@[href] /_astro/ServiceLayout.*.css
+@[href] #contenuto
+Vai al contenuto
+@[href] /
+Studio Optometrico Nicastro
+Optometrista, Rieducatore visivo
+Menu
+@[aria-label] Principale
+@[href] /
+Home
+@[href] /servizi/
+Servizi
+Mostra i servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+@[href] /chi-sono/
+Chi sono
+@[href] /professionisti/
+Per i professionisti
+@[href] /recensioni/
+Recensioni
+@[href] /contatti/
+Contatti
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+WhatsApp
+(si apre in una nuova scheda)
+@[aria-label] Percorso di navigazione
+@[href] /
+Home
+@[href] /servizi/
+Servizi
+Analisi visiva
+Analisi visiva optometrica
+Una valutazione delle abilità visive, per capire come gli occhi lavorano nelle attività di ogni giorno.
+Per chi
+Bambini, adulti e sportivi
+Costo
+75 €
+una tantum
+Durata
+1 ora
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sull%E2%80%99analisi%20visiva%20optometrica.
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[alt] Un momento dell’analisi visiva optometrica
+Che cos’è
+L’analisi visiva optometrica è una valutazione delle abilità visive. Serve a capire come la vista viene usata nelle attività di ogni giorno: leggere, scrivere, copiare dalla lavagna, seguire un oggetto in movimento.
+Le abilità visive sono le capacità che permettono agli occhi e al cervello di lavorare bene insieme.
+Cosa viene valutato
+Vengono valutate le abilità visive, cioè le capacità che servono a usare la vista con efficacia nelle attività quotidiane.
+Accomodazione
+Fusione
+Movimenti oculari
+Percezione della tridimensionalità
+A chi può essere rivolta
+L’analisi è pensata soprattutto per i bambini, il pubblico con cui lavoro più spesso, ma è rivolta anche agli adulti e agli sportivi.
+Ci si arriva in due modi: su indicazione di un altro professionista (per esempio una logopedista, uno psicologo o una neuropsicomotricista) oppure perché un genitore, o la persona stessa, ha un dubbio da chiarire.
+Quando può avere senso
+Difficoltà visive, affaticamento o disturbi durante lettura, studio, lavoro o attività sportive
+Come controllo periodico delle abilità visive, anche in assenza di sintomi evidenti
+Soprattutto in età scolare, o per chi svolge attività visive prolungate
+Come si svolge
+Ci si accorda su WhatsApp
+Giorno e sede si concordano su WhatsApp.
+L’analisi
+Prima dell’appuntamento invio un questionario da compilare a casa, utile per capire le difficoltà in corso. In studio faccio molte domande per non tralasciare nulla, poi svolgo la valutazione vera e propria: circa un’ora, anche di più nei casi più complessi. Vengono controllate tutte le abilità visive e i dati raccolti vengono elaborati con uno strumento che, in base all’età, indica se sono in norma o fuori norma. Al termine della seduta il quadro della situazione è già chiaro.
+Cosa succede dopo
+Se dall’analisi emerge che alcune abilità visive non sono adeguate rispetto a quanto atteso per l’età, si può valutare insieme un percorso di
+@[href] /servizi/rieducazione-visiva/
+rieducazione visiva
+.
+Al termine dell’analisi preparo un report scritto con quanto emerso. Per spiegare i risultati segue poi un colloquio, di persona o in videochiamata.
+Costo
+L’analisi visiva optometrica costa
+75 €
+, una tantum: si paga una sola volta.
+@[aria-label] Riepilogo e contatto
+Analisi visiva
+75 €
+una tantum
+Durata
+1 ora
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sull%E2%80%99analisi%20visiva%20optometrica.
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com?subject=Informazioni%3A%20Analisi%20visiva%20optometrica
+Oppure scrivi via email
+Gli altri servizi
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+Un percorso di sedute per lavorare sulle abilità visive che risultano non adeguate rispetto a quanto atteso per l’età.
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+Per chi pratica sport, a livello amatoriale o agonistico: prima la correzione, poi il potenziamento vero e proprio.
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+Il controllo visivo direttamente a casa tua, pensato per chi ha difficoltà a spostarsi o necessita di un servizio più comodo e personalizzato.
+Vuoi capire se questo percorso può essere adatto?
+Scrivimi su WhatsApp descrivendo la situazione: valuterò se questo percorso è adatto.
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20vorrei%20avere%20informazioni%20sull%E2%80%99analisi%20visiva%20optometrica.
+Contatta su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com?subject=Informazioni%3A%20Analisi%20visiva%20optometrica
+Scrivi via email
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+WhatsApp
+: scrivimi un messaggio
+(si apre in una nuova scheda)
+Studio Optometrico Nicastro
+Optometrista, Rieducatore visivo
+Per sapere come fissare un appuntamento, scrivimi su WhatsApp.
+Servizi
+@[href] /servizi/analisi-visiva-optometrica/
+Analisi visiva optometrica
+@[href] /servizi/rieducazione-visiva/
+Rieducazione visiva (Visual Training)
+@[href] /servizi/potenziamento-visivo-sportivo/
+Potenziamento visivo sportivo
+@[href] /servizi/controllo-visivo-a-domicilio/
+Controllo visivo a domicilio
+Il sito
+@[href] /
+Home
+@[href] /chi-sono/
+Chi sono
+@[href] /professionisti/
+Per i professionisti
+@[href] /recensioni/
+Recensioni
+@[href] /contatti/
+Contatti
+Contatti
+@[href] https://wa.me/393286537596?text=Buongiorno%2C%20ho%20visto%20il%20sito%20e%20vorrei%20avere%20qualche%20informazione.
+Scrivimi su WhatsApp
+(si apre in una nuova scheda)
+@[href] mailto:studio.nicastronico@gmail.com
+studio.nicastronico@gmail.com
+© 2026 Studio Optometrico Nicastro · Via Vittorio Bachelet, 15, 62024 Matelica (MC) · P.IVA 02156950434
+Website by
+Federico Fuffa

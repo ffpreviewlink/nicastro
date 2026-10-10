@@ -67,7 +67,7 @@
     --text-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.3125rem);
     --text-body: clamp(1rem, 0.95rem + 0.25vw, 1.0625rem);
     --text-small: 0.9rem;
-    --text-label: 0.8125rem;
+    --text-label: 0.875rem;
     --text-button: 1rem;
 
     /* Spazi e misure */
@@ -588,6 +588,7 @@ a:hover {
     display: inline-flex;
     align-items: center;
     gap: 0.5rem;
+    min-height: var(--touch);
     font-family: var(--font-heading);
     font-weight: 600;
     text-decoration: none;

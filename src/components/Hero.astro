@@ -102,7 +102,7 @@ import { site } from '../data/site';
 
   .slide__desc {
     margin-top: 0.85rem;
-    max-width: 34rem;
+    max-width: 40rem;
     color: var(--color-text-muted);
   }
 
@@ -159,6 +159,9 @@ import { site } from '../data/site';
     grid-auto-flow: column;
     grid-auto-columns: 100%;
     overflow-x: auto;
+    overflow-y: hidden;
+    /* Ogni slide ha la propria altezza: l'altezza del carosello segue quella attiva (vedi script) */
+    align-items: start;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
     scroll-behavior: smooth;
@@ -216,6 +219,7 @@ import { site } from '../data/site';
 
   @media (min-width: 64rem) {
     .slide {
+      grid-template-columns: 1.3fr 1fr;
       gap: 3rem;
     }
 
@@ -240,6 +244,12 @@ import { site } from '../data/site';
   @media (prefers-reduced-motion: reduce) {
     .carousel[data-enhanced] .carousel__track {
       scroll-behavior: auto;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .carousel[data-enhanced] .carousel__track {
+      transition: height 0.3s var(--ease);
     }
   }
 
@@ -289,6 +299,11 @@ import { site } from '../data/site';
         slides[i].setAttribute('aria-labelledby', tab.id);
       });
 
+      // L'altezza del carosello è quella della slide attiva, non della più lunga
+      const fit = () => {
+        track.style.height = `${Math.ceil(slides[active].getBoundingClientRect().height)}px`;
+      };
+
       const select = (index: number) => {
         active = index;
         tabs.forEach((tab, i) => {
@@ -299,6 +314,7 @@ import { site } from '../data/site';
         slides.forEach((slide, i) => {
           slide.inert = i !== index;
         });
+        fit();
       };
 
       const goTo = (index: number) => {
@@ -355,6 +371,11 @@ import { site } from '../data/site';
           track.scrollTo({ left: active * track.clientWidth, behavior: 'instant' });
         }, 120);
       });
+
+      if ('ResizeObserver' in window) {
+        const observer = new ResizeObserver(fit);
+        slides.forEach((slide) => observer.observe(slide));
+      }
 
       select(0);
     }
