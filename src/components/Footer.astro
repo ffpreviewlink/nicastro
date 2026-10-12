@@ -81,7 +81,9 @@ const pages = navigation.filter((item) => item.href !== '/servizi/');
     <p class="small">
       © {year} <Fill value={site.businessName} /> · {formatAddress()} · P.IVA <Fill value={site.vatId} />
     </p>
-    <p class="footer__credit small">Website by <span>Federico Fuffa</span></p>
+    <p class="footer__credit small">
+      Website by{' '}<a href="https://federicofuffa.it" target="_blank" rel="noopener"><span class="footer__credit-name">Federico Fuffa</span><span class="footer__credit-arrow" aria-hidden="true">↗</span></a>
+    </p>
   </div>
 </footer>
 
@@ -184,9 +186,48 @@ const pages = navigation.filter((item) => item.href !== '/servizi/');
     letter-spacing: 0.02em;
   }
 
-  .footer__credit span {
-    color: var(--color-on-dark);
-    font-weight: 600;
+  .footer__credit a,
+  .footer__credit a:hover {
+    color: inherit;
+    font-weight: inherit;
+    text-decoration: none;
+  }
+
+  /* Hover: la linea si disegna da sinistra, il nome si schiarisce e si solleva, la freccia scatta */
+  .footer__credit-name {
+    display: inline-block;
+    padding-bottom: 0.15em;
+    background: linear-gradient(currentColor, currentColor) no-repeat 0 100% / 0 1.5px;
+    transition:
+      background-size 0.35s var(--ease),
+      color 0.25s var(--ease),
+      transform 0.35s var(--ease);
+  }
+
+  .footer__credit-arrow {
+    display: inline-block;
+    margin-left: 0.25em;
+    transition: transform 0.35s var(--ease);
+  }
+
+  .footer__credit a:hover .footer__credit-name,
+  .footer__credit a:focus-visible .footer__credit-name {
+    background-size: 100% 1.5px;
+    color: var(--color-primary-light);
+    transform: translateY(-2px);
+  }
+
+  .footer__credit a:hover .footer__credit-arrow,
+  .footer__credit a:focus-visible .footer__credit-arrow {
+    transform: translate(0.2em, -0.2em);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .footer__credit-name,
+    .footer__credit-arrow {
+      transition: none;
+      transform: none !important;
+    }
   }
 
   @media (min-width: 48rem) {
