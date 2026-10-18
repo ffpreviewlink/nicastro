@@ -1,8 +1,10 @@
 name: Anteprima GitHub Pages
 
-# Solo su avvio manuale: il deploy reale del sito è su Aruba (vedi README),
-# questa pipeline serve solo a mostrare lo stile su un URL pubblico temporaneo.
+# Parte a ogni push su main e anche a mano. Il deploy reale del sito è su Aruba
+# (vedi README), questa pipeline serve solo a mostrare lo stile su un URL pubblico temporaneo.
 on:
+  push:
+    branches: [main]
   workflow_dispatch:
 
 permissions:
