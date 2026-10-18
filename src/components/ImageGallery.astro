@@ -1,0 +1,256 @@
+---
+/**
+ * Galleria di immagini scorrevole, usata nelle slide della home.
+ *
+ * Miglioramento progressivo, come il carosello che la contiene:
+ * - senza JavaScript è una fila orizzontale con scroll-snap (scorrimento nativo);
+ * - con JavaScript compaiono frecce e indicatori (creati dallo script, quindi
+ *   non presenti nell'HTML statico);
+ * - con `autoplay` (ms) le foto cambiano da sole. Si ferma con mouse o focus sulla
+ *   galleria, a scheda nascosta o slide fuori vista.
+ *   Con prefers-reduced-motion non parte e non c'è lo scorrimento animato.
+ */
+import SiteImage from './SiteImage.astro';
+import type { ImageKey } from '../data/images';
+
+interface Props {
+  names: ImageKey[];
+  /** Proporzioni del riquadro, uguali per tutte le immagini. */
+  ratio: string;
+  /** Nome accessibile della galleria. */
+  label: string;
+  /** true se la prima immagine è la più grande visibile al primo schermo. */
+  priority?: boolean;
+  /** Intervallo in ms del cambio automatico di foto. Assente = nessun cambio automatico. */
+  autoplay?: number;
+}
+
+const { names, ratio, label, priority = false, autoplay } = Astro.props;
+---
+
+<div class="gallery" data-gallery data-label={label} data-autoplay={autoplay}>
+  <div class="gallery__track" data-gallery-track>
+    {
+      names.map((name, index) => (
+        <div class="gallery__item">
+          <SiteImage name={name} ratio={ratio} eager priority={priority && index === 0} />
+        </div>
+      ))
+    }
+  </div>
+</div>
+
+<style is:global>
+  .gallery {
+    position: relative;
+  }
+
+  .gallery__track {
+    display: flex;
+    border-radius: var(--radius-l);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+
+  .gallery__item {
+    flex: 0 0 100%;
+    min-width: 0;
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+
+  .gallery[data-enhanced] .gallery__track {
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+  }
+
+  .gallery[data-enhanced] .gallery__track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .gallery__arrow,
+  .gallery__dot {
+    display: grid;
+    place-items: center;
+    border: 0;
+    padding: 0;
+    cursor: pointer;
+  }
+
+  /* Comandi sotto la foto: frecce ai lati degli indicatori, mai sopra il soggetto */
+  .gallery__arrow {
+    inline-size: 2.75rem;
+    block-size: 2.75rem;
+    border-radius: 50%;
+    background: var(--color-primary-tint);
+    color: var(--color-primary-dark);
+    transition: background-color 0.18s var(--ease), color 0.18s var(--ease);
+  }
+
+  .gallery__arrow:hover {
+    background: var(--color-primary);
+    color: var(--color-on-dark);
+  }
+
+  .gallery__arrow svg {
+    inline-size: 1.25rem;
+    block-size: 1.25rem;
+  }
+
+  .gallery__dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+
+  .gallery__dots-list {
+    display: flex;
+  }
+
+  .gallery__dot {
+    inline-size: 2.25rem;
+    block-size: 2.75rem;
+    background: transparent;
+  }
+
+  .gallery__dot::before {
+    content: '';
+    inline-size: 0.6rem;
+    block-size: 0.6rem;
+    border-radius: 50%;
+    background: var(--color-border-strong);
+    opacity: 0.45;
+    transition: background-color 0.18s var(--ease), opacity 0.18s var(--ease), scale 0.18s var(--ease);
+  }
+
+  .gallery__dot[aria-current='true']::before {
+    background: var(--color-primary);
+    opacity: 1;
+    scale: 1.3;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .gallery[data-enhanced] .gallery__track {
+      scroll-behavior: auto;
+    }
+  }
+</style>
+
+<script>
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  const chevron = (direction: 'left' | 'right') =>
+    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="${direction === 'left' ? 'm15 6-6 6 6 6' : 'm9 6 6 6-6 6'}" /></svg>`;
+
+  document.querySelectorAll<HTMLElement>('[data-gallery]').forEach((root) => {
+    const track = root.querySelector<HTMLElement>('[data-gallery-track]');
+    const items = track ? (Array.from(track.children) as HTMLElement[]) : [];
+    if (!track || items.length < 2) return;
+
+    let active = 0;
+    const total = items.length;
+
+    root.setAttribute('data-enhanced', '');
+    root.setAttribute('role', 'group');
+    root.setAttribute('aria-roledescription', 'galleria');
+    root.setAttribute('aria-label', root.dataset.label ?? 'Foto');
+    items.forEach((item, i) => {
+      item.setAttribute('role', 'group');
+      item.setAttribute('aria-roledescription', 'foto');
+      item.setAttribute('aria-label', `${i + 1} di ${total}`);
+    });
+
+    const button = (className: string, label: string, html = '') => {
+      const el = document.createElement('button');
+      el.type = 'button';
+      el.className = className;
+      el.setAttribute('aria-label', label);
+      el.innerHTML = html;
+      return el;
+    };
+
+    const prev = button('gallery__arrow gallery__arrow--prev', 'Foto precedente', chevron('left'));
+    const next = button('gallery__arrow gallery__arrow--next', 'Foto successiva', chevron('right'));
+    const dots = items.map((_, i) => button('gallery__dot', `Vai alla foto ${i + 1} di ${total}`));
+
+    const dotsWrap = document.createElement('div');
+    dotsWrap.className = 'gallery__dots';
+    const dotsList = document.createElement('div');
+    dotsList.className = 'gallery__dots-list';
+    dotsList.append(...dots);
+    dotsWrap.append(prev, dotsList, next);
+    root.append(dotsWrap);
+
+    const mark = (index: number) => {
+      active = index;
+      dots.forEach((dot, i) => {
+        if (i === index) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+      });
+      // Le foto fuori vista non sono raggiungibili da screen reader
+      items.forEach((item, i) => item.setAttribute('aria-hidden', String(i !== index)));
+    };
+
+    const goTo = (index: number) => {
+      restart();
+      mark(index);
+      track.scrollTo({ left: index * track.clientWidth, behavior: reduceMotion.matches ? 'instant' : 'smooth' });
+    };
+
+    prev.addEventListener('click', () => goTo((active - 1 + total) % total));
+    next.addEventListener('click', () => goTo((active + 1) % total));
+    dots.forEach((dot, i) => dot.addEventListener('click', () => goTo(i)));
+
+    // Swipe / scorrimento manuale: l'indicatore segue la foto visibile
+    let frame = 0;
+    track.addEventListener(
+      'scroll',
+      () => {
+        cancelAnimationFrame(frame);
+        frame = requestAnimationFrame(() => {
+          const index = Math.round(track.scrollLeft / track.clientWidth);
+          if (index !== active) mark(index);
+        });
+      },
+      { passive: true },
+    );
+
+    // --- Cambio automatico (solo se richiesto e se l'utente non ha ridotto i movimenti) ---
+    const interval = Number(root.dataset.autoplay);
+    let timer = 0;
+    let hovering = false;
+    let onScreen = true;
+
+    const canRun = () =>
+      !hovering && onScreen && !document.hidden && !root.querySelector(':focus-visible') &&
+      !root.closest('[inert]');
+
+    function restart() {
+      window.clearInterval(timer);
+      if (interval > 0 && !reduceMotion.matches) {
+        timer = window.setInterval(() => {
+          if (canRun()) goTo((active + 1) % total);
+        }, interval);
+      }
+    }
+
+    if (interval > 0 && !reduceMotion.matches) {
+      // Mouse sopra la galleria: ferma; il touch azzera solo il conto alla rovescia
+      root.addEventListener('pointerenter', (e) => (hovering = e.pointerType === 'mouse'));
+      root.addEventListener('pointerleave', () => {
+        hovering = false;
+        restart();
+      });
+      root.addEventListener('pointerdown', restart);
+      root.addEventListener('focusout', restart);
+      if ('IntersectionObserver' in window) {
+        new IntersectionObserver(([entry]) => (onScreen = entry.isIntersecting), { threshold: 0.4 }).observe(root);
+      }
+      restart();
+    }
+
+    mark(0);
+  });
+</script>

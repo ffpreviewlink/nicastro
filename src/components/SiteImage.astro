@@ -15,12 +15,12 @@ interface Props {
   eager?: boolean;
   /** true per l'immagine più grande visibile al primo schermo (LCP): priorità di rete alta. */
   priority?: boolean;
-  /** Punto di messa a fuoco del ritaglio, es. "center 20%". */
+  /** Punto di messa a fuoco del ritaglio, es. "center 20%". Default: quello dell'immagine in images.ts. */
   position?: string;
   class?: string;
 }
 
-const { name, ratio, eager = false, priority = false, position = 'center', class: className } = Astro.props;
+const { name, ratio, eager = false, priority = false, position, class: className } = Astro.props;
 const image = images[name];
 ---
 
@@ -36,7 +36,7 @@ const image = images[name];
     loading={eager ? 'eager' : 'lazy'}
     decoding="async"
     fetchpriority={priority ? 'high' : undefined}
-    style={`object-position: ${position}`}
+    style={`object-position: ${position ?? image.position ?? 'center'}`}
     data-placeholder={image.placeholder ? '' : undefined}
   />
 </div>

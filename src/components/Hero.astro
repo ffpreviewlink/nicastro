@@ -7,10 +7,12 @@
  * - senza JavaScript le tre slide sono semplicemente impilate e leggibili;
  * - con JavaScript diventa scorrevole (swipe nativo con scroll-snap) e un
  *   selettore a schede (tablist) permette di scegliere il pubblico;
- * - non c'è scorrimento automatico: l'utente decide, e prefers-reduced-motion
- *   disattiva anche l'animazione dello scorrimento.
+ * - le slide non cambiano da sole: l'utente decide (solo la galleria di foto
+ *   dentro la slide può avanzare automaticamente, vedi ImageGallery); con
+ *   prefers-reduced-motion l'animazione dello scorrimento è disattivata.
  */
 import Fill from './Fill.astro';
+import ImageGallery from './ImageGallery.astro';
 import SiteImage from './SiteImage.astro';
 import WhatsAppButton from './WhatsAppButton.astro';
 import { audiences } from '../data/audiences';
@@ -56,7 +58,17 @@ import { site } from '../data/site';
                 </div>
               </div>
               <div class="slide__media">
-                <SiteImage name={audience.image} eager priority={index === 0} />
+                {Array.isArray(audience.image) ? (
+                  <ImageGallery
+                    names={audience.image}
+                    ratio="4 / 3"
+                    label={`Foto: ${audience.label}`}
+                    priority={index === 0}
+                    autoplay={3000}
+                  />
+                ) : (
+                  <SiteImage name={audience.image} ratio="4 / 3" eager priority={index === 0} />
+                )}
               </div>
             </section>
           ))

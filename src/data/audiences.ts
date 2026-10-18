@@ -15,7 +15,8 @@ export interface Audience {
   /** Link primario verso la pagina di approfondimento. */
   cta: { label: string; href: string };
   whatsappMessage: string;
-  image: ImageKey;
+  /** Un'immagine, oppure più immagini: in quel caso la slide mostra una galleria scorrevole. */
+  image: ImageKey | ImageKey[];
 }
 
 export const audiences: Audience[] = [
@@ -27,7 +28,7 @@ export const audiences: Audience[] = [
     cta: { label: "Scopri l’analisi visiva", href: getService('analisi-visiva-optometrica').path },
     whatsappMessage:
       "Buongiorno, vorrei avere informazioni per mio figlio/a sull’analisi visiva optometrica.",
-    image: 'bambini',
+    image: ['bambini', 'bambiniLavagna', 'bambiniTavolo'],
   },
   {
     id: 'adulti',

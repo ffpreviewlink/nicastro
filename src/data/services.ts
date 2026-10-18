@@ -20,7 +20,8 @@ export interface Service {
   /** Mostrata solo se presente. Un segnaposto [ ... ] compare evidenziato finché non viene sostituito. */
   duration?: string;
   /** Senza immagine, la testata della pagina mostra il pannello con il prezzo. */
-  image?: ImageKey;
+  /** Un'immagine, oppure più immagini: in quel caso la pagina mostra una galleria scorrevole. */
+  image?: ImageKey | ImageKey[];
   /** Etichetta discreta sulla card. */
   note?: string;
   /** true = prestazione a domicilio: niente area servita nei dati strutturati (la zona non è dichiarata),
@@ -43,7 +44,7 @@ export const services: Service[] = [
     audience: 'Bambini, adulti e sportivi',
     price: { amount: 75, unit: 'una tantum' },
     duration: '1 ora',
-    image: 'analisiVisiva',
+    image: ['analisiVisivaStrumenti', 'analisiVisivaTavolo', 'analisiVisivaLavagna'],
     whatsappMessage:
       "Buongiorno, vorrei avere informazioni sull’analisi visiva optometrica.",
     seo: {

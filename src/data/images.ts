@@ -14,6 +14,8 @@ export interface SiteImage {
   width: number;
   height: number;
   alt: string;
+  /** Punto di messa a fuoco del ritaglio (object-position). Default: centro. */
+  position?: string;
   /** true finché il file è un segnaposto: il componente lo marca con data-placeholder. */
   placeholder: boolean;
 }
@@ -26,27 +28,69 @@ const placeholder = (
 ): SiteImage => ({ src: `/images/${file}`, width, height, alt, placeholder: true });
 
 export const images = {
-  professionista: placeholder(
-    'placeholder-professionista.jpg',
-    1000,
-    1250,
-    `Ritratto di ${site.name}`,
-  ),
-  bambini: placeholder('placeholder-bambini.jpg', 1200, 900, 'Un bambino durante un esercizio visivo'),
+  professionista: {
+    src: '/images/professionista.jpg',
+    width: 521,
+    height: 651,
+    alt: `${site.name} alla scrivania del suo studio`,
+    placeholder: false,
+  },
+  bambini: {
+    src: '/images/bambini-analisi-visiva.jpg',
+    width: 921,
+    height: 1218,
+    alt: 'Un bambino con occhiali rosso-verdi osserva una scheda per la valutazione della visione tridimensionale',
+    position: 'center 38%',
+    placeholder: false,
+  },
+  bambiniLavagna: {
+    src: '/images/bambini-lavagna.jpg',
+    width: 921,
+    height: 1216,
+    alt: 'Una bambina di spalle osserva una lavagna con schede e tabelle di lettere per un esercizio visivo',
+    position: 'center 66%',
+    placeholder: false,
+  },
+  bambiniTavolo: {
+    src: '/images/bambini-tavolo.jpg',
+    width: 921,
+    height: 683,
+    alt: 'Una bambina scrive a un tavolo con schede, matite e costruzioni colorate durante un’attività visiva',
+    placeholder: false,
+  },
   adulti: placeholder('placeholder-adulti.jpg', 1200, 900, 'Un adulto durante una valutazione visiva'),
   sportivi: placeholder('placeholder-sportivi.jpg', 1200, 900, 'Un atleta durante un esercizio visivo'),
-  analisiVisiva: placeholder(
-    'placeholder-analisi-visiva.jpg',
-    1200,
-    800,
-    "Un momento dell’analisi visiva optometrica",
-  ),
-  rieducazioneVisiva: placeholder(
-    'placeholder-rieducazione-visiva.jpg',
-    1200,
-    800,
-    'Una seduta di rieducazione visiva',
-  ),
+  analisiVisivaStrumenti: {
+    src: '/images/analisi-strumenti.jpg',
+    width: 1200,
+    height: 1584,
+    alt: 'Strumenti per la valutazione delle abilità visive: una scheda con palloni, una cordicella con perline e lenti di prova',
+    position: 'center 51%',
+    placeholder: false,
+  },
+  analisiVisivaTavolo: {
+    src: '/images/analisi-tavolo.jpg',
+    width: 1400,
+    height: 780,
+    alt: 'Strumenti optometrici su un tavolo: cassetta delle lenti di prova, test stereoscopico e occhiali rosso-verdi',
+    placeholder: false,
+  },
+  analisiVisivaLavagna: {
+    src: '/images/analisi-lavagna.jpg',
+    width: 1400,
+    height: 778,
+    alt: 'Una lavagna con schede e test visivi appesi con magneti colorati',
+    position: '8% center',
+    placeholder: false,
+  },
+  rieducazioneVisiva: {
+    src: '/images/rieducazione-visiva.jpg',
+    width: 921,
+    height: 1218,
+    alt: 'Un paziente con occhiali rosso-verdi durante un esercizio di rieducazione visiva su tablet',
+    position: 'center 63%',
+    placeholder: false,
+  },
   potenziamentoSportivo: placeholder(
     'placeholder-potenziamento-sportivo.jpg',
     1200,

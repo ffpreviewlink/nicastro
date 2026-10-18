@@ -8,6 +8,7 @@ import BaseLayout from './BaseLayout.astro';
 import CtaBand from '../components/CtaBand.astro';
 import Fill from '../components/Fill.astro';
 import PricePanel from '../components/PricePanel.astro';
+import ImageGallery from '../components/ImageGallery.astro';
 import SiteImage from '../components/SiteImage.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
 import { formatPrice, getService, services } from '../data/services';
@@ -72,7 +73,15 @@ const others = services.filter((s) => s.slug !== service.slug);
         </div>
       </div>
       {
-        service.image ? (
+        Array.isArray(service.image) ? (
+          <ImageGallery
+            names={service.image}
+            ratio="3 / 2"
+            label={`Foto: ${service.shortName}`}
+            priority
+            autoplay={3000}
+          />
+        ) : service.image ? (
           <SiteImage name={service.image} ratio="3 / 2" eager priority class="service-hero__image" />
         ) : (
           <div class="service-hero__visual">
