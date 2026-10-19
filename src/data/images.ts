@@ -30,9 +30,10 @@ const placeholder = (
 export const images = {
   professionista: {
     src: '/images/professionista.jpg',
-    width: 521,
-    height: 651,
-    alt: `${site.name} alla scrivania del suo studio`,
+    width: 960,
+    height: 1200,
+    alt: `${site.name} in camice bianco con uno strumento per l’esame della vista in mano`,
+    position: 'center 25%',
     placeholder: false,
   },
   bambini: {
