@@ -1,4 +1,5 @@
 ---
+import CissInvite from '../../components/CissInvite.astro';
 import { formatPrice, getService } from '../../data/services';
 import ServiceLayout from '../../layouts/ServiceLayout.astro';
 
@@ -72,6 +73,8 @@ const price = formatPrice(getService('analisi-visiva-optometrica'));
       </li>
     </ol>
   </section>
+
+  <CissInvite />
 
   <section aria-labelledby="dopo">
     <h2 id="dopo">Cosa succede dopo</h2>

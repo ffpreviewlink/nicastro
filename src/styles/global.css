@@ -856,3 +856,124 @@ textarea.field__control {
     transform: rotate(-45deg);
 }
 
+
+/* --------------------------------------------------------------------------
+   Finestre di dialogo (<dialog> nativo): popup e questionario.
+   Focus, Esc e blocco dello sfondo li gestisce il browser (showModal).
+   Entrata/uscita solo con opacity e transform; "riduci movimento" le azzera
+   con la regola generale più sopra.
+   -------------------------------------------------------------------------- */
+.dialog {
+    --dialog-width: 40rem;
+    width: min(calc(100% - 1.5rem), var(--dialog-width));
+    max-width: none;
+    max-height: calc(100dvh - 1.5rem);
+    margin: auto;
+    padding: 0;
+    border: 0;
+    border-radius: var(--radius-l);
+    background: var(--color-bg);
+    color: var(--color-text);
+    box-shadow:
+        0 0 0 1px var(--color-border),
+        0 32px 64px -24px rgb(6 46 37 / 0.5);
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(14px) scale(0.985);
+    transition:
+        opacity 0.28s var(--ease),
+        transform 0.28s var(--ease),
+        overlay 0.28s allow-discrete,
+        display 0.28s allow-discrete;
+}
+
+.dialog[open] {
+    opacity: 1;
+    transform: none;
+}
+
+@starting-style {
+    .dialog[open] {
+        opacity: 0;
+        transform: translateY(14px) scale(0.985);
+    }
+}
+
+.dialog::backdrop {
+    background: rgb(6 46 37 / 0.5);
+    opacity: 0;
+    transition:
+        opacity 0.28s var(--ease),
+        overlay 0.28s allow-discrete,
+        display 0.28s allow-discrete;
+}
+
+.dialog[open]::backdrop {
+    opacity: 1;
+}
+
+@starting-style {
+    .dialog[open]::backdrop {
+        opacity: 0;
+    }
+}
+
+/* Con una finestra aperta la pagina sotto non scorre; la sede della barra resta riservata (niente scatto) */
+html:has(dialog[open]) {
+    overflow: hidden;
+    scrollbar-gutter: stable;
+}
+
+.dialog__frame {
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100dvh - 1.5rem);
+}
+
+.dialog__close {
+    flex: none;
+    display: inline-grid;
+    place-items: center;
+    width: var(--touch);
+    height: var(--touch);
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: var(--color-text);
+    transition: background-color 0.18s var(--ease);
+}
+
+.dialog__close:hover {
+    background: var(--color-bg-sand-deep);
+}
+
+.dialog__close svg {
+    width: 1.35rem;
+    height: 1.35rem;
+}
+
+/* Pulsante che si comporta come un link (apre il questionario da footer e riepilogo) */
+.link-button {
+    appearance: none;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--color-primary);
+    text-align: left;
+    text-decoration: underline;
+    text-decoration-thickness: 0.08em;
+    text-underline-offset: 0.2em;
+    cursor: pointer;
+}
+
+.link-button:hover {
+    color: var(--color-primary-hover);
+    text-decoration-thickness: 0.14em;
+}
+
+/* Senza JavaScript il questionario non esiste: i suoi punti d'accesso non si mostrano */
+html:not(.js) [data-ciss-open] {
+    display: none;
+}

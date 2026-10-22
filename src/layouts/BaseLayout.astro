@@ -4,6 +4,8 @@
  * pulsante WhatsApp fisso. Ogni pagina passa solo titolo e descrizione.
  */
 import { Font } from 'astro:assets';
+import CissPopup from '../components/CissPopup.astro';
+import CissQuestionnaire from '../components/CissQuestionnaire.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import WhatsAppButton from '../components/WhatsAppButton.astro';
@@ -23,6 +25,8 @@ interface Props {
   noindex?: boolean;
   /** false per le pagine che hanno già una CTA WhatsApp in primo piano (Contatti). */
   floatingCta?: boolean;
+  /** false per le pagine in cui il popup del questionario non deve comparire (404). */
+  cissPopup?: boolean;
 }
 
 const {
@@ -33,6 +37,7 @@ const {
   jsonLd = [],
   noindex = false,
   floatingCta = true,
+  cissPopup = true,
 } = Astro.props;
 
 const pageTitle = fullTitle ? title : `${title} | ${site.businessName}`;
@@ -92,11 +97,14 @@ const structuredData = jsonLd.filter(Boolean);
       {floatingCta && <WhatsAppButton variant="floating" />}
     </main>
     <Footer />
+    <CissQuestionnaire />
+    {cissPopup && <CissPopup />}
   </body>
 </html>
 
 <script>
   import '../scripts/reveal';
+  import '../scripts/ciss';
 
   // Il pulsante WhatsApp fisso si nasconde quando nella schermata c'è già una CTA WhatsApp
   // in pagina (sezioni marcate con data-cta): niente doppioni, niente contenuti coperti.

@@ -20,6 +20,7 @@ Ogni dato ha un solo posto: cambiandolo lì, si aggiorna in tutto il sito.
 | Esperienze, formazione, specializzazioni, punti di autorevolezza | [src/data/credentials.ts](src/data/credentials.ts) |
 | Le tre slide del hero (bambini, adulti, sportivi) | [src/data/audiences.ts](src/data/audiences.ts) |
 | Immagini e relativi testi alternativi | [src/data/images.ts](src/data/images.ts) |
+| Questionario CISS: domande, accesso per età, testi della schermata finale e del popup | [src/data/ciss.ts](src/data/ciss.ts) |
 | Voci del menu | [src/data/navigation.ts](src/data/navigation.ts) |
 | Colori, font, spaziature, pulsanti | [src/styles/global.css](src/styles/global.css) |
 | Dominio del sito | variabile `SITE_URL` in fase di build (o [astro.config.mjs](astro.config.mjs)) |
@@ -48,6 +49,25 @@ I riquadri hanno proporzioni fisse e la foto viene ritagliata, non deformata. I 
 ## Modulo di contatto
 
 Senza configurazione apre il programma di posta con il messaggio già scritto (usa l'email in `site.ts`). Per un invio vero, impostare `contactForm.endpoint` con l'URL di un servizio (Formspree, Web3Forms, Netlify Forms…): il modulo invia via `fetch` e mostra l'esito.
+
+## Questionario CISS
+
+Popup iniziale + questionario interattivo (15 domande, una per schermata) basato sul PDF «Convergence Insufficiency Symptom Survey (CISS), versione italiana». Si apre senza lasciare la pagina da: popup (una volta per sessione), link «Compila il questionario» nel footer, invito nella pagina Analisi visiva. Per aggiungerne un altro basta un elemento con l'attributo `data-ciss-open`.
+
+| Cosa | Dove |
+| :-- | :-- |
+| Domande, istruzioni, risposte e punti (**uguali al PDF: non parafrasare**), fonti | [src/data/ciss.ts](src/data/ciss.ts) |
+| Chi può compilarlo (`cissAccess.ranges`) e testo per chi non rientra | [src/data/ciss.ts](src/data/ciss.ts) |
+| Testi del popup e della schermata finale (nota, invito a contattare lo studio) | [src/data/ciss.ts](src/data/ciss.ts) |
+| Punteggio (somma 0–60) ed età, funzioni pure | [src/utils/ciss.ts](src/utils/ciss.ts) |
+| Comportamento (schermate, conferme, focus) | [src/scripts/ciss.ts](src/scripts/ciss.ts) |
+| Markup e stili | [CissPopup.astro](src/components/CissPopup.astro), [CissQuestionnaire.astro](src/components/CissQuestionnaire.astro), [CissInvite.astro](src/components/CissInvite.astro), sezione «Finestre di dialogo» di global.css |
+
+**Test**: `npm test` (nessuna dipendenza) controlla che le domande coincidano parola per parola con il PDF, il punteggio (0/60, 60/60, intermedi, risposte mancanti) e la validazione dell'età.
+
+**Privacy**: tutto avviene nel browser. Le risposte e l'età stanno solo in memoria e si cancellano alla chiusura; nessun invio, database, URL, cookie o analytics. In `sessionStorage` resta solo l'informazione «popup già mostrato» (dura quanto la scheda). Il messaggio WhatsApp dell'ultima schermata non contiene risposte né punteggio.
+
+**Il punteggio è solo la somma dei punti**: nessuna soglia, classificazione o interpretazione, finché non sono confermate dal professionista. Decisioni ancora da prendere (cercare `TODO(cliente)` in `src/data/ciss.ts`): fasce d'età ammesse (oggi solo 9–18 anni, la popolazione dello studio citato nel PDF), eventuali percorsi per le altre età, testi finali.
 
 ## Recensioni Google
 

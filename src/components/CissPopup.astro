@@ -1,0 +1,102 @@
+---
+/**
+ * Popup iniziale che propone il questionario. Compare una sola volta per sessione
+ * (lo script src/scripts/ciss.ts ricorda solo questo in sessionStorage) e non
+ * obbliga a nulla: X, «Continua a visitare il sito», Esc e clic fuori lo chiudono.
+ * Testi in src/data/ciss.ts.
+ *
+ * Il markup sta in un <template>: non è renderizzato né indicizzato su ogni pagina, e lo
+ * script lo inserisce nella pagina solo quando serve.
+ */
+import { cissPopup } from '../data/ciss';
+import Icon from './Icon.astro';
+---
+
+<template data-ciss-template="popup">
+<dialog
+  class="dialog ciss-popup"
+  id="ciss-popup"
+  aria-labelledby="ciss-popup-title"
+  aria-describedby="ciss-popup-text"
+>
+  <div class="ciss-popup__frame">
+    <button class="dialog__close ciss-popup__close" type="button" data-ciss-popup-close aria-label="Chiudi">
+      <Icon name="close" />
+    </button>
+
+    <span class="ciss-popup__icon"><Icon name="eye" /></span>
+    <h2 id="ciss-popup-title" tabindex="-1" autofocus>{cissPopup.title}</h2>
+    <p class="lead" id="ciss-popup-text">{cissPopup.text}</p>
+
+    <div class="ciss-popup__actions">
+      <button class="btn btn--primary btn--lg" type="button" data-ciss-open>{cissPopup.start}</button>
+      <button class="btn btn--secondary btn--lg" type="button" data-ciss-popup-close>{cissPopup.dismiss}</button>
+    </div>
+  </div>
+</dialog>
+</template>
+
+<style>
+  .ciss-popup {
+    --dialog-width: 31rem;
+  }
+
+  .ciss-popup__frame {
+    position: relative;
+    padding: 2rem 1.25rem 1.5rem;
+    overflow-y: auto;
+    max-height: calc(100dvh - 1.5rem);
+    background: linear-gradient(180deg, var(--color-primary-wash) 0, var(--color-bg) 9rem);
+  }
+
+  .ciss-popup__close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+  }
+
+  .ciss-popup__icon {
+    display: inline-grid;
+    place-items: center;
+    width: 3.5rem;
+    height: 3.5rem;
+    margin-bottom: 1.25rem;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+    box-shadow: 0 10px 22px -12px rgb(15 110 86 / 0.7);
+  }
+
+  .ciss-popup__icon :global(svg) {
+    width: 1.7rem;
+    height: 1.7rem;
+  }
+
+  h2 {
+    max-width: 24rem;
+    outline: none;
+    font-size: clamp(1.4rem, 1.2rem + 1vw, 1.75rem);
+    line-height: 1.22;
+  }
+
+  .lead {
+    margin-top: 0.9rem;
+    font-size: 1rem;
+  }
+
+  .ciss-popup__actions {
+    display: grid;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  @media (min-width: 30rem) {
+    .ciss-popup__frame {
+      padding: 2.5rem 2.25rem 2rem;
+    }
+
+    .lead {
+      font-size: var(--text-body);
+    }
+  }
+</style>
