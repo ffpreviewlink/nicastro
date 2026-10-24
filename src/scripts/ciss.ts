@@ -6,10 +6,10 @@
  * in storage, URL, rete o analytics, e vengono cancellate alla chiusura del questionario.
  * Unica traccia: in sessionStorage resta il solo fatto che il popup è già comparso.
  */
-import { cissMaxScore, cissOptions, cissPopup, cissQuestions } from '../data/ciss';
-import { calculateScore, checkAge, isComplete } from '../utils/ciss';
+import { cissOptions, cissPopup, cissQuestions } from '../data/ciss';
+import { calculateScore, checkAge, classifyScore, isComplete } from '../utils/ciss';
 
-type Screen = 'age' | 'ineligible' | 'question' | 'review' | 'result';
+type Screen = 'age' | 'question' | 'review' | 'result';
 
 interface State {
   screen: Screen;
@@ -182,8 +182,6 @@ function setupQuestionnaire(root: HTMLDialogElement, confirmEl: HTMLDialogElemen
     if (result.status === 'invalid') {
       setError(ageInput, ageError, result.message);
       ageInput.focus();
-    } else if (result.status === 'not-eligible') {
-      show('ineligible');
     } else {
       goToQuestion(state.index);
     }
@@ -263,10 +261,25 @@ function setupQuestionnaire(root: HTMLDialogElement, confirmEl: HTMLDialogElemen
       show('review');
       return;
     }
+    // L'età digitata è già stata validata alla schermata età; qui serve solo alla fascia
+    const checked = checkAge(state.age);
+    const fascia = classifyScore(score, checked.status === 'valid' ? checked.age : null);
+
     $('[data-score]').textContent = String(score);
-    $('[data-score-spoken]').textContent = `${score} su ${cissMaxScore}`;
+    // Senza fascia approvata il punteggio resta neutro: nessun colore, nessuna etichetta
+    const scoreBox = $<HTMLElement>('[data-score-box]');
+    const band = $<HTMLElement>('[data-score-band]');
+    if (fascia.status === 'banded') {
+      scoreBox.dataset.tone = fascia.band.tone;
+      $('[data-score-band-label]').textContent = fascia.band.label;
+      band.hidden = false;
+    } else {
+      delete scoreBox.dataset.tone;
+      band.hidden = true;
+    }
     renderSummary('result');
   }
+
 
   // --- Pulsanti ------------------------------------------------------------
   root.addEventListener('click', (event) => {
@@ -279,8 +292,6 @@ function setupQuestionnaire(root: HTMLDialogElement, confirmEl: HTMLDialogElemen
     switch (action) {
       case 'age-back':
         return void requestExit();
-      case 'ineligible-back':
-        return show('age');
       case 'question-back':
         if (state.fromReview) return show('review');
         if (state.index > 0) return goToQuestion(state.index - 1);
@@ -341,7 +352,8 @@ function setupQuestionnaire(root: HTMLDialogElement, confirmEl: HTMLDialogElemen
     for (const radio of radios) radio.checked = false;
     for (const list of root.querySelectorAll('[data-summary]')) list.replaceChildren();
     $('[data-score]').textContent = '';
-    $('[data-score-spoken]').textContent = '';
+    delete $<HTMLElement>('[data-score-box]').dataset.tone;
+    $<HTMLElement>('[data-score-band]').hidden = true;
     for (const el of screens) el.hidden = el.dataset.screen !== 'age';
     progress.hidden = true;
   }

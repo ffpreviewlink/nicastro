@@ -11,9 +11,7 @@
  * su ogni pagina; lo script lo inserisce nella pagina alla prima apertura.
  */
 import {
-  cissAccess,
   cissInstructions,
-  cissMaxScore,
   cissName,
   cissOptions,
   cissQuestions,
@@ -25,7 +23,6 @@ import { emailUrl } from '../utils/whatsapp';
 import Icon from './Icon.astro';
 import WhatsAppButton from './WhatsAppButton.astro';
 
-const { notEligible } = cissAccess;
 ---
 
 <template data-ciss-template="questionnaire">
@@ -34,7 +31,6 @@ const { notEligible } = cissAccess;
   id="ciss"
   aria-label={cissName}
   data-total={cissQuestions.length}
-  data-max-score={cissMaxScore}
 >
   <div class="dialog__frame">
     <div class="ciss__bar">
@@ -50,7 +46,7 @@ const { notEligible } = cissAccess;
     <form class="ciss__screen" data-screen="age" novalidate>
       <div class="dialog__body">
         <h2 tabindex="-1" data-focus>Prima di iniziare</h2>
-        <p class="lead">Per capire se questo questionario è adatto serve un solo dato: l’età.</p>
+        <p class="lead">Per iniziare serve un solo dato: l’età.</p>
 
         <div class="field">
           <label class="field__label" for="ciss-age">Quanti anni ha la persona a cui si riferiscono le risposte?</label>
@@ -84,22 +80,6 @@ const { notEligible } = cissAccess;
         <button class="btn btn--primary btn--lg" type="submit">Continua</button>
       </div>
     </form>
-
-    <!-- Età fuori dall'accesso configurato: nessun questionario alternativo -->
-    <section class="ciss__screen" data-screen="ineligible" hidden>
-      <div class="dialog__body">
-        <h2 tabindex="-1" data-focus>{notEligible.title}</h2>
-        {notEligible.text.map((paragraph) => <p class="lead">{paragraph}</p>)}
-        <div class="cta-row ciss__contact">
-          <WhatsAppButton message={cissResult.contact.whatsappMessage} label="Contatta lo studio su WhatsApp" />
-          <a class="btn btn--secondary" href={emailUrl(cissResult.contact.emailSubject)}>Scrivi via email</a>
-        </div>
-      </div>
-      <div class="dialog__actions">
-        <button class="btn btn--secondary btn--lg" type="button" data-action="ineligible-back">Modifica l’età</button>
-        <button class="btn btn--primary btn--lg" type="button" data-ciss-exit>Torna al sito</button>
-      </div>
-    </section>
 
     <!-- 2 · Domanda (un solo pannello, riempito dallo script) -->
     <form class="ciss__screen" data-screen="question" hidden novalidate>
@@ -150,12 +130,15 @@ const { notEligible } = cissAccess;
         <p class="eyebrow">Fine del questionario</p>
         <h2 tabindex="-1" data-focus>{cissResult.title}</h2>
 
-        <div class="ciss__score">
-          <p class="ciss__score-label">{cissResult.scoreLabel}</p>
-          <p class="ciss__score-value">
-            <span aria-hidden="true"><strong data-score></strong>/{cissMaxScore}</span>
-            <span class="visually-hidden" data-score-spoken></span>
-          </p>
+        <div class="ciss__score" data-score-box>
+          <p class="ciss__score-ring"><strong data-score></strong></p>
+          <div class="ciss__score-text">
+            <p class="ciss__score-label">{cissResult.scoreLabel}</p>
+            <!-- Compare solo se la fascia è approvata: si vede solo il colore, il testo è per gli screen reader -->
+            <p class="visually-hidden ciss__score-band" data-score-band hidden>
+              <span data-score-band-label></span>
+            </p>
+          </div>
         </div>
 
         <p class="note ciss__note">{cissResult.note}</p>
@@ -291,10 +274,6 @@ const { notEligible } = cissAccess;
 
   /* Dopo il riepilogo (due pulsanti equivalenti) le colonne sono uguali */
   [data-screen='result'] > .dialog__actions {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  [data-screen='ineligible'] > .dialog__actions {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
@@ -520,15 +499,66 @@ const { notEligible } = cissAccess;
   }
 
   /* --- Punteggio ---------------------------------------------------------- */
+  /* Scheda chiara con un tono morbido della fascia: il colore sta nel cerchio, nello sfondo
+     e nel numero (in una tinta scura leggibile). Il cerchio è sempre pieno: non è una
+     barra di avanzamento, un numero più alto non è «più vicino a un traguardo». */
   .ciss__score {
-    padding: 1.25rem 1.5rem;
+    --tone: var(--color-primary-light);
+    --tone-ink: var(--color-primary-dark);
+    --tone-wash: var(--color-primary-wash);
+    position: relative; /* ancora il testo .visually-hidden */
+    display: flex;
+    align-items: center;
+    gap: 1.1rem;
+    padding: 1.1rem 1.25rem;
+    border: 1px solid color-mix(in srgb, var(--tone) 45%, var(--color-surface));
     border-radius: var(--radius-l);
-    background: var(--color-primary-dark);
-    color: var(--color-on-dark);
+    background: var(--tone-wash);
+    color: var(--color-text);
+  }
+
+  .ciss__score[data-tone='red'] {
+    --tone: #e5594b;
+    --tone-ink: #a3231a;
+    --tone-wash: #fdeeec;
+  }
+
+  .ciss__score[data-tone='yellow'] {
+    --tone: #f2b21e;
+    --tone-ink: #7a5200;
+    --tone-wash: #fff6dd;
+  }
+
+  .ciss__score[data-tone='green'] {
+    --tone: #3db57a;
+    --tone-ink: #1b6b45;
+    --tone-wash: #e7f6ee;
   }
 
   .ciss__score p {
     max-width: none;
+  }
+
+  .ciss__score-ring {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 5.75rem;
+    height: 5.75rem;
+    border: 0.5rem solid var(--tone);
+    border-radius: 50%;
+    background: var(--color-surface);
+    /* alone morbido attorno al cerchio */
+    box-shadow: 0 0 0 0.45rem color-mix(in srgb, var(--tone) 22%, transparent);
+    font-family: var(--font-heading);
+    line-height: 1;
+  }
+
+  .ciss__score-ring strong {
+    font-size: 2.4rem;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--tone-ink);
   }
 
   .ciss__score-label {
@@ -537,21 +567,27 @@ const { notEligible } = cissAccess;
     font-weight: 600;
     letter-spacing: 0.09em;
     text-transform: uppercase;
-    color: var(--color-primary-light);
+    color: var(--tone-ink);
   }
 
-  .ciss__score-value {
-    margin-top: 0.25rem;
-    font-family: var(--font-heading);
-    font-size: 1.5rem;
-    font-weight: 600;
-    line-height: 1.1;
-    color: var(--color-on-dark-muted);
+  .ciss__score-band[hidden] {
+    display: none;
   }
 
-  .ciss__score-value strong {
-    font-size: clamp(3rem, 2.4rem + 3vw, 4rem);
-    color: var(--color-on-dark);
+  @media (min-width: 30rem) {
+    .ciss__score {
+      gap: 1.5rem;
+      padding: 1.4rem 1.75rem;
+    }
+
+    .ciss__score-ring {
+      width: 6.75rem;
+      height: 6.75rem;
+    }
+
+    .ciss__score-ring strong {
+      font-size: 2.9rem;
+    }
   }
 
   .ciss__contact-box {

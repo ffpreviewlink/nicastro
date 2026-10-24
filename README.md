@@ -57,17 +57,17 @@ Popup iniziale + questionario interattivo (15 domande, una per schermata) basato
 | Cosa | Dove |
 | :-- | :-- |
 | Domande, istruzioni, risposte e punti (**uguali al PDF: non parafrasare**), fonti | [src/data/ciss.ts](src/data/ciss.ts) |
-| Chi può compilarlo (`cissAccess.ranges`) e testo per chi non rientra | [src/data/ciss.ts](src/data/ciss.ts) |
+| Limiti del campo età (`cissAge`) e fasce di punteggio per bambini/adulti (`cissScoreBands`: confine d'età, soglie, colori, etichette) | [src/data/ciss.ts](src/data/ciss.ts) |
 | Testi del popup e della schermata finale (nota, invito a contattare lo studio) | [src/data/ciss.ts](src/data/ciss.ts) |
-| Punteggio (somma 0–60) ed età, funzioni pure | [src/utils/ciss.ts](src/utils/ciss.ts) |
+| Punteggio (somma 0–60), validazione età, categoria d'età e fascia (`classifyScore`), funzioni pure | [src/utils/ciss.ts](src/utils/ciss.ts) |
 | Comportamento (schermate, conferme, focus) | [src/scripts/ciss.ts](src/scripts/ciss.ts) |
 | Markup e stili | [CissPopup.astro](src/components/CissPopup.astro), [CissQuestionnaire.astro](src/components/CissQuestionnaire.astro), [CissInvite.astro](src/components/CissInvite.astro), sezione «Finestre di dialogo» di global.css |
 
-**Test**: `npm test` (nessuna dipendenza) controlla che le domande coincidano parola per parola con il PDF, il punteggio (0/60, 60/60, intermedi, risposte mancanti) e la validazione dell'età.
+**Test**: `npm test` (nessuna dipendenza) controlla che le domande coincidano parola per parola con il PDF, il punteggio (0, 60, intermedi, risposte mancanti), la validazione dell'età (nessun blocco per età) e la classificazione in fasce (valori sul confine, categorie, configurazione non approvata = neutro).
 
 **Privacy**: tutto avviene nel browser. Le risposte e l'età stanno solo in memoria e si cancellano alla chiusura; nessun invio, database, URL, cookie o analytics. In `sessionStorage` resta solo l'informazione «popup già mostrato» (dura quanto la scheda). Il messaggio WhatsApp dell'ultima schermata non contiene risposte né punteggio.
 
-**Il punteggio è solo la somma dei punti**: nessuna soglia, classificazione o interpretazione, finché non sono confermate dal professionista. Decisioni ancora da prendere (cercare `TODO(cliente)` in `src/data/ciss.ts`): fasce d'età ammesse (oggi solo 9–18 anni, la popolazione dello studio citato nel PDF), eventuali percorsi per le altre età, testi finali.
+**Il punteggio è la somma dei punti** e si mostra come numero semplice («Punteggio del questionario»), mai «X su 60». Il significato lo dà solo il colore (numero + barra colorata), calcolato a parte (`classifyScore`) con le soglie di `cissScoreBands`: verde = nessuna urgenza di una visita, giallo = situazione intermedia, rosso = visita fortemente consigliata. Il testo della fascia non è visibile: lo leggono gli screen reader. Confine confermato: **bambini fino a 18 anni, adulti dai 19** (`childMaxAge`). Soglie bambini (dette dal cliente): 0–9 verde, 10–18 giallo, 19–60 rosso. Soglie adulti: **proposta tecnica da confermare** (0–14 verde, 15–23 giallo, 24–60 rosso). Tutte le età possono compilare il questionario: poterlo compilare non equivale a una validazione clinica dell'interpretazione per ogni età. Da confermare col cliente (cercare `TODO(cliente)` in `src/data/ciss.ts`): le soglie di bambini e adulti.
 
 ## Recensioni Google
 

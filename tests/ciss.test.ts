@@ -5,8 +5,15 @@
  */
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { cissAccess, cissInstructions, cissMaxScore, cissOptions, cissQuestions } from '../src/data/ciss.ts';
-import { calculateScore, checkAge, isComplete } from '../src/utils/ciss.ts';
+import {
+  cissAge,
+  cissInstructions,
+  cissMaxScore,
+  cissOptions,
+  cissQuestions,
+  cissScoreBands,
+} from '../src/data/ciss.ts';
+import { calculateScore, checkAge, classifyScore, getAgeGroup, isComplete } from '../src/utils/ciss.ts';
 
 const PDF_QUESTIONS = [
   'Senti gli occhi stanchi quando leggi o lavori da vicino?',
@@ -98,22 +105,150 @@ test('età: campo vuoto o non numerico è un errore', () => {
 test('età: fuori dal limite di digitazione è un errore', () => {
   assert.equal(checkAge('121').status, 'invalid');
   assert.equal(checkAge(999).status, 'invalid');
-  assert.equal(checkAge('0').status, 'not-eligible');
+  assert.equal(checkAge('0').status, 'valid');
+  assert.equal(checkAge('120').status, 'valid');
 });
 
-test('età: l’intervallo documentato (9–18) è incluso agli estremi', () => {
-  assert.equal(checkAge('9').status, 'eligible');
-  assert.equal(checkAge(' 12 ').status, 'eligible');
-  assert.equal(checkAge('18').status, 'eligible');
-  assert.equal(checkAge('8').status, 'not-eligible');
-  assert.equal(checkAge('19').status, 'not-eligible');
-  assert.equal(checkAge('45').status, 'not-eligible');
+test('età: nessun blocco, sotto i 9 anni e sopra i 18 si prosegue', () => {
+  for (const age of ['0', '3', '5', '8', '9', '12', '18', '19', '45', '99']) {
+    assert.deepEqual(checkAge(age), { status: 'valid', age: Number(age) }, `età ${age}`);
+  }
+  assert.equal(checkAge(' 7 ').status, 'valid');
+  assert.deepEqual(cissAge, { inputMin: 0, inputMax: 120 });
 });
 
-test('età: l’accesso segue la configurazione, senza intervalli non entra nessuno', () => {
-  const none = { ...cissAccess, ranges: [] };
-  assert.equal(checkAge('12', none).status, 'not-eligible');
-  const adults = { ...cissAccess, ranges: [{ min: 19, max: 99 }] };
-  assert.equal(checkAge('40', adults).status, 'eligible');
-  assert.equal(checkAge('12', adults).status, 'not-eligible');
+// --- Fascia del punteggio -------------------------------------------------
+
+/** Configurazione di prova: confine a 12 anni e fasce di esempio, entrambe approvate. */
+const approved = {
+  childMaxAge: 12,
+  groups: {
+    child: {
+      approved: true,
+      bands: [
+        { min: 0, max: 9, tone: 'green', label: 'bassa' },
+        { min: 10, max: 18, tone: 'yellow', label: 'intermedia' },
+        { min: 19, max: 60, tone: 'red', label: 'alta' },
+      ],
+    },
+    adult: {
+      approved: true,
+      bands: [
+        { min: 0, max: 19, tone: 'green', label: 'adulto bassa' },
+        { min: 20, max: 29, tone: 'yellow', label: 'adulto intermedia' },
+        { min: 30, max: 60, tone: 'red', label: 'adulto alta' },
+      ],
+    },
+  },
+} as typeof cissScoreBands;
+
+const labelOf = (score: number, age: number, config = approved) => {
+  const result = classifyScore(score, age, config);
+  return result.status === 'banded' ? `${result.group}:${result.band.label}` : 'neutral';
+};
+
+test('fasce: i valori esattamente sul confine vanno nella fascia giusta', () => {
+  assert.equal(labelOf(0, 8), 'child:bassa');
+  assert.equal(labelOf(9, 8), 'child:bassa');
+  assert.equal(labelOf(10, 8), 'child:intermedia');
+  assert.equal(labelOf(18, 8), 'child:intermedia');
+  assert.equal(labelOf(19, 8), 'child:alta');
+  assert.equal(labelOf(60, 8), 'child:alta');
+});
+
+test('fasce: bambini e adulti usano ciascuno la propria configurazione', () => {
+  // stesso punteggio, categoria diversa → fascia diversa
+  assert.equal(labelOf(25, 12), 'child:alta');
+  assert.equal(labelOf(25, 13), 'adult:adulto intermedia');
+  assert.equal(labelOf(19, 13), 'adult:adulto bassa');
+  assert.equal(labelOf(20, 13), 'adult:adulto intermedia');
+  assert.equal(labelOf(29, 40), 'adult:adulto intermedia');
+  assert.equal(labelOf(30, 40), 'adult:adulto alta');
+});
+
+test('categoria: il confine bambino/adulto è incluso nei bambini', () => {
+  assert.equal(getAgeGroup(12, 12), 'child');
+  assert.equal(getAgeGroup(13, 12), 'adult');
+  assert.equal(getAgeGroup(0, 12), 'child');
+});
+
+test('categoria: senza confine definito nessuna età ha una categoria', () => {
+  assert.equal(getAgeGroup(8, null), null);
+  assert.equal(getAgeGroup(40, null), null);
+  assert.equal(getAgeGroup(null, 12), null);
+  assert.equal(getAgeGroup(Number.NaN, 12), null);
+});
+
+test('fasce: risultato neutro se manca un presupposto', () => {
+  // categoria non approvata
+  const unapproved = { ...approved, groups: { ...approved.groups, child: { ...approved.groups.child, approved: false } } };
+  assert.equal(labelOf(25, 8, unapproved), 'neutral');
+  // categoria senza fasce (come gli adulti nella configurazione reale)
+  const noAdultBands = { ...approved, groups: { ...approved.groups, adult: { approved: true, bands: [] } } };
+  assert.equal(labelOf(25, 40, noAdultBands), 'neutral');
+  // confine non definito
+  assert.equal(labelOf(25, 8, { ...approved, childMaxAge: null }), 'neutral');
+  // punteggio o età assenti
+  assert.deepEqual(classifyScore(null, 8, approved), { status: 'neutral' });
+  assert.deepEqual(classifyScore(25, null, approved), { status: 'neutral' });
+  // punteggio che nessuna fascia contiene
+  const holes = { ...approved, groups: { ...approved.groups, child: { approved: true, bands: [{ min: 0, max: 9, tone: 'green', label: 'x' }] } } };
+  assert.equal(labelOf(30, 8, holes), 'neutral');
+});
+
+test('fasce: la classificazione non cambia il punteggio né dipende dalle risposte', () => {
+  const answers = all(2);
+  assert.equal(calculateScore(answers), 30);
+  classifyScore(30, 8, approved);
+  assert.equal(calculateScore(answers), 30);
+});
+
+const realTone = (score: number, age: number) => {
+  const result = classifyScore(score, age);
+  return result.status === 'banded' ? result.band.tone : 'neutral';
+};
+
+test('configurazione reale: bambini (fino a 18 anni) sui valori di confine', () => {
+  for (const age of [0, 3, 8, 9, 12, 18]) {
+    assert.equal(getAgeGroup(age), 'child');
+    assert.deepEqual(
+      [0, 9, 10, 18, 19, 60].map((score) => realTone(score, age)),
+      ['green', 'green', 'yellow', 'yellow', 'red', 'red'],
+      `età ${age}`,
+    );
+  }
+});
+
+test('configurazione reale: adulti (dai 19 anni) sui valori di confine', () => {
+  for (const age of [19, 25, 40, 90]) {
+    assert.equal(getAgeGroup(age), 'adult');
+    assert.deepEqual(
+      [0, 14, 15, 23, 24, 60].map((score) => realTone(score, age)),
+      ['green', 'green', 'yellow', 'yellow', 'red', 'red'],
+      `età ${age}`,
+    );
+  }
+});
+
+test('configurazione reale: lo stesso punteggio cambia fascia tra 18 e 19 anni', () => {
+  assert.equal(realTone(20, 18), 'red');
+  assert.equal(realTone(20, 19), 'yellow');
+});
+
+test('configurazione reale: ogni fascia ha un testo (per gli screen reader)', () => {
+  for (const group of Object.values(cissScoreBands.groups)) {
+    for (const band of group.bands) assert.ok(band.label.trim() !== '');
+  }
+});
+
+test('configurazione reale: le fasce coprono 0–60 senza buchi né sovrapposizioni', () => {
+  for (const [name, group] of Object.entries(cissScoreBands.groups)) {
+    assert.equal(group.bands[0].min, 0, `${name}: parte da 0`);
+    assert.equal(group.bands.at(-1)!.max, cissMaxScore, `${name}: arriva a ${cissMaxScore}`);
+    group.bands.forEach((band, i) => {
+      assert.ok(band.min <= band.max, `${name}: fascia ${i} valida`);
+      assert.ok(band.label.trim() !== '', `${name}: fascia ${i} ha un'etichetta testuale`);
+      if (i > 0) assert.equal(band.min, group.bands[i - 1].max + 1, `${name}: fascia ${i} contigua`);
+    });
+  }
 });

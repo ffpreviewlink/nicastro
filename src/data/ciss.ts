@@ -3,7 +3,7 @@
  *
  * Domande, istruzioni, etichette e valori delle risposte sono quelli del PDF
  * originale: NON vanno parafrasati né aggiunti. Tutto il resto di questo file
- * (accesso per età, testi della schermata finale) è configurazione che il
+ * (campo età, fasce di punteggio, testi della schermata finale) è configurazione che il
  * professionista può approvare o modificare senza toccare il codice.
  */
 
@@ -60,46 +60,111 @@ export const cissSource = {
   ],
 };
 
-/** Intervallo di età (in anni, estremi inclusi). */
-export interface AgeRange {
+/**
+ * Campo età.
+ *
+ * L'età non blocca più nessuno: chiunque può compilare le 15 domande (richiesta del
+ * cliente: anche i bambini sotto i 9 anni). Poter compilare il questionario NON significa che
+ * l'interpretazione del punteggio sia validata per ogni età: lo studio citato nelle fonti
+ * riguarda ragazzi dai 9 ai 18 anni. Per questo l'età serve solo a scegliere le fasce di
+ * `cissScoreBands` e non cambia mai il punteggio.
+ *
+ * `inputMin`/`inputMax` sono solo limiti di digitazione: oltre questi valori l'input è
+ * considerato un errore di battitura.
+ */
+export const cissAge = {
+  inputMin: 0,
+  inputMax: 120,
+};
+
+/** Colore di una fascia; il codice colore vero è nel CSS di CissQuestionnaire.astro. */
+export type CissTone = 'red' | 'yellow' | 'green';
+
+/** Fascia di punteggio: estremi interi inclusi. */
+export interface ScoreBand {
   min: number;
   max: number;
+  tone: CissTone;
+  /** Testo che accompagna il colore: il colore da solo non basta per capire. */
+  label: string;
+}
+
+export interface ScoreBandGroup {
+  /**
+   * Vero solo dopo la conferma del professionista. Finché è false, per questa categoria il
+   * risultato resta neutro (nessun colore, nessuna fascia), qualunque sia il punteggio.
+   */
+  approved: boolean;
+  /** Fasce ordinate, senza buchi né sovrapposizioni su tutto l'intervallo 0 – cissMaxScore. */
+  bands: readonly ScoreBand[];
 }
 
 /**
- * Chi può proseguire con le 15 domande.
- *
- * TODO(cliente): decisione clinica di Nicolais Nicastro. Il PDF documenta lo studio di
- * validazione del questionario su ragazzi dai 9 ai 18 anni, ed è l'unica popolazione di
- * riferimento nota: per questo è l'unico intervallo abilitato. Per ammettere altre fasce,
- * aggiungere intervalli a `ranges` (es. { min: 19, max: 99 }); con `ranges` vuoto nessuno
- * accede alle domande. Non esistono versioni alternative del questionario.
+ * Testo di ciascun colore. Nella schermata finale NON si vede: il risultato mostra solo il
+ * colore (richiesta del cliente). Il testo è letto dagli screen reader, così chi non vede i
+ * colori ha comunque l'informazione.
  */
-export const cissAccess = {
-  ranges: [{ min: 9, max: 18 }] as AgeRange[],
-  /** Limiti del campo età: oltre questi valori l'input è considerato un errore di digitazione. */
-  inputMin: 0,
-  inputMax: 120,
-  /** Schermata mostrata a chi non rientra negli intervalli sopra. */
-  notEligible: {
-    title: 'Prima di proseguire serve un confronto con lo studio',
-    text: [
-      'Il questionario di riferimento è documentato per ragazzi dai 9 ai 18 anni. Per l’età indicata non è stato definito un percorso online.',
-      'Se vuoi, contatta lo studio: valuteremo insieme come procedere.',
-    ],
+const bandLabels: Record<CissTone, string> = {
+  green: 'Nessuna urgenza di una visita',
+  yellow: 'Situazione intermedia: una visita può essere utile',
+  red: 'Visita fortemente consigliata',
+};
+
+/**
+ * Colore e fascia del punteggio. È l'UNICO posto dove vanno cambiate le soglie.
+ *
+ * Significato dei colori, come detto dal cliente: rosso = ha bisogno di una visita,
+ * giallo = situazione in bilico, verde = a posto.
+ *
+ * `childMaxAge`: fino a che età (inclusa) si usano le fasce dei bambini. CONFERMATO dal
+ * cliente: bambini fino a 18 anni, adulti dai 19 in su. Con `null` nessuna età avrebbe una
+ * categoria e il risultato resterebbe neutro.
+ *
+ * Bambini: soglie dette a voce dal cliente (sopra 18 rosso, sotto 10 verde, in mezzo giallo).
+ * Adulti: il cliente ha detto «più alte» ma non i valori. Quelle qui sono una PROPOSTA
+ * tecnica, spostata di 5 punti rispetto ai bambini (in letteratura il punto di taglio
+ * indicato è 16 per i ragazzi e 21 per gli adulti: cade nella fascia gialla in entrambi i casi).
+ * TODO(cliente): soglie di bambini e adulti sono da confermare, non sono una tabella clinica
+ * definitiva.
+ *
+ * `approved: false` spegne i colori di una categoria senza toccare le sue soglie: il
+ * risultato resta neutro (solo il numero).
+ */
+export const cissScoreBands: {
+  childMaxAge: number | null;
+  groups: { child: ScoreBandGroup; adult: ScoreBandGroup };
+} = {
+  childMaxAge: 18,
+  groups: {
+    child: {
+      approved: true,
+      bands: [
+        { min: 0, max: 9, tone: 'green', label: bandLabels.green },
+        { min: 10, max: 18, tone: 'yellow', label: bandLabels.yellow },
+        { min: 19, max: cissMaxScore, tone: 'red', label: bandLabels.red },
+      ],
+    },
+    adult: {
+      approved: true,
+      bands: [
+        { min: 0, max: 14, tone: 'green', label: bandLabels.green },
+        { min: 15, max: 23, tone: 'yellow', label: bandLabels.yellow },
+        { min: 24, max: cissMaxScore, tone: 'red', label: bandLabels.red },
+      ],
+    },
   },
 };
 
 /**
  * Schermata finale.
  *
- * TODO(cliente): i testi sono da approvare. Non devono contenere diagnosi, soglie,
- * classificazioni del punteggio o indicazioni terapeutiche, salvo conferma esplicita
- * del professionista.
+ * TODO(cliente): i testi sono da approvare. Non devono contenere diagnosi o indicazioni
+ * terapeutiche. Il punteggio si mostra come numero semplice, mai come «X su 60»; il suo
+ * significato lo dà la fascia colorata (vedi `cissScoreBands`).
  */
 export const cissResult = {
   title: 'Questionario completato',
-  scoreLabel: 'Punteggio totale',
+  scoreLabel: 'Punteggio del questionario',
   note: 'Questo questionario raccoglie informazioni sui sintomi riferiti durante le attività da vicino. Il risultato non costituisce una diagnosi e deve essere interpretato nell’ambito di una valutazione professionale.',
   contact: {
     title: 'Parliamone insieme',
