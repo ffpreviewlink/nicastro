@@ -6,10 +6,11 @@
  * Google direttamente e non conosce alcuna chiave API. La pipeline dati
  * (Google → PHP → cache → questo componente) non va toccata da qui.
  *
- * Il sito resta statico: qui non c'è alcun dato finto né un valore costruito
- * a tempo di build. Finché l'endpoint non è configurato (o mentre risponde),
- * il componente mostra uno stato di caricamento e poi, se necessario, uno
- * stato vuoto onesto — mai numeri, distribuzioni o testi inventati.
+ * Il sito resta statico e il collegamento a Google funziona ovunque (anche su GitHub
+ * Pages, dove il PHP non gira): il riquadro con «Leggi le recensioni su Google» e
+ * «Lascia una recensione» è HTML già pronto, senza JavaScript. Quando l'endpoint risponde
+ * si aggiungono valutazione, numero di recensioni e carosello; altrimenti non compare
+ * nulla di rotto né di finto — mai numeri, stelle o testi inventati.
  *
  * Presentazione: un blocco valutazione editoriale (non una "dashboard" di
  * statistiche) seguito da un carosello leggero, a scorrimento nativo
@@ -21,17 +22,36 @@ import { site } from '../data/site';
 interface Props {
   /** Numero massimo di recensioni da mostrare (default: tutte quelle restituite, fino a 5). */
   limit?: number;
-  /** Mostra il link e il blocco CTA verso Google Maps. Default: true. */
-  showGoogleLink?: boolean;
 }
 
-const { limit, showGoogleLink = true } = Astro.props;
-const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleReviews.placeId}`;
+const { limit } = Astro.props;
+const { readUrl, writeUrl } = site.googleReviews;
 ---
 
-<div class="google-reviews" data-google-reviews data-limit={limit ?? ''} data-maps-url={mapsUrl}>
-  <div class="reviews-rating" aria-live="polite" data-google-reviews-summary>
-    <p class="reviews-rating__status">Caricamento delle recensioni…</p>
+<div class="google-reviews" data-google-reviews data-limit={limit ?? ''}>
+  <div class="reviews-rating">
+    <div class="reviews-rating__main">
+      <p class="reviews-rating__badge">Google Maps</p>
+      <!-- Testo fisso; se Google risponde lo sostituiscono valutazione e numero di recensioni -->
+      <div class="reviews-rating__info" data-google-reviews-info>
+        <p class="reviews-rating__intro">
+          Le recensioni sono scritte direttamente su Google da chi si è rivolto a me: le trovi lì, nella loro forma
+          originale.
+        </p>
+      </div>
+    </div>
+
+    <div class="cta-row reviews-rating__actions">
+      <a class="btn btn--primary" href={readUrl} target="_blank" rel="noopener noreferrer" data-google-reviews-link>
+        Leggi le recensioni su Google
+        <Icon name="arrow" />
+        <span class="visually-hidden"> (si apre in una nuova scheda)</span>
+      </a>
+      <a class="btn btn--secondary" href={writeUrl} target="_blank" rel="noopener noreferrer">
+        Lascia una recensione
+        <span class="visually-hidden"> (si apre in una nuova scheda)</span>
+      </a>
+    </div>
   </div>
 
   <div class="reviews-carousel" data-carousel hidden>
@@ -53,34 +73,10 @@ const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleRevi
     </div>
   </div>
 
-  <p class="google-reviews__empty" data-google-reviews-empty hidden>
-    Le recensioni non sono disponibili al momento.
-  </p>
-
-  {
-    showGoogleLink && (
-      <div class="google-reviews__cta" data-google-reviews-cta hidden>
-        <p class="google-reviews__cta-title">Tutte le esperienze condivise su Google</p>
-        <a
-          class="btn btn--secondary"
-          href={mapsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          data-google-reviews-link
-        >
-          Leggi tutte le recensioni su Google Maps
-          <Icon name="arrow" />
-          <span class="visually-hidden"> (si apre in una nuova scheda)</span>
-        </a>
-      </div>
-    )
-  }
-
-  <noscript>
-    <p class="google-reviews__noscript">
-      Per vedere le recensioni più recenti, <a href={mapsUrl} target="_blank" rel="noopener noreferrer">visita la mia scheda Google</a>.
-    </p>
-  </noscript>
+  <!-- Contenuto opzionale (es. link a tutte le recensioni): compare solo se le recensioni ci sono davvero -->
+  <div class="google-reviews__more" data-google-reviews-more hidden>
+    <slot />
+  </div>
 </div>
 
 <script>
@@ -140,39 +136,25 @@ const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleRevi
   }
 
   function renderSummary(root: HTMLElement, data: GoogleReviewsPayload): void {
-    const summary = root.querySelector<HTMLElement>('[data-google-reviews-summary]');
-    if (!summary) return;
-
+    const info = root.querySelector<HTMLElement>('[data-google-reviews-info]');
     const ratingText = formatRating(data.rating);
-    const countText = typeof data.userRatingCount === 'number' ? `Basato su ${data.userRatingCount} recensioni Google` : '';
 
-    summary.hidden = false;
-    summary.innerHTML = `
-      <div class="reviews-rating__main">
-        <p class="reviews-rating__badge">Google Maps</p>
+    // Solo dati reali: senza una valutazione numerica resta il testo fisso
+    if (info && ratingText) {
+      const countText =
+        typeof data.userRatingCount === 'number' ? `Basato su ${data.userRatingCount} recensioni Google` : '';
+      info.innerHTML = `
         <div class="reviews-rating__headline">
-          ${ratingText ? `<span class="reviews-rating__number">${ratingText}</span>` : ''}
-          <span class="reviews-rating__stars" role="img" aria-label="${data.rating ?? 0} stelle su 5">${starRow(data.rating)}</span>
+          <span class="reviews-rating__number">${ratingText}</span>
+          <span class="reviews-rating__stars" role="img" aria-label="${escapeHtml(ratingText)} stelle su 5">${starRow(data.rating)}</span>
         </div>
         ${countText ? `<p class="reviews-rating__caption">${countText}</p>` : ''}
-      </div>
-    `;
+      `;
+    }
 
+    // Il link ufficiale restituito da Google ha la precedenza su quello costruito dal Place ID
     const link = root.querySelector<HTMLAnchorElement>('[data-google-reviews-link]');
     if (link && isHttpsUrl(data.googleMapsUri)) link.href = data.googleMapsUri;
-
-    // Il link discreto verso Google Maps compare solo dove è previsto anche il
-    // blocco CTA finale (prop showGoogleLink): sulla homepage compatta resta nascosto.
-    const showLinks = root.querySelector('[data-google-reviews-cta]') !== null;
-    if (showLinks && isHttpsUrl(data.googleMapsUri)) {
-      summary.insertAdjacentHTML(
-        'beforeend',
-        `<a class="reviews-rating__link link-arrow" href="${escapeHtml(data.googleMapsUri)}" target="_blank" rel="noopener noreferrer">
-          Vedi il profilo su Google Maps
-          <span class="visually-hidden"> (si apre in una nuova scheda)</span>
-        </a>`,
-      );
-    }
   }
 
   function reviewMarkup(review: GoogleReview): string {
@@ -395,16 +377,8 @@ const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleRevi
     const limitAttr = Number(root.dataset.limit);
     const limit = Number.isFinite(limitAttr) && limitAttr > 0 ? limitAttr : undefined;
 
-    const summaryEl = root.querySelector<HTMLElement>('[data-google-reviews-summary]');
-    const emptyEl = root.querySelector<HTMLElement>('[data-google-reviews-empty]');
-    const ctaEl = root.querySelector<HTMLElement>('[data-google-reviews-cta]');
-
-    const showEmpty = () => {
-      if (summaryEl) summaryEl.hidden = true;
-      if (emptyEl) emptyEl.hidden = false;
-      if (ctaEl) ctaEl.hidden = false;
-    };
-
+    // Se qualcosa non va (hosting senza PHP, chiave mancante, timeout…) non cambia nulla:
+    // il riquadro con i due link a Google è già completo.
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -414,20 +388,16 @@ const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleRevi
       });
       clearTimeout(timeoutId);
 
-      if (!response.ok) throw new Error(`http ${response.status}`);
+      if (!response.ok) return;
       const data: GoogleReviewsPayload = await response.json();
-
-      if (!data || data.available !== true) {
-        showEmpty();
-        return;
-      }
+      if (!data || data.available !== true) return;
 
       renderSummary(root, data);
       const hasReviews = renderReviews(root, Array.isArray(data.reviews) ? data.reviews : [], limit);
-      if (!hasReviews && emptyEl) emptyEl.hidden = false;
-      if (ctaEl) ctaEl.hidden = false;
+      const more = root.querySelector<HTMLElement>('[data-google-reviews-more]');
+      if (hasReviews && more) more.hidden = false;
     } catch {
-      showEmpty();
+      /* niente da fare: resta il riquadro statico */
     }
   }
 
@@ -449,20 +419,30 @@ const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleRevi
     align-items: center;
     justify-content: space-between;
     gap: 1.25rem 2rem;
-    min-height: 7rem;
-    margin-bottom: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
     padding: clamp(1.5rem, 1.2rem + 1.2vw, 2.25rem) clamp(1.5rem, 1.2rem + 2vw, 2.5rem);
     border-radius: var(--radius-l);
     background: var(--color-bg-sand);
   }
 
-  .reviews-rating__status {
-    color: var(--color-text-muted);
+  /* Il testo fisso e la valutazione live occupano lo stesso spazio: niente salti di layout */
+  .reviews-rating__main {
+    display: grid;
+    flex: 1 1 18rem;
+    gap: 0.6rem;
+    max-width: 34rem;
   }
 
-  :global(.reviews-rating__main) {
-    display: grid;
-    gap: 0.6rem;
+  .reviews-rating__info {
+    min-height: 5.25rem;
+  }
+
+  .reviews-rating__intro {
+    margin: 0;
+    color: var(--color-text);
+  }
+
+  .reviews-rating__actions {
+    flex: none;
   }
 
   /*
@@ -476,7 +456,7 @@ const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleRevi
   :global(.reviews-rating__badge) {
     display: inline-flex;
     align-items: center;
-    align-self: start;
+    justify-self: start;
     padding: 0.3rem 0.75rem;
     border-radius: 999px;
     background: var(--color-surface);
@@ -517,17 +497,6 @@ const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleRevi
     color: var(--color-text-muted);
   }
 
-  :global(.reviews-rating__link) {
-    flex: none;
-  }
-
-  .google-reviews__empty {
-    color: var(--color-text-muted);
-  }
-
-  :global(.section--dark) .google-reviews__empty {
-    color: var(--color-on-dark-muted);
-  }
 
   /* --------------------------------------------------------------------
      Carosello: scorrimento nativo (overflow-x + scroll-snap), come il Hero.
@@ -536,6 +505,7 @@ const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleRevi
      -------------------------------------------------------------------- */
   .reviews-carousel {
     position: relative;
+    margin-top: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
   }
 
   .reviews-carousel__track {
@@ -819,50 +789,23 @@ const mapsUrl = `https://www.google.com/maps/place/?q=place_id:${site.googleRevi
     }
   }
 
-  /* --------------------------------------------------------------------
-     CTA finale verso Google Maps: un momento a sé, non un link tecnico
-     in coda alla sezione.
-     -------------------------------------------------------------------- */
-  .google-reviews__cta {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1rem 1.5rem;
-    margin-top: clamp(2rem, 1.5rem + 2vw, 3rem);
-    padding-top: clamp(1.5rem, 1.2rem + 1vw, 2rem);
-    border-top: 1px solid var(--color-border);
-  }
-
-  :global(.section--dark) .google-reviews__cta {
-    border-top-color: var(--color-line-on-dark);
-  }
-
-  .google-reviews__cta-title {
-    margin: 0;
-    font-family: var(--font-heading);
-    font-size: 1.1875rem;
-    font-weight: 600;
-    color: var(--color-text);
-  }
-
-  :global(.section--dark) .google-reviews__cta-title {
-    color: var(--color-on-dark);
-  }
-
-  .google-reviews__noscript p {
-    color: var(--color-text-muted);
-  }
-
   @media (max-width: 47.9375rem) {
     .reviews-rating {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: stretch;
     }
 
-    .google-reviews__cta {
+    .reviews-rating__main {
+      flex: none;
+    }
+
+    .reviews-rating__info {
+      min-height: 0;
+    }
+
+    .reviews-rating__actions {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: stretch;
     }
   }
 </style>

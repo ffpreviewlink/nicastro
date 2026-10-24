@@ -79,9 +79,9 @@ Le recensioni (Homepage e pagina Recensioni) sono **reali e live**: il component
 GOOGLE_PLACES_API_KEY=la-tua-chiave-reale
 ```
 
-Vedi la sezione "Google Cloud" e "Deploy su Aruba" più sotto per la procedura completa. In locale (`astro dev`), senza PHP in esecuzione, il componente mostra semplicemente lo stato vuoto ("Le recensioni non sono disponibili al momento.") e il link diretto alla scheda Google: è il comportamento atteso, non un errore.
+Vedi la sezione "Google Cloud" e "Deploy su Aruba" più sotto per la procedura completa. **Senza PHP (GitHub Pages anteprima, `astro dev`)** il riquadro Google funziona comunque: «Leggi le recensioni su Google» e «Lascia una recensione» sono link fissi, derivati dal Place ID (`site.googleReviews.readUrl` / `writeUrl` in [src/data/site.ts](src/data/site.ts)), e non compare alcun dato di valutazione né errore. Valutazione, numero di recensioni e carosello compaiono solo quando l'endpoint risponde con dati reali.
 
-Il Place ID (`ChIJAxnfu4PFLRMRqZ-Zw4r50fI`, Studio Optometrico Nicastro) è configurato in due punti che vanno tenuti allineati se mai cambiasse: `site.googleReviews.placeId` (per costruire il link "Vedi su Google", lato frontend — non è un segreto) e la costante `PLACE_ID` in cima a `google-reviews.php` (usata per la vera chiamata a Google, lato server).
+Il Place ID (`ChIJAxnfu4PFLRMRqZ-Zw4r50fI`, Studio Optometrico Nicastro) è configurato in due punti che vanno tenuti allineati se mai cambiasse: `site.googleReviews.placeId` (da cui derivano i link a Google, lato frontend — non è un segreto) e la costante `PLACE_ID` in cima a `google-reviews.php` (usata per la vera chiamata a Google, lato server).
 
 ### Google Cloud: cosa abilitare
 
