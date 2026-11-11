@@ -1,0 +1,54 @@
+name: Pubblica su Aruba (FTP)
+
+# Pubblicazione del sito reale: si avvia SOLO a mano (Actions → "Pubblica su Aruba (FTP)" →
+# Run workflow), così un push di lavoro non finisce online per sbaglio.
+# L'anteprima su GitHub Pages è un altro workflow (gh-pages-preview.yml).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-aruba
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Se i test falliscono non si pubblica nulla
+      - run: npm test
+
+      - name: Build (Astro)
+        run: npm run build
+        env:
+          SITE_URL: https://www.studio-nicastro.it
+
+      # Carica solo ciò che è cambiato. Non cancella file che il server ha e dist/ no:
+      # api/.env (chiavi Google e SMTP) e api/cache/ esistono solo sul server e restano lì.
+      - name: Carica dist/ via FTP (TLS esplicito)
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          protocol: ftps
+          port: 21
+          local-dir: ./dist/
+          server-dir: /www.studio-nicastro.it/
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            **/.env
+            **/api/cache/*.json

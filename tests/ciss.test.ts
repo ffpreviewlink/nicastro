@@ -235,6 +235,27 @@ test('configurazione reale: lo stesso punteggio cambia fascia tra 18 e 19 anni',
   assert.equal(realTone(20, 19), 'yellow');
 });
 
+test('configurazione reale: tabella approvata (soglie, colori e testi) per bambini e adulti', () => {
+  const table = (age: number) =>
+    [0, 9, 10, 18, 19, 60, 14, 15, 23, 24].map((score) => {
+      const r = classifyScore(score, age);
+      return r.status === 'banded' ? [score, r.band.tone, r.band.label] : [score, 'neutral'];
+    });
+  const green = 'Nessuna urgenza di una visita';
+  const red = 'Visita fortemente consigliata';
+  assert.deepEqual(table(10), [
+    [0, 'green', green], [9, 'green', green], [10, 'yellow', 'Situazione intermedia: una visita può essere utile'],
+    [18, 'yellow', 'Situazione intermedia: una visita può essere utile'], [19, 'red', red], [60, 'red', red],
+    [14, 'yellow', 'Situazione intermedia: una visita può essere utile'], [15, 'yellow', 'Situazione intermedia: una visita può essere utile'],
+    [23, 'red', red], [24, 'red', red],
+  ]);
+  assert.deepEqual(table(30), [
+    [0, 'green', green], [9, 'green', green], [10, 'green', green], [18, 'yellow', 'Situazione intermedia / in bilico'],
+    [19, 'yellow', 'Situazione intermedia / in bilico'], [60, 'red', red],
+    [14, 'green', green], [15, 'yellow', 'Situazione intermedia / in bilico'], [23, 'yellow', 'Situazione intermedia / in bilico'], [24, 'red', red],
+  ]);
+});
+
 test('configurazione reale: ogni fascia ha un testo (per gli screen reader)', () => {
   for (const group of Object.values(cissScoreBands.groups)) {
     for (const band of group.bands) assert.ok(band.label.trim() !== '');

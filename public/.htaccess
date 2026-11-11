@@ -1,0 +1,5 @@
+# Il deploy via FTP lascia sul server un file con l'elenco dei file caricati: non deve
+# essere scaricabile dal web.
+<Files ".ftp-deploy-sync-state.json">
+    Require all denied
+</Files>

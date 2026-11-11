@@ -100,15 +100,16 @@ export interface ScoreBandGroup {
 }
 
 /**
- * Testo di ciascun colore. Nella schermata finale NON si vede: il risultato mostra solo il
+ * Testo di ciascun colore (tabella approvata: bambini e adulti hanno lo stesso verde e rosso, il giallo cambia). Nella schermata finale NON si vede: il risultato mostra solo il
  * colore (richiesta del cliente). Il testo è letto dagli screen reader, così chi non vede i
  * colori ha comunque l'informazione.
  */
-const bandLabels: Record<CissTone, string> = {
+const bandLabels = {
   green: 'Nessuna urgenza di una visita',
-  yellow: 'Situazione intermedia: una visita può essere utile',
+  yellowChild: 'Situazione intermedia: una visita può essere utile',
+  yellowAdult: 'Situazione intermedia / in bilico',
   red: 'Visita fortemente consigliata',
-};
+} as const;
 
 /**
  * Colore e fascia del punteggio. È l'UNICO posto dove vanno cambiate le soglie.
@@ -140,7 +141,7 @@ export const cissScoreBands: {
       approved: true,
       bands: [
         { min: 0, max: 9, tone: 'green', label: bandLabels.green },
-        { min: 10, max: 18, tone: 'yellow', label: bandLabels.yellow },
+        { min: 10, max: 18, tone: 'yellow', label: bandLabels.yellowChild },
         { min: 19, max: cissMaxScore, tone: 'red', label: bandLabels.red },
       ],
     },
@@ -148,7 +149,7 @@ export const cissScoreBands: {
       approved: true,
       bands: [
         { min: 0, max: 14, tone: 'green', label: bandLabels.green },
-        { min: 15, max: 23, tone: 'yellow', label: bandLabels.yellow },
+        { min: 15, max: 23, tone: 'yellow', label: bandLabels.yellowAdult },
         { min: 24, max: cissMaxScore, tone: 'red', label: bandLabels.red },
       ],
     },

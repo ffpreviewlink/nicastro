@@ -46,7 +46,7 @@ export const site = {
     defaultMessage: 'Buongiorno, ho visto il sito e vorrei avere qualche informazione.',
   },
 
-  email: 'studio.nicastronico@gmail.com',
+  email: 'info@studio-nicastro.it',
   /** Facoltativo. Lascia vuoto ('') per non mostrare alcun numero di telefono. */
   phone: '',
   vatId: '02156950434',
@@ -74,10 +74,12 @@ export const site = {
 
   contactForm: {
     /**
-     * Endpoint del servizio che riceve il modulo (es. Formspree, Web3Forms, Netlify Forms).
+     * Endpoint che riceve il modulo: public/api/contact.php (SMTP Aruba, configurato nel file
+     * api/.env sul server). Funziona solo dove gira PHP: sull'anteprima GitHub Pages e in
+     * `astro dev` il modulo mostra il messaggio di errore con i contatti alternativi.
      * Vuoto = il modulo apre il programma di posta con il messaggio già scritto.
      */
-    endpoint: '',
+    endpoint: '/api/contact.php',
   },
 };
 

@@ -48,7 +48,17 @@ I riquadri hanno proporzioni fisse e la foto viene ritagliata, non deformata. I 
 
 ## Modulo di contatto
 
-Senza configurazione apre il programma di posta con il messaggio già scritto (usa l'email in `site.ts`). Per un invio vero, impostare `contactForm.endpoint` con l'URL di un servizio (Formspree, Web3Forms, Netlify Forms…): il modulo invia via `fetch` e mostra l'esito.
+Il modulo invia via `fetch` a [public/api/contact.php](public/api/contact.php) (`site.contactForm.endpoint`), che spedisce l'email via **SMTP autenticato di Aruba** (`smtps.aruba.it`, porta 465, SSL/TLS) alla casella del professionista. Difese: solo POST, controllo dell'origine, campo trappola, limiti di lunghezza, massimo 5 invii all'ora per IP. Gli errori tecnici vanno solo nel log del server. Serve PHP: sull'anteprima GitHub Pages e in `astro dev` il modulo mostra il messaggio di errore con i contatti alternativi. Con `endpoint` vuoto torna al vecchio comportamento (si apre il programma di posta).
+
+**Configurazione sul server** (una volta, nel file `htdocs/api/.env`, lo stesso della chiave Google; vedi `.env.example`):
+
+```
+SMTP_USER=info@studio-nicastro.it     # casella REALE del dominio, creata dal pannello Aruba
+SMTP_PASSWORD=...
+# MAIL_TO=...                         # facoltativo: dove arrivano i messaggi (default: la stessa casella)
+```
+
+I messaggi arrivano nella casella `info@` (webmail: https://webmail.aruba.it, accesso con l'indirizzo completo). Se il professionista li vuole anche su un altro indirizzo, conviene un **inoltro automatico impostato dentro la casella** (Webmail → Impostazioni → Messaggi e scrittura → Inoltro automatico, spuntando di conservare la copia): così non si tocca il codice. Il mittente (From) è `SMTP_USER` (o `MAIL_FROM`): deve coincidere con la casella autenticata, altrimenti Aruba rifiuta l'invio («Sender not allowed»). Se `MAIL_TO` è impostato manda a quell'indirizzo. SPF, DKIM e DMARC del dominio sono già presenti nel DNS Aruba.
 
 ## Questionario CISS
 
@@ -109,9 +119,13 @@ Il Place ID (`ChIJAxnfu4PFLRMRqZ-Zw4r50fI`, Studio Optometrico Nicastro) è conf
 
 ### Deploy su Aruba (Hosting Basic Linux)
 
+**Automatico (FTP)**: il workflow [deploy-aruba.yml](.github/workflows/deploy-aruba.yml) compila, esegue i test e carica `dist/` in `/www.studio-nicastro.it/` via FTP con TLS esplicito (porta 21). Si avvia **a mano**: GitHub → Actions → «Pubblica su Aruba (FTP)» → Run workflow. Prima va creato il segreto: Settings → Secrets and variables → Actions → `FTP_SERVER` (`ftp.studio-nicastro.it`), `FTP_USERNAME`, `FTP_PASSWORD`. Il workflow non cancella `api/.env` né `api/cache/` (esistono solo sul server). Il dominio pubblico `https://www.studio-nicastro.it` è impostato nel workflow (`SITE_URL`).
+
+**Manuale** (alternativa):
+
 1. `npm run build` genera `dist/`, che include già `dist/api/google-reviews.php`, `dist/api/.htaccess` e `dist/api/cache/.htaccess` (copiati automaticamente da `public/`).
-2. Caricare **tutto il contenuto di `dist/`** nella document root del sito su Aruba (tipicamente `web/htdocs/<dominio>/httpdocs/` o simile: verificare il percorso esatto nel pannello Aruba).
-3. Via FTP, creare manualmente `htdocs/api/.env` (stesso percorso di `google-reviews.php`) con `GOOGLE_PLACES_API_KEY=...`: questo file non arriva mai dal repository/build, va creato una sola volta direttamente sul server.
+2. Caricare **tutto il contenuto di `dist/`** nella cartella `/www.studio-nicastro.it/` del server FTP.
+3. Via FTP, creare manualmente `htdocs/api/.env` (stesso percorso di `google-reviews.php`) con `GOOGLE_PLACES_API_KEY=...` (e le voci SMTP del modulo contatti, vedi sopra): questo file non arriva mai dal repository/build, va creato una sola volta direttamente sul server.
 4. Permessi: la cartella `api/cache/` deve essere scrivibile dal processo PHP (in genere il default FTP/Aruba va già bene; se il primo caricamento fallisse in silenzio, verificare i permessi a 755/775 su quella cartella).
 5. Verificare che Apache abbia `AllowOverride` attivo per gli `.htaccess` (standard su Aruba Hosting Linux) e che il modulo PHP sia PHP 7.4 o superiore.
 6. Non sono richieste altre configurazioni: nessun Node.js, nessun database, nessun processo da avviare.
