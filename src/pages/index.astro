@@ -73,11 +73,7 @@ const origin = Astro.site!.origin;
         <p class="eyebrow">Recensioni</p>
         <h2 id="recensioni">Cosa dicono di me su Google</h2>
       </div>
-      <GoogleReviews limit={3}>
-        <p class="reviews-cta">
-          <a class="btn btn--light" href="/recensioni/">Leggi tutte le recensioni</a>
-        </p>
-      </GoogleReviews>
+      <GoogleReviews />
     </div>
   </section>
 
@@ -209,10 +205,6 @@ const origin = Astro.site!.origin;
 
   .trust-head {
     margin-bottom: 0;
-  }
-
-  .reviews-cta {
-    margin-top: 2.25rem;
   }
 
   .pro > div > * + * {

@@ -17,27 +17,50 @@
  * (overflow-x + scroll-snap, come il carosello del Hero) — niente librerie.
  */
 import Icon from './Icon.astro';
+import { manualReviews } from '../data/reviews';
 import { site } from '../data/site';
 
 interface Props {
   /** Numero massimo di recensioni da mostrare (default: tutte quelle restituite, fino a 5). */
   limit?: number;
+  /** Millisecondi tra una recensione e la successiva; 0 = nessun cambio automatico. Default 20 secondi. */
+  autoplay?: number;
 }
 
-const { limit } = Astro.props;
+const { limit, autoplay = 20000 } = Astro.props;
 const { readUrl, writeUrl } = site.googleReviews;
+
+// Recensioni inserite a mano (src/data/reviews.ts): servono finché l'endpoint live non risponde
+const items = limit ? manualReviews.items.slice(0, limit) : manualReviews.items;
+const summary = items.length ? manualReviews.summary : null;
+const formatRating = (value: number) =>
+  value.toLocaleString('it-IT', { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+const stars = (n: number) => Array.from({ length: n });
 ---
 
-<div class="google-reviews" data-google-reviews data-limit={limit ?? ''}>
+<div class="google-reviews" data-google-reviews data-limit={limit ?? ''} data-autoplay={autoplay}>
   <div class="reviews-rating">
     <div class="reviews-rating__main">
-      <p class="reviews-rating__badge">Google Maps</p>
       <!-- Testo fisso; se Google risponde lo sostituiscono valutazione e numero di recensioni -->
       <div class="reviews-rating__info" data-google-reviews-info>
-        <p class="reviews-rating__intro">
-          Le recensioni sono scritte direttamente su Google da chi si è rivolto a me: le trovi lì, nella loro forma
-          originale.
-        </p>
+        {
+          summary ? (
+            <>
+              <div class="reviews-rating__headline">
+                <span class="reviews-rating__number">{formatRating(summary.rating)}</span>
+                <span class="reviews-rating__stars" role="img" aria-label={`${formatRating(summary.rating)} stelle su 5`}>
+                  {stars(Math.round(summary.rating)).map(() => <Icon name="star" />)}
+                </span>
+              </div>
+              <p class="reviews-rating__caption">Basato su {summary.count} recensioni Google</p>
+            </>
+          ) : (
+            <p class="reviews-rating__intro">
+              Le recensioni sono scritte direttamente su Google da chi si è rivolto a me: le trovi lì, nella loro forma
+              originale.
+            </p>
+          )
+        }
       </div>
     </div>
 
@@ -54,19 +77,49 @@ const { readUrl, writeUrl } = site.googleReviews;
     </div>
   </div>
 
-  <div class="reviews-carousel" data-carousel hidden>
-    <ul class="reviews-carousel__track" data-track role="list"></ul>
+  <div class="reviews-carousel" data-carousel hidden={items.length === 0}>
+    <ul class="reviews-carousel__track" data-track role="list">
+      {
+        /* Stesso markup e stesse classi di reviewMarkup() nello script (recensioni live) */
+        items.map((review, index) => (
+          <li class:list={['google-review', { 'is-active': index === 0 }]}>
+            <figure class="google-review__figure">
+              {review.rating && (
+                <span class="google-review__stars" role="img" aria-label={`${review.rating} stelle su 5`}>
+                  {stars(review.rating).map(() => <Icon name="star" />)}
+                </span>
+              )}
+              <blockquote class="google-review__text google-review__text--full">
+                {review.text.split(/\n\s*\n/).map((paragraph) => <p>{paragraph}</p>)}
+              </blockquote>
+              <figcaption class="google-review__author">
+                <span class="google-review__avatar google-review__avatar--fallback" aria-hidden="true">
+                  {review.author.trim().charAt(0).toUpperCase() || '?'}
+                </span>
+                <span class="google-review__author-info">
+                  <span class="google-review__author-name">{review.author}</span>
+                  <span class="google-review__author-sub">Recensione Google</span>
+                </span>
+              </figcaption>
+              {review.url && (
+                <p class="google-review__meta">
+                  <a href={review.url} target="_blank" rel="noopener noreferrer nofollow ugc">
+                    Leggi su Google
+                    <span class="visually-hidden"> (si apre in una nuova scheda)</span>
+                  </a>
+                </p>
+              )}
+            </figure>
+          </li>
+        ))
+      }
+    </ul>
 
-    <div class="reviews-carousel__nav" data-nav hidden>
+    <div class="reviews-carousel__nav" data-nav hidden={items.length < 2}>
       <button type="button" class="reviews-carousel__arrow" data-prev aria-label="Recensione precedente">
         <Icon name="arrow" class="reviews-carousel__arrow-icon reviews-carousel__arrow-icon--prev" />
       </button>
-      <div class="reviews-carousel__progress-wrap">
-        <div class="reviews-carousel__progress" aria-hidden="true">
-          <div class="reviews-carousel__progress-bar" data-progress-bar></div>
-        </div>
-        <p class="reviews-carousel__counter" data-counter aria-hidden="true"></p>
-      </div>
+      <div class="reviews-carousel__dots" data-dots role="group" aria-label="Scegli la recensione"></div>
       <button type="button" class="reviews-carousel__arrow" data-next aria-label="Recensione successiva">
         <Icon name="arrow" class="reviews-carousel__arrow-icon" />
       </button>
@@ -74,7 +127,7 @@ const { readUrl, writeUrl } = site.googleReviews;
   </div>
 
   <!-- Contenuto opzionale (es. link a tutte le recensioni): compare solo se le recensioni ci sono davvero -->
-  <div class="google-reviews__more" data-google-reviews-more hidden>
+  <div class="google-reviews__more" data-google-reviews-more hidden={items.length === 0}>
     <slot />
   </div>
 </div>
@@ -138,6 +191,12 @@ const { readUrl, writeUrl } = site.googleReviews;
   function renderSummary(root: HTMLElement, data: GoogleReviewsPayload): void {
     const info = root.querySelector<HTMLElement>('[data-google-reviews-info]');
     const ratingText = formatRating(data.rating);
+
+    // Dati letti da Google: i termini d'uso richiedono l'attribuzione testuale «Google Maps»
+    const main = root.querySelector<HTMLElement>('.reviews-rating__main');
+    if (main && !main.querySelector('.reviews-rating__badge')) {
+      main.insertAdjacentHTML('afterbegin', '<p class="reviews-rating__badge">Google Maps</p>');
+    }
 
     // Solo dati reali: senza una valutazione numerica resta il testo fisso
     if (info && ratingText) {
@@ -233,19 +292,29 @@ const { readUrl, writeUrl } = site.googleReviews;
     });
   }
 
+  // Un solo carosello attivo per riquadro: se le recensioni live sostituiscono quelle inserite
+  // a mano, i vecchi ascoltatori e il timer vengono tolti (niente doppi click sulle frecce).
+  const carouselControllers = new WeakMap<HTMLElement, AbortController>();
+
   /**
-   * Carosello leggero a scorrimento nativo (overflow-x + scroll-snap), sullo
-   * stesso principio del carosello del Hero: nessuna libreria, swipe/scroll
-   * nativo su touch e trackpad, frecce e tastiera solo per rifinire l'esperienza.
+   * Carosello a una recensione per volta, a scorrimento nativo (overflow-x + scroll-snap,
+   * come il Hero): nessuna libreria; swipe/trackpad nativi, frecce, puntini e tastiera in più.
+   * Cambia da solo ogni `data-autoplay` ms, con le stesse regole della galleria foto: si ferma
+   * col mouse sopra o col focus da tastiera, quando la pagina non è visibile o il carosello è
+   * fuori schermo, e non parte con «riduci animazioni». Senza pulsante di pausa, come richiesto.
    */
   function setupCarousel(root: HTMLElement): void {
+    carouselControllers.get(root)?.abort();
+    const controller = new AbortController();
+    carouselControllers.set(root, controller);
+    const { signal } = controller;
+
     const carousel = root.querySelector<HTMLElement>('[data-carousel]');
     const track = root.querySelector<HTMLElement>('[data-track]');
     const nav = root.querySelector<HTMLElement>('[data-nav]');
     const prevBtn = root.querySelector<HTMLButtonElement>('[data-prev]');
     const nextBtn = root.querySelector<HTMLButtonElement>('[data-next]');
-    const progressBar = root.querySelector<HTMLElement>('[data-progress-bar]');
-    const counter = root.querySelector<HTMLElement>('[data-counter]');
+    const dotsEl = root.querySelector<HTMLElement>('[data-dots]');
     if (!carousel || !track) return;
 
     const slides = Array.from(track.children) as HTMLElement[];
@@ -273,28 +342,44 @@ const { readUrl, writeUrl } = site.googleReviews;
 
     if (nav) nav.hidden = false;
 
+    // Puntini: uno per recensione, area di tocco da 44px
+    const dots = slides.map((_, i) => {
+      const dot = document.createElement('button');
+      dot.type = 'button';
+      dot.className = 'reviews-carousel__dot';
+      dot.setAttribute('aria-label', `Vai alla recensione ${i + 1} di ${slides.length}`);
+      dot.addEventListener(
+        'click',
+        () => {
+          goTo(i);
+          restart();
+        },
+        { signal },
+      );
+      return dot;
+    });
+    dotsEl?.replaceChildren(...dots);
+
     const update = () => {
       slides.forEach((slide, i) => {
         slide.classList.toggle('is-active', i === active);
         slide.inert = i !== active;
       });
-      if (progressBar) progressBar.style.width = `${((active + 1) / slides.length) * 100}%`;
-      if (counter) {
-        counter.textContent = `${String(active + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
-      }
-      if (prevBtn) prevBtn.disabled = active === 0;
-      if (nextBtn) nextBtn.disabled = active === slides.length - 1;
+      dots.forEach((dot, i) => {
+        if (i === active) dot.setAttribute('aria-current', 'true');
+        else dot.removeAttribute('aria-current');
+      });
     };
 
     let settling = false;
     let settleTimer = 0;
+    // Dall'ultima si torna alla prima (e viceversa)
     const goTo = (index: number) => {
-      const clamped = Math.max(0, Math.min(slides.length - 1, index));
-      active = clamped;
+      active = (index + slides.length) % slides.length;
       settling = true;
       window.clearTimeout(settleTimer);
-      settleTimer = window.setTimeout(() => (settling = false), 500);
-      slides[clamped].scrollIntoView({
+      settleTimer = window.setTimeout(() => (settling = false), 700);
+      slides[active].scrollIntoView({
         behavior: reduceMotion.matches ? 'instant' : 'smooth',
         inline: 'start',
         block: 'nearest',
@@ -302,24 +387,83 @@ const { readUrl, writeUrl } = site.googleReviews;
       update();
     };
 
-    prevBtn?.addEventListener('click', () => goTo(active - 1));
-    nextBtn?.addEventListener('click', () => goTo(active + 1));
+    // --- Cambio automatico ---------------------------------------------------
+    const interval = Number(root.dataset.autoplay);
+    const autoplay = interval > 0 && !reduceMotion.matches;
+    let timer = 0;
+    let hovering = false;
+    let onScreen = true;
 
-    carousel.addEventListener('keydown', (event) => {
-      if (event.key === 'ArrowRight') {
-        event.preventDefault();
-        goTo(active + 1);
-      } else if (event.key === 'ArrowLeft') {
-        event.preventDefault();
-        goTo(active - 1);
-      } else if (event.key === 'Home') {
-        event.preventDefault();
-        goTo(0);
-      } else if (event.key === 'End') {
-        event.preventDefault();
-        goTo(slides.length - 1);
+    const canRun = () => !hovering && onScreen && !document.hidden && !carousel.querySelector(':focus-visible');
+
+    // Ogni azione dell'utente azzera il conto alla rovescia
+    function restart() {
+      window.clearInterval(timer);
+      if (autoplay) {
+        timer = window.setInterval(() => {
+          if (canRun()) goTo(active + 1);
+        }, interval);
       }
-    });
+    }
+
+    prevBtn?.addEventListener(
+      'click',
+      () => {
+        goTo(active - 1);
+        restart();
+      },
+      { signal },
+    );
+    nextBtn?.addEventListener(
+      'click',
+      () => {
+        goTo(active + 1);
+        restart();
+      },
+      { signal },
+    );
+
+    carousel.addEventListener(
+      'keydown',
+      (event) => {
+        const target =
+          event.key === 'ArrowRight'
+            ? active + 1
+            : event.key === 'ArrowLeft'
+              ? active - 1
+              : event.key === 'Home'
+                ? 0
+                : event.key === 'End'
+                  ? slides.length - 1
+                  : null;
+        if (target === null) return;
+        event.preventDefault();
+        goTo(target);
+        restart();
+      },
+      { signal },
+    );
+
+    if (autoplay) {
+      // Mouse sopra: ferma; il touch azzera solo il conto alla rovescia
+      carousel.addEventListener('pointerenter', (e) => (hovering = e.pointerType === 'mouse'), { signal });
+      carousel.addEventListener(
+        'pointerleave',
+        () => {
+          hovering = false;
+          restart();
+        },
+        { signal },
+      );
+      carousel.addEventListener('pointerdown', restart, { signal });
+      carousel.addEventListener('focusout', restart, { signal });
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver(([entry]) => (onScreen = entry.isIntersecting), { threshold: 0.4 });
+        observer.observe(carousel);
+        signal.addEventListener('abort', () => observer.disconnect());
+      }
+      signal.addEventListener('abort', () => window.clearInterval(timer));
+    }
 
     // Segue lo swipe / scorrimento manuale: la posizione attiva rincorre la slide visibile
     let frame = 0;
@@ -342,22 +486,28 @@ const { readUrl, writeUrl } = site.googleReviews;
           if (closest !== active) {
             active = closest;
             update();
+            restart();
           }
         });
       },
-      { passive: true },
+      { passive: true, signal },
     );
 
     // Se cambia la larghezza (rotazione, resize) resta allineata alla slide attiva
     let resizeTimer = 0;
-    window.addEventListener('resize', () => {
-      window.clearTimeout(resizeTimer);
-      resizeTimer = window.setTimeout(() => {
-        slides[active]?.scrollIntoView({ inline: 'start', block: 'nearest', behavior: 'instant' });
-      }, 120);
-    });
+    window.addEventListener(
+      'resize',
+      () => {
+        window.clearTimeout(resizeTimer);
+        resizeTimer = window.setTimeout(() => {
+          slides[active]?.scrollIntoView({ inline: 'start', block: 'nearest', behavior: 'instant' });
+        }, 120);
+      },
+      { signal },
+    );
 
     update();
+    restart();
   }
 
   function renderReviews(root: HTMLElement, reviews: GoogleReview[], limit?: number): boolean {
@@ -367,8 +517,9 @@ const { readUrl, writeUrl } = site.googleReviews;
     const items = limit ? reviews.slice(0, limit) : reviews;
     if (!items.length) return false;
 
+    const replacing = track.children.length > 0;
     track.innerHTML = items.map(reviewMarkup).join('');
-    bindOriginalToggle(track);
+    if (!replacing) bindOriginalToggle(track);
     setupCarousel(root);
     return true;
   }
@@ -377,8 +528,15 @@ const { readUrl, writeUrl } = site.googleReviews;
     const limitAttr = Number(root.dataset.limit);
     const limit = Number.isFinite(limitAttr) && limitAttr > 0 ? limitAttr : undefined;
 
+    // Recensioni inserite a mano (già nel markup): il carosello parte subito
+    const track = root.querySelector<HTMLElement>('[data-track]');
+    if (track?.children.length) {
+      bindOriginalToggle(track);
+      setupCarousel(root);
+    }
+
     // Se qualcosa non va (hosting senza PHP, chiave mancante, timeout…) non cambia nulla:
-    // il riquadro con i due link a Google è già completo.
+    // restano le recensioni inserite a mano, o il riquadro con i due link a Google.
     try {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), 8000);
@@ -503,9 +661,11 @@ const { readUrl, writeUrl } = site.googleReviews;
      Su tablet/desktop la slide successiva resta parzialmente visibile, a
      suggerire che ci sono altre recensioni da leggere.
      -------------------------------------------------------------------- */
+  /* Una recensione per volta, in una colonna di lettura centrata */
   .reviews-carousel {
     position: relative;
-    margin-top: clamp(1.75rem, 1.3rem + 2vw, 2.5rem);
+    max-width: 52rem;
+    margin: clamp(1.75rem, 1.3rem + 2vw, 2.5rem) auto 0;
   }
 
   .reviews-carousel__track {
@@ -527,24 +687,13 @@ const { readUrl, writeUrl } = site.googleReviews;
     display: none;
   }
 
-  @media (min-width: 48rem) {
-    .reviews-carousel__track {
-      grid-auto-columns: 76%;
-    }
-  }
-
-  @media (min-width: 64rem) {
-    .reviews-carousel__track {
-      grid-auto-columns: 60%;
-    }
-  }
-
   /* --------------------------------------------------------------------
      Card recensione: la citazione è l'elemento dominante, i dati
      sull'autore restano quieti in fondo. Sempre su superficie chiara,
      indipendentemente dalla sezione che la ospita.
      -------------------------------------------------------------------- */
   :global(.google-review) {
+    position: relative; /* ancora il testo .visually-hidden: senza, allarga la pagina */
     scroll-snap-align: start;
     scroll-snap-stop: always;
     opacity: 0.5;
@@ -556,20 +705,38 @@ const { readUrl, writeUrl } = site.googleReviews;
   }
 
   :global(.google-review__figure) {
+    position: relative;
     display: flex;
     height: 100%;
     flex-direction: column;
-    gap: 1rem;
-    padding: 1.75rem 1.6rem;
-    border: 1px solid transparent;
+    gap: 1.25rem;
+    margin: 0;
+    padding: clamp(1.75rem, 1.2rem + 2.4vw, 3rem) clamp(1.5rem, 1rem + 3vw, 3.25rem)
+      clamp(1.5rem, 1.1rem + 1.8vw, 2.25rem);
     border-radius: var(--radius-l);
     background: var(--color-surface);
     color: var(--color-text);
-    transition: border-color 0.25s var(--ease);
+    overflow: hidden;
   }
 
-  :global(.google-review.is-active .google-review__figure) {
-    border-color: var(--color-border);
+  /* Virgolette decorative sullo sfondo, nel verde tenue del sito */
+  :global(.google-review__figure)::before {
+    content: '\201C';
+    position: absolute;
+    top: -0.35rem;
+    right: clamp(1rem, 0.5rem + 2.5vw, 2.25rem);
+    font-family: var(--font-heading);
+    font-size: clamp(6rem, 4.5rem + 6vw, 9.5rem);
+    font-weight: 600;
+    line-height: 1;
+    color: var(--color-primary-tint);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* Il contenuto sta sopra le virgolette */
+  :global(.google-review__figure > *) {
+    position: relative;
   }
 
   :global(.google-review__stars) {
@@ -579,18 +746,19 @@ const { readUrl, writeUrl } = site.googleReviews;
   }
 
   :global(.google-review__stars svg) {
-    width: 1.05rem;
-    height: 1.05rem;
+    width: 1.2rem;
+    height: 1.2rem;
   }
 
   :global(.google-review__text) {
     margin: 0;
     flex: 1;
     font-family: var(--font-heading);
-    font-size: 1.125rem;
+    font-size: clamp(1.0625rem, 0.98rem + 0.45vw, 1.3rem);
     font-weight: 500;
-    line-height: 1.55;
+    line-height: 1.65;
     letter-spacing: -0.005em;
+    text-wrap: pretty;
     /* Recensioni molto lunghe restano leggibili senza far esplodere l'altezza
        della card: oltre 7 righe il testo si interrompe con "…" — il testo
        integrale resta comunque a un tocco su "Leggi su Google". */
@@ -598,6 +766,13 @@ const { readUrl, writeUrl } = site.googleReviews;
     -webkit-line-clamp: 7;
     -webkit-box-orient: vertical;
     overflow: hidden;
+  }
+
+  /* Recensioni copiate a mano: si leggono per intero (non c'è un link a cui rimandare per il resto) */
+  :global(.google-review__text--full) {
+    display: block;
+    overflow: visible;
+    -webkit-line-clamp: unset;
   }
 
   :global(.google-review__text p) {
@@ -639,14 +814,14 @@ const { readUrl, writeUrl } = site.googleReviews;
     display: flex;
     align-items: center;
     gap: 0.75rem;
-    padding-top: 0.9rem;
+    padding-top: 1.25rem;
     border-top: 1px solid var(--color-border);
   }
 
   :global(.google-review__avatar) {
     flex: none;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 3rem;
+    height: 3rem;
     border-radius: 50%;
     object-fit: cover;
   }
@@ -668,7 +843,7 @@ const { readUrl, writeUrl } = site.googleReviews;
 
   :global(.google-review__author-name) {
     font-family: var(--font-heading);
-    font-size: 0.9375rem;
+    font-size: 1rem;
     font-weight: 600;
     color: var(--color-text);
     text-decoration: none;
@@ -689,8 +864,10 @@ const { readUrl, writeUrl } = site.googleReviews;
     font-size: var(--text-small);
   }
 
-  :global(.google-review__meta a) {
+  /* La scheda è sempre chiara: il link non eredita il colore chiaro delle sezioni scure */
+  :global(.google-review .google-review__meta a:not(.btn)) {
     font-weight: 600;
+    color: var(--color-primary);
     text-decoration: none;
   }
 
@@ -699,14 +876,15 @@ const { readUrl, writeUrl } = site.googleReviews;
   }
 
   /* --------------------------------------------------------------------
-     Navigazione: frecce discrete + progress line minimale + contatore.
+     Navigazione: frecce discrete + puntini (uno per recensione).
      Niente pallini: una linea sottile comunica la posizione senza
      appesantire la sezione.
      -------------------------------------------------------------------- */
   .reviews-carousel__nav {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    justify-content: center;
+    gap: 0.5rem;
     margin-top: 1.25rem;
   }
 
@@ -729,10 +907,6 @@ const { readUrl, writeUrl } = site.googleReviews;
     border-color: var(--color-primary);
   }
 
-  .reviews-carousel__arrow:disabled {
-    opacity: 0.35;
-  }
-
   :global(.reviews-carousel__arrow-icon) {
     width: 1.15rem;
     height: 1.15rem;
@@ -742,41 +916,53 @@ const { readUrl, writeUrl } = site.googleReviews;
     transform: rotate(180deg);
   }
 
-  .reviews-carousel__progress-wrap {
-    display: grid;
-    flex: 1;
-    gap: 0.4rem;
+  .reviews-carousel__dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .reviews-carousel__progress {
-    height: 2px;
+  /* Il puntino vero è lo pseudo-elemento; il pulsante è alto 44px per il tocco */
+  :global(.reviews-carousel__dot) {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.75rem;
+    height: var(--touch);
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: pointer;
+  }
+
+  :global(.reviews-carousel__dot)::before {
+    content: '';
+    width: 0.55rem;
+    height: 0.55rem;
     border-radius: 999px;
-    background: var(--color-border);
-    overflow: hidden;
+    background: var(--color-border-strong);
+    transition:
+      width 0.25s var(--ease),
+      background-color 0.25s var(--ease);
   }
 
-  :global(.section--dark) .reviews-carousel__progress {
+  :global(.reviews-carousel__dot[aria-current='true'])::before {
+    width: 1.6rem;
+    background: var(--color-primary);
+  }
+
+  :global(.section--dark) :global(.reviews-carousel__dot)::before {
     background: var(--color-line-on-dark);
   }
 
-  .reviews-carousel__progress-bar {
-    width: 0%;
-    height: 100%;
-    border-radius: inherit;
-    background: var(--color-primary);
-    transition: width 0.3s var(--ease);
+  :global(.section--dark) :global(.reviews-carousel__dot[aria-current='true'])::before {
+    background: var(--color-on-dark);
   }
 
-  .reviews-carousel__counter {
-    font-family: var(--font-heading);
-    font-size: var(--text-label);
-    font-weight: 600;
-    text-align: center;
-    color: var(--color-text-muted);
-  }
-
-  :global(.section--dark) .reviews-carousel__counter {
-    color: var(--color-on-dark-muted);
+  :global(.reviews-carousel__dot:focus-visible) {
+    outline: 3px solid var(--color-focus);
+    outline-offset: -4px;
+    border-radius: 999px;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -784,7 +970,7 @@ const { readUrl, writeUrl } = site.googleReviews;
       transition: none;
     }
 
-    .reviews-carousel__progress-bar {
+    :global(.reviews-carousel__dot)::before {
       transition: none;
     }
   }

@@ -93,6 +93,10 @@ Vedi la sezione "Google Cloud" e "Deploy su Aruba" più sotto per la procedura c
 
 Il Place ID (`ChIJAxnfu4PFLRMRqZ-Zw4r50fI`, Studio Optometrico Nicastro) è configurato in due punti che vanno tenuti allineati se mai cambiasse: `site.googleReviews.placeId` (da cui derivano i link a Google, lato frontend — non è un segreto) e la costante `PLACE_ID` in cima a `google-reviews.php` (usata per la vera chiamata a Google, lato server).
 
+### Recensioni inserite a mano
+
+In alternativa (o in attesa) della chiave Google, si possono mostrare recensioni copiate a mano in [src/data/reviews.ts](src/data/reviews.ts): nome, stelle e testo **identico** all'originale, più la data in cui sono state ricontrollate su Google (`checkedOn`), che compare sul sito («Recensioni copiate dalla scheda Google il …»). Facoltativi: link alla singola recensione e, solo se letti sulla scheda Google, media e numero totale (`summary`). Con l'elenco vuoto non compare nulla. Se l'endpoint live risponde, le recensioni vere hanno la precedenza e la nota sparisce. Non inserire testi scritti o riassunti da altri.
+
 ### Google Cloud: cosa abilitare
 
 1. **API da abilitare**: solo **Places API (New)** nel progetto Google Cloud collegato alla fatturazione.
