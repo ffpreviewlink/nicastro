@@ -727,12 +727,7 @@ textarea.field__control {
         }
     }
 
-    /* Ingresso della testata di ogni pagina: subito, senza ritardo sul contenuto */
-    .page-intro__inner,
-    .service-hero__text,
-    .about-intro__text {
-        animation: rise 0.46s var(--ease) backwards;
-    }
+    /* La testata di ogni pagina (candidato LCP) non si anima: dev'essere visibile dal primo frame */
 
     /* Sezioni sotto la piega: nascoste solo dallo script, che le rivela quando entrano in vista */
     .reveal {

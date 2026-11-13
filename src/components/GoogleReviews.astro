@@ -679,7 +679,7 @@ const stars = (n: number) => Array.from({ length: n });
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
+    /* niente scroll-behavior CSS: lo scorrimento morbido è richiesto da JS (scrollIntoView) */
     scrollbar-width: none;
   }
 

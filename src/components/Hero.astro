@@ -7,6 +7,10 @@
  * - senza JavaScript le tre slide sono semplicemente impilate e leggibili;
  * - con JavaScript diventa scorrevole (swipe nativo con scroll-snap) e un
  *   selettore a schede (tablist) permette di scegliere il pubblico;
+ * - il contenuto del primo schermo (candidato LCP) è visibile dal primo frame: niente animazioni
+ *   d'ingresso né scroll-behavior CSS (uno scroll animato di riallineamento allo scroll-snap
+ *   al caricamento impedisce a Chrome di registrare l'LCP: Lighthouse darebbe NO_LCP);
+ *   lo scorrimento morbido è richiesto da JS con scrollTo({ behavior: 'smooth' });
  * - le slide non cambiano da sole: l'utente decide (solo la galleria di foto
  *   dentro la slide può avanzare automaticamente, vedi ImageGallery); con
  *   prefers-reduced-motion l'animazione dello scorrimento è disattivata.
@@ -176,7 +180,6 @@ import { site } from '../data/site';
     align-items: start;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
-    scroll-behavior: smooth;
     scrollbar-width: none;
   }
 
@@ -253,30 +256,9 @@ import { site } from '../data/site';
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .carousel[data-enhanced] .carousel__track {
-      scroll-behavior: auto;
-    }
-  }
-
   @media (prefers-reduced-motion: no-preference) {
     .carousel[data-enhanced] .carousel__track {
       transition: height 0.3s var(--ease);
-    }
-  }
-
-  /* Ingresso: titolo subito, poi introduzione e carosello con uno scarto minimo (keyframes in global.css) */
-  @media (prefers-reduced-motion: no-preference) {
-    .hero__intro > * {
-      animation: rise 0.46s var(--ease) backwards;
-    }
-
-    .hero__intro > .lead {
-      animation-delay: 60ms;
-    }
-
-    .carousel {
-      animation: rise 0.46s var(--ease) 140ms backwards;
     }
   }
 </style>

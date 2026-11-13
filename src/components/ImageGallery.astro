@@ -33,7 +33,7 @@ const { names, ratio, label, priority = false, autoplay } = Astro.props;
     {
       names.map((name, index) => (
         <div class="gallery__item">
-          <SiteImage name={name} ratio={ratio} eager priority={priority && index === 0} />
+          <SiteImage name={name} ratio={ratio} eager={index === 0} priority={priority && index === 0} />
         </div>
       ))
     }
@@ -61,7 +61,6 @@ const { names, ratio, label, priority = false, autoplay } = Astro.props;
   }
 
   .gallery[data-enhanced] .gallery__track {
-    scroll-behavior: smooth;
     scrollbar-width: none;
   }
 
@@ -132,11 +131,6 @@ const { names, ratio, label, priority = false, autoplay } = Astro.props;
     scale: 1.3;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .gallery[data-enhanced] .gallery__track {
-      scroll-behavior: auto;
-    }
-  }
 </style>
 
 <script>
