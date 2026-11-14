@@ -123,6 +123,8 @@ In alternativa (o in attesa) della chiave Google, si possono mostrare recensioni
 
 ### Deploy su Aruba (Hosting Basic Linux)
 
+**Da terminale**: `npm run deploy` (serve `gh` con login). Controlla che main sia committato e pushato, avvia il workflow qui sotto e ne mostra l'esito.
+
 **Automatico (FTP)**: il workflow [deploy-aruba.yml](.github/workflows/deploy-aruba.yml) compila, esegue i test e carica `dist/` in `/www.studio-nicastro.it/` via FTP con TLS esplicito (porta 21). Si avvia **a mano**: GitHub → Actions → «Pubblica su Aruba (FTP)» → Run workflow. Prima va creato il segreto: Settings → Secrets and variables → Actions → `FTP_SERVER` (`ftp.studio-nicastro.it`), `FTP_USERNAME`, `FTP_PASSWORD`. Il workflow non cancella `api/.env` né `api/cache/` (esistono solo sul server). Il dominio pubblico `https://www.studio-nicastro.it` è impostato nel workflow (`SITE_URL`).
 
 **Manuale** (alternativa):
