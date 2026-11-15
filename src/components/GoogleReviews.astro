@@ -379,10 +379,10 @@ const stars = (n: number) => Array.from({ length: n });
       settling = true;
       window.clearTimeout(settleTimer);
       settleTimer = window.setTimeout(() => (settling = false), 700);
-      slides[active].scrollIntoView({
+      // scrollTo sulla sola traccia: scrollIntoView farebbe scorrere anche la pagina
+      track.scrollTo({
+        left: slides[active].offsetLeft - track.offsetLeft,
         behavior: reduceMotion.matches ? 'instant' : 'smooth',
-        inline: 'start',
-        block: 'nearest',
       });
       update();
     };
@@ -394,7 +394,8 @@ const stars = (n: number) => Array.from({ length: n });
     let hovering = false;
     let onScreen = true;
 
-    const canRun = () => !hovering && onScreen && !document.hidden && !carousel.querySelector(':focus-visible');
+    const canRun = () =>
+      !hovering && onScreen && !document.hidden && !document.querySelector('dialog[open]') && !carousel.querySelector(':focus-visible');
 
     // Ogni azione dell'utente azzera il conto alla rovescia
     function restart() {
@@ -500,7 +501,7 @@ const stars = (n: number) => Array.from({ length: n });
       () => {
         window.clearTimeout(resizeTimer);
         resizeTimer = window.setTimeout(() => {
-          slides[active]?.scrollIntoView({ inline: 'start', block: 'nearest', behavior: 'instant' });
+          if (slides[active]) track.scrollTo({ left: slides[active].offsetLeft - track.offsetLeft, behavior: 'instant' });
         }, 120);
       },
       { signal },
@@ -679,7 +680,7 @@ const stars = (n: number) => Array.from({ length: n });
     overflow-x: auto;
     overscroll-behavior-x: contain;
     scroll-snap-type: x mandatory;
-    /* niente scroll-behavior CSS: lo scorrimento morbido è richiesto da JS (scrollIntoView) */
+    /* niente scroll-behavior CSS: lo scorrimento morbido è richiesto da JS (track.scrollTo) */
     scrollbar-width: none;
   }
 
